@@ -57,6 +57,8 @@ book:
           text: Clinical features
         - href: polaris.qmd
           text: Polaris
+        - href: codex.qmd
+          text: CODEX
         - href: cd44.qmd
           text: CD44
         - href: epi_nkt.qmd
