@@ -1,0 +1,15 @@
+# Detect differential alternative splicing events 
+Detect differential alternative splicing events 
+
+Previous studies [PMID: 36535935] have demonstrated that MM cells exhibit widespread alterations in splicing patterns compared to normal plasma cells, with approximately 40% of splicing regulators showing differential expression. These findings suggest a fundamental role for alternative splicing in MM pathogenesis.
+
+Building on this knowledge, we leveraged the expanded cohort and refined subtype classification developed in this study to further investigate the relationship between splicing regulation and MM heterogeneity. Specifically, we used rMATS-turbo, a high-performance tool for splicing analysis, to identify differential alternative splicing (DAS) events across molecular subtypes of MM. rMATS detects five major classes of splicing events: skipped exons (SE), mutually exclusive exons (MXE), alternative 5′ splice sites (A5SS), alternative 3′ splice sites (A3SS), and retained introns (RI). This approach allowed us to quantify subtype-associated splicing changes with high sensitivity and to explore whether specific splicing programs correlate with distinct transcriptional and clinical profiles in MM.
+
+
+
+
+
+
+These analyses provide a foundation for understanding how alternative splicing contributes to molecular subtype specification, and may reveal novel subtype-specific vulnerabilities linked to RNA processing machinery.
+
+

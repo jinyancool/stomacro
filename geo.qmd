@@ -1,0 +1,7 @@
+# Gene Expression Omnibus (GEO)
+
+We conducted a search using the keyword "Multiple Myeloma" in the Gene Expression Omnibus (GEO) database, accessible at [https://www.ncbi.nlm.nih.gov/geo/](https://www.ncbi.nlm.nih.gov/geo/). The search primarily returned microarray datasets, which provided valuable gene expression profiles for our study. Among the results, we identified six RNA-sequencing (RNA-seq) datasets, with accession numbers GSE116324, GSE230526, GSE263767, GSE148048, GSE164652, GSE220144, that were particularly relevant to our research objectives. These RNA-seq datasets have been successfully incorporated into our study, offering critical genomic and phenomic data to advance our understanding of Multiple Myeloma.
+
+Additionally, we utilized the microarray datasets retrieved from GEO as a validation resource in our study. These datasets served as a complementary tool to confirm our findings, enhancing the robustness of our analyses.
+
+

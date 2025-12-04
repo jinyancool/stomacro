@@ -1,0 +1,2 @@
+# Introduction {.unnumbered}
+To begin, I assume that you have read through our paper. In the chapters of this book, I present the key components of this study, encompassing the full analytical workflow from data collection to result interpretation. Particular emphasis is placed on the major findings of the research. I hope this book offers useful insights for readers and also contributes, in a small way, to the broader reproducibility community.

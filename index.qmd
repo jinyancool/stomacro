@@ -1,0 +1,15 @@
+# Preface {.unnumbered}
+
+---
+title: "The Oral Carcinoma Project" 
+---
+
+I would like to express my sincere gratitude to the Chinese Association for Blood Sciences (CABS) for their outstanding organization of the 2022 conference and the memorable football match held in Shanghai. These events provided a valuable platform for scientific exchange and helped foster meaningful connections among researchers.
+
+During the conference, I had the privilege of engaging in a stimulating discussion with Professor Dai Yun from the First Hospital of Jilin University. Our conversation took place at our hotel following the football match and focused on recent advancements in the molecular subtyping of hematological malignancies. I highlighted the significant progress made in refining molecular classifications for B-cell precursor acute lymphoblastic leukemia (BCP-ALL)[@RN4; @RN2] and T-cell acute lymphoblastic leukemia (T-ALL)[@RN3; @RN1]. These advances have enhanced diagnostic precision and opened new avenues for targeted therapies.
+
+In response, Professor Dai shared his insights on the molecular classification of multiple myeloma, emphasizing its inherent complexity—particularly in Chinese and broader Asian populations. He noted that patients in these groups often exhibit distinct molecular and clinical features compared to their Western counterparts, posing unique challenges for diagnosis and treatment. Intrigued by this perspective, Professor Dai proposed a collaborative research initiative aimed at improving molecular subtyping specifically for Chinese patients with multiple myeloma. He suggested that methodologies and insights from BCP-ALL and T-ALL research could be adapted to address these challenges.
+
+I found Professor Dai’s proposal both compelling and timely, as it aligns with the growing demand for precision medicine tailored to diverse populations. Our discussion sparked enthusiasm for exploring how cutting-edge molecular techniques—such as next-generation sequencing and integrated genomic profiling—could be leveraged to better characterize multiple myeloma in Chinese patients. This exchange laid the groundwork for our current collaborative project, which seeks to bridge the gap in molecular subtyping and improve patient outcomes through personalized approaches.
+
+This initiative reflects the spirit of international collaboration encouraged by events such as the CABS conference, and I am optimistic about its potential to advance our understanding of multiple myeloma and contribute to more effective, population-specific therapeutic strategies.

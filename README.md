@@ -1,10 +1,10 @@
 
-# MultipleMyeloma
+# Carcinoma of mouth
 
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of MultipleMyeloma is to ...
+The goal of carcinoma of mouth is to ...
 
 # stomacro
 # stomacro

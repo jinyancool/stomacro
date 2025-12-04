@@ -1,0 +1,129 @@
+# Package load and plot settings.
+
+```{r warning=FALSE}
+pkgs <- c("jhtools", "Seurat", "data.table", "magrittr", "dplyr", "ggplot2",
+          "ComplexHeatmap", "cluster", "survival", "survminer", "RColorBrewer")  
+for (pkg in pkgs){
+  suppressPackageStartupMessages(library(pkg, character.only = T))
+}
+dat_dir <- ""
+fs::dir_create("./results/fig1")
+color_fn <- "/cluster/home/lixiyue_jh/projects/quarto/stomatology_lvjiong/quarto_book/colors.yaml"
+cols <- show_me_the_colors(color_fn)
+col_fun <- circlize::colorRamp2(c(0, 0.5, 0.8, 0.9, 1), c("#94C6E5", "white", "#F4AB89", "#BD2333", "#6D001E"))
+cols_ct <- c("Spinous" = "#8358CF",  
+             "Spinous_2" = "#D083FF", 
+             "Spinous_EMT" = "#27A7FA", 
+             EMT = "#62FFFF", 
+             "Basal" = "#a6cee3",
+             'Basal_KI67+' = "#fdd0a2", 
+             Basal_distant = "#fccde5",
+             Distant = "#b3de69",
+             Small_dense = "#74F882", 
+             "Nuclei Dense_kera" ="#F6D026", 
+             'Kera_CK-' = "#EE6600",
+             "Fragment" = "#AE2519", 
+             'CD44++' = "#FA339A")
+cols_grp <- c("brown2", "#4696E6", "#3CB371", "#9575aa", "#e8d056", "#F2ADBE")
+names(cols_grp) <- paste0("G", 1:6)
+```
+
+## (a) Sample correlation heatmap
+
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# read data
+srat_qt_fil <- readRDS("{dat_dir}/srat_qt_fil.rds")
+srat_core <- subset(srat_qt_fil, subset = roi_type == "Core")
+
+# cluster samples by cell type proportion - pool multiple TMA together
+## correlation mat
+df_prop <- srat_core[[]] %>%
+  group_by(sample_id, celltype) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n)) %>%
+  as.data.table() %>%
+  dcast(sample_id ~ celltype, value.var = "freq", fill = 0) 
+mat_prop <- df_prop[, -1] %>% as.matrix()
+rownames(mat_prop) <- df_prop$sample_id
+mat_cor <- cor(t(mat_prop), method = "pearson")
+# plot group
+dt_grp <- fread("./data/sample_cluster_group_newcore.csv")
+df_anno <- as.data.frame(dt_grp[match(colnames(mat_cor), sample_id), ]) %>%
+  `rownames<-`(colnames(mat_cor)) %>%
+  .[, "group", drop = FALSE]
+row_ha <- rowAnnotation(df = df_anno, col = list(group = cols_grp))
+col_ha <- HeatmapAnnotation(df = df_anno, col = list(group = cols_grp))
+idx_order <- match(dt_grp$sample_id, rownames(df_anno))
+p1 <- ComplexHeatmap::Heatmap(mat_cor, col = col_fun,
+                              column_order = idx_order,
+                              row_order = idx_order,
+                              column_names_gp = grid::gpar(fontsize = 4),
+                              show_row_names = FALSE,
+                              top_annotation = col_ha,
+                              left_annotation = row_ha)
+pdf("./results/fig1/fig1a_heatmap_sample_correlation_group_anno.pdf", width = 8, height = 8)
+p1 <- draw(p1)
+dev.off()
+```
+
+```{r echo=FALSE, fig.width = 8, fig.height = 8}
+p1
+```
+
+## (b) Sample group celltype propotion
+
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# plot group freq
+df_grp_ct <- srat_core[[]] %>%
+  select(sample_id, roi_id, cell_id, celltype) %>%
+  left_join(tibble::rownames_to_column(df_anno, var = "sample_id"))
+p2 <- ggplot(df_grp_ct, aes(group, fill = celltype)) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = cols_ct) +
+  coord_flip() +
+  theme_classic()
+ggsave("./results/fig1/fig1b_bar_stack_sample_group_celltype_prop.pdf", p2, width = 7, height = 4)
+```
+
+```{r echo=FALSE, fig.width = 7, fig.height = 4}
+p2
+```
+
+## (c) Survival curve sample core cluster
+
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# ===================== survival analysis ===========================
+# clinical data
+clin <- fread("./data/clinical_info.tsv")
+clin[RFS_time > 60, `:=`(RFS_time = 60,
+                         RFS = 0)]
+
+# read group data
+dt <- dt_grp %>%
+  left_join(clin, by = "sample_id") %>%
+  na.omit(cols = c("RFS", "RFS_time"))
+dt[, group := as.factor(group)]
+
+# survival analysis
+fit <- survfit(Surv(RFS_time, RFS) ~ group, data = dt)
+
+p3 <- ggsurvplot(fit, data = dt, xlab = "Time (Months)", pval = TRUE, risk.table = TRUE,
+                risk.table.height = 0.3, 
+                palette = unname(cols_grp), title = "Survival by Core Cluster")
+p3 <- arrange_ggsurvplots(list(p3), ncol = 1, print = FALSE)
+ggsave("./results/fig1/fig1c_survival_curve_sample_core_cluster.pdf", p3, width = 7, height = 7)
+```
+
+```{r echo=FALSE, fig.width = 7, fig.height = 7}
+p3
+```
+
+## (d) Survival curve cd44 mac1 core cluster m2 spinous high
+
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+
+```
+
+```{r echo=FALSE, fig.width = 7, fig.height = 7}
+p4
+```

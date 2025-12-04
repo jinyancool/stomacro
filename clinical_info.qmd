@@ -1,0 +1,390 @@
+# Distribution of clinical features across subtypes
+
+Multiple myeloma (MM) are characterized by highly heterogeneous tumor biology, like cytogenetic abnormalities, the secretion of a monoclonal component, etc. Consequently, MM patients display markedly diverse clinical characteristics, therapeutic responses, and outcomes. Therefore, we analyzed the distribution of clinical characteristics of patients with different subtypes of multiple myeloma.
+
+## Setup
+
+Load required R packages and set the working directory.
+
+```{r, echo=TRUE, eval=FALSE}
+#| label: load-packages
+#| message: false
+#| warning: false
+
+# Load necessary R packages for data processing and visualization
+pkgs <- c("fs", "stringr", "ggpubr", "ggthemes", "vroom", "jhtools", 
+          "glue", "openxlsx", "ggsci", "patchwork", "cowplot",
+          "tidyverse", "dplyr", "ggsci")
+for (pkg in pkgs) {
+  suppressPackageStartupMessages(library(pkg, character.only = TRUE))
+}
+
+# Define project parameters
+project <- "mm"
+dataset <- "jilin"
+species <- "human"
+workdir <- glue::glue("~/projects/{project}/analysis/{dataset}/{species}/sinfo_plot") %>% checkdir
+setwd(workdir)
+```
+
+## Data Loading
+Load sample info of all merged samples. In order to avoid the impact of treatment, primary patients were filtered. This helped to focus on the untreated patient characteristics.
+
+```{r, echo=TRUE, eval=FALSE}
+#| label: load-data
+
+# Load merged sample info
+all_sampleinfo <- "/cluster/home/jhuang/projects/mm/docs/meta/sampleinfo/sampleinfo_jilin_commpass.rds" %>% 
+  read_rds %>% dplyr::mutate(subtypes = case_when(
+  subtypes %in% c("CD1a1", "CD1a2", "CD1b") ~ "CD1",
+  subtypes == "chr1qgain" ~ "1q gain",
+  subtypes == "HRD15" ~ "HRD, ++15",
+  subtypes == "HRD_chr1qgain" ~ "HRD, chr1qgain",
+  subtypes == "HRD_MYC_lowNFkB" ~ "HRD, MYC, low NFkB",
+  subtypes == "HRD_lowTP53" ~ "HRD, low TP53",
+  subtypes == "Low_purity" ~ "Low purity", 
+  TRUE ~ as.character(subtypes)
+))
+
+# Define colors for subtypes
+config_fn = "/cluster/home/jhuang/projects/mm/analysis/jilin/human/rnaseq/configs/colors.yaml"
+group_cols <- show_me_the_colors(config_fn, "subtypes")
+
+merged_sampleinfo <- all_sampleinfo %>% drop_na(subtypes) %>% dplyr::filter(tumor_descriptor %in% "primary") %>% 
+  dplyr::mutate(age_group = case_when(
+    age < 65 ~ "<65",
+    age >= 65 ~ ">=65",
+    TRUE ~ NA_character_
+  )) %>%
+  as.data.frame() %>% `row.names<-`(.$sample_id) 
+
+```
+
+## Classify variables
+Classifying variable types to plot these clinical features separately.
+
+```{r, echo=TRUE, eval=FALSE}
+#| label: classify-variables
+
+# define a function to classify
+classify_variables <- function(df) {
+  variable_types <- list(discrete = character(), continuous = character())
+
+  for (col in names(df)) {
+    if (is.character(df[[col]])) {
+      variable_types$discrete <- c(variable_types$discrete, col)
+    } else if (is.numeric(df[[col]])) {
+      unique_values <- length(unique(df[[col]]))
+      if (unique_values < 10) { 
+        variable_types$discrete <- c(variable_types$discrete, col)
+      } else {
+        variable_types$continuous <- c(variable_types$continuous, col)
+      }
+    }
+  }
+  return(variable_types)
+}
+
+res_vars <- classify_variables(merged_sampleinfo)
+
+continuous_vars <- setdiff(res_vars$continuous,c("UMAP1", "UMAP2","cluster_order"))
+discrete_vars <- setdiff(res_vars$discrete,c("sample_id", "cn_name", "tumor_descriptor",
+                                             "new_type", "treatment_followup", "tissue",
+                                             "treatment_sampling", "PrimaryCluster_bk",
+                                             "patient_id", "diagnosis", "MRD_neg", 
+                                             "MRD_pos", "asct"))
+
+merged_sampleinfo$karyotype <- merged_sampleinfo$karyotype %>%
+  str_remove_all("\\[.*?\\]") %>%        
+  { ifelse(is.na(.), NA, str_split_fixed(., "/", 2)[, 1]) } %>%      
+  str_trim() %>%
+  str_trunc(30, side = "right", ellipsis = "...")
+
+## separate continuous_vars and discrete_vars
+discrete_info <- merged_sampleinfo[, discrete_vars] %>% as_tibble(rownames = "sample_id")
+continuous_info <- merged_sampleinfo[, c("subtypes", continuous_vars)] %>% as_tibble(rownames = "sample_id")
+
+discrete_info <- discrete_info %>%
+  dplyr::mutate(across(2:153, ~ as.character(.x))) %>%
+  dplyr::mutate(across(CD38:CD56, ~ factor(.x, levels = c("N", "PN", "P", "PP")))) %>%
+  dplyr::mutate(across(ends_with("_class"), ~ factor(.x, levels = c("low", "normal", "high"))))
+
+```
+
+## Stacked bar plot of discrete vars
+
+
+```{r, echo=TRUE, eval=FALSE}
+#| label: stacked-barplot
+
+# plot function
+group_ratio <- function(input_data = input_data, clivar = "data", samples = "subtypes", 
+                       cols = color_list, fz = 8){
+  
+  input_data <- as.data.frame(input_data)
+  df_ratio1 <- prop.table(table(input_data[, clivar],
+                                 input_data[, samples]),
+                           margin = 2)
+  df_ratio1 <- as.data.frame(df_ratio1)
+  head(df_ratio1)
+  colnames(df_ratio1)<-c("var1", "var2", "proportion")
+  df_ratio1$var1 <- factor(df_ratio1$var1, levels = unique(df_ratio1$var1))
+  
+  legend_lab <- str_c(names(table(input_data[[clivar]])), table(input_data[[clivar]]), sep = ", n=")
+  names(legend_lab) <- names(table(input_data[[clivar]]))
+
+  p <- ggplot(data = df_ratio1, mapping = aes(x = var2, y = proportion, fill = var1))+
+    geom_bar(stat = "identity", width = 0.5,colour = '#FFFFFF')+
+    theme_classic()+
+    labs(x = samples, y = 'Ratio', fill = clivar)+
+    #geom_flow()+·
+    scale_fill_manual(values = color_list, labels = legend_lab)+
+    theme(axis.text.x = element_text(angle = 75, hjust = 1, vjust = 1, color = "#222222", size = 6),
+          axis.text.y = element_text(color = "#222222", size = 6),
+          axis.line = element_line(color = "#222222"),
+          axis.ticks = element_line(color = "#222222"),
+          axis.title = element_text(size = 6),
+          legend.title = element_text(size = 6),
+          legend.position = "right",
+          legend.key.size = unit(0.2, 'cm'),
+          legend.text = element_text(size = fz))
+  return(p)
+}
+
+p_list <- list()
+
+color_list <- c(ggsci::pal_nejm()(8),ggsci::pal_ucscgb()(26))
+
+output_dir <- "./stackplot" %>% checkdir()
+
+p_list <- list()
+discrete_vars <- setdiff(discrete_vars, c("subtypes"))
+for (i in discrete_vars) {
+    a <- group_ratio(input_data = discrete_info,
+                    clivar = i,
+                    samples = "subtypes",
+                    cols = color_list,
+                    fz = 6)
+    p_list[[i]] <- a
+  }
+multi_plot(fig_fn = glue::glue("{output_dir}/subtypes_stack_plot_all.pdf"), p_list = p_list, nrow = 2, ncol = 2)
+
+```
+![clinical discrete features across subtypes](images/subtypes_stackplot_cilinical.png){fig-alt="clinical discrete features across subtypes" .align-center width=600px fig-cap="Figure: Clinical Discrete Features Across Subtypes" .lightbox}
+
+```{r, echo=TRUE, eval=FALSE}
+#| label: test
+
+test_ls <- list()
+for (i in discrete_vars) {
+  df_tab <- table(discrete_info[["subtypes"]], discrete_info[[i]]) %>% 
+    as.data.frame %>% pivot_wider(names_from = "Var2", values_from = "Freq") %>% 
+    dplyr::rename("subtypes" = "Var1") %>% as.data.frame() %>% 
+    `rownames<-`(.$subtypes) %>% .[,-1, drop = F]
+  
+  if (dim(df_tab)[2] == 2) {
+    results <- lapply(1:nrow(df_tab), function(n) {
+      mat <- matrix(c(df_tab[n, 1], df_tab[n, 2],
+                  sum(df_tab[[1]]) - df_tab[n, 1],
+                  sum(df_tab[[2]]) - df_tab[n, 2]),
+                nrow = 2, byrow = TRUE)
+  
+      test <- fisher.test(mat)
+  
+      return(tibble(
+        subtypes = rownames(df_tab)[n],
+        varible = i,
+        test_method = "fisher",
+        p_value = test$p.value
+      ))
+    })
+ 
+    results_df <- do.call(rbind, results)
+
+    # Benjamini-Hochberg FDR
+    results_df$adj_p <- p.adjust(results_df$p_value, method = "BH")
+    
+  } else if (dim(df_tab)[2] > 2) {
+    total_by_group <- colSums(df_tab)
+    prop_total_group <- total_by_group / sum(total_by_group)
+
+
+    results <- lapply(1:nrow(df_tab), function(n) {
+      counts <- as.numeric(df_tab[n, ])
+      
+      keep_idx <- counts > 0
+      counts <- counts[keep_idx]
+      
+      if (length(counts) < 2) {
+        return(tibble(
+          subtypes = rownames(df_tab)[n],
+          varible = i,
+          test_method = NA,
+          p_value = NA
+        ))
+        
+      } else {
+        prop_total_group <- prop_total_group[keep_idx]
+      prop_total_group <- prop_total_group / sum(prop_total_group)
+    
+      # 如果某些期望频数过小（n * p < 5），chisq.test 的近似可能不稳，可以使用 simulate.p.value=TRUE
+      expected_counts <- sum(counts) * prop_total_group
+      if (any(expected_counts < 5)) {
+       test_res <- chisq.test(counts, p = prop_total_group, simulate.p.value = TRUE, B = 20000)
+       test_meth <- "chisq_sim"
+      } else {
+       test_res <- chisq.test(counts, p = prop_total_group)
+       test_meth <- "chisq"
+      }
+      
+         return(tibble(
+           subtypes = rownames(df_tab)[n],
+            varible = i,
+            test_method = test_meth,
+           p_value = test_res$p.value
+          ))
+       }
+      })
+      
+    results_df <- do.call(rbind, results)
+    
+    # Benjamini-Hochberg FDR
+    results_df$adj_p <- p.adjust(results_df$p_value, method = "BH")
+  } else {
+    next
+  }
+  
+test_ls[[i]] <- results_df
+}
+
+
+test_merge <- do.call(rbind, test_ls)
+
+write_csv(test_merge, "discrete_vars_subtypes_merge_test.csv")
+
+
+```
+
+
+## Boxplot of continuous vars
+
+
+```{r, echo=TRUE, eval=FALSE}
+#| label: boxplot
+
+# plot function
+cli_box <- function(input_data = input_data, clivar = "data", samples = "subtypes", 
+                       cols = color_list){
+  
+  input <- input_data %>% dplyr::select(all_of(c(clivar, samples)))
+  
+  if (any(abs(scale(input[[clivar]])) > 6, na.rm = TRUE)) {
+    new_col <- str_c("log2_", clivar)
+    input[[new_col]] <- log2(input[[clivar]] +1)
+    clivar <- new_col
+  }
+    
+  p <- ggplot(input,aes(x = .data[[samples]], y = .data[[clivar]], fill = .data[[samples]]))+
+        stat_boxplot(geom= "errorbar", width= 0.1, size= 0.5, 
+                     position= position_dodge(0.6), color= "black")+
+        geom_boxplot(position = position_dodge(0.6),
+                     size= 0.5,
+                     width= 0.3,
+                     color= "black",
+                     outlier.color= "black",
+                     outlier.shape= 19,
+                     outlier.size= 1.5,
+                     outlier.stroke= 0.5,
+                     outlier.alpha= 45,
+                     notch= F,
+                     notchwidth= 0.5) +
+      labs(x = samples, y = clivar) +
+        theme_classic() +
+        scale_fill_manual(values = cols) +
+        theme(axis.title = element_text(size = 8),
+              axis.line = element_line(color = "#222222"),
+              axis.text.x = element_text(angle = 75, color = "#222222", hjust = 1, size = 8),
+              axis.text.y = element_text(color = "#222222"),
+              axis.ticks = element_line(color = "#222222"),
+              plot.title = element_text(size = 8, hjust = 0.5),
+              legend.position = "none") +
+        stat_summary(fun = mean, geom = "point", 
+                     size = 1, aes(group = 1))
+  return(p)
+}
+
+
+output_dir <- "./boxplot" %>% checkdir()
+
+p_list <- list()
+continuous_vars <- setdiff(continuous_vars, c("subtype_index", "subtype_index1"))
+for (i in continuous_vars) {
+    a <- cli_box(input_data = continuous_info,
+                    clivar = i,
+                    samples = "subtypes",
+                    cols = unname(group_cols))
+    p_list[[i]] <- a
+  }
+multi_plot(fig_fn = glue::glue("{output_dir}/subtypes_boxplot_all.pdf.pdf"), p_list = p_list, nrow = 2, ncol = 2)
+
+```
+![clinical continuous features across subtypes](images/subtypes_boxplot_clinical.png){fig-alt="clinical continuous features across subtypes" .align-center width=600px fig-cap="Figure: Clinical Continuous Features Across Subtypes" .lightbox}
+
+## ethnicity distribution
+```{r, echo=TRUE, eval=FALSE}
+df_ethnicity <- table(merged_sampleinfo$ethnicity, merged_sampleinfo$subtypes) %>% prop.table(., margin = 1) %>% as.data.frame
+legend_lab <- str_c(names(table(merged_sampleinfo$ethnicity)), table(merged_sampleinfo$ethnicity), sep = ", n=")
+names(legend_lab) <- names(table(merged_sampleinfo$ethnicity))
+
+col_enthn <- show_me_the_colors(config_fn, "ethnicity")
+  
+p1 <- ggplot(data = df_ethnicity[df_ethnicity$Var1 != "other",], mapping = aes(x = Var2, y = Freq, fill = Var1))+
+  geom_bar(stat = "identity", position = "dodge", width = 0.8, colour = '#FFFFFF')+
+  theme_classic()+
+  labs(x = "Subtypes", y = 'Percentage', fill = "Ethnicity")+
+  #geom_flow()+·
+  scale_fill_manual(values = col_enthn,
+                    labels = legend_lab)+
+  theme(axis.text.x = element_text(angle = 75, hjust = 1, vjust = 1, color = "#222222", size = 6),
+        axis.text.y = element_text(color = "#222222", size = 6),
+        axis.line.x = element_line(color = "#222222"),
+        axis.line.y = element_line(color = "#222222"),
+        axis.ticks.x = element_line(color = "#222222"),
+        axis.ticks.y = element_line(color = "#222222"),
+        axis.title.x = element_text(size = 6),
+        axis.title.y = element_text(size = 6),
+        legend.title = element_text(size = 6),
+        legend.position = "right",
+        legend.key.size = unit(0.2, 'cm'),
+        legend.text = element_text(size = 6))
+ggsave("ethnicity_distribution_subtypes.pdf", p1)
+```
+![ethnicity distribution across subtypes](images/ethnicity_distribution_subtypes.png){fig-alt="ethnicity distribution across subtypes" .align-center width=600px fig-cap="Figure: Ethnicity Distribution Across Subtypes" .lightbox}
+
+## datasets batch distribution
+```{r, echo=TRUE, eval=FALSE}
+df_batch <- table(merged_sampleinfo$batch, merged_sampleinfo$subtypes) %>% prop.table(., margin = 1) %>% as.data.frame
+legend_lab <- str_c(names(table(merged_sampleinfo$batch)), table(merged_sampleinfo$batch), sep = ", n=")
+names(legend_lab) <- names(table(merged_sampleinfo$batch))
+p1 <- ggplot(data = df_batch, mapping = aes(x = Var2, y = Freq, fill = Var1))+
+  geom_bar(stat = "identity", position = "dodge", width = 0.8, colour = '#FFFFFF')+
+  theme_classic()+
+  labs(x = "Subtypes", y = 'Percentage', fill = "Batch")+
+  #geom_flow()+·
+  scale_fill_manual(values = ggsci::pal_nejm()(6),
+                    labels = legend_lab)+
+  theme(axis.text.x = element_text(angle = 75, hjust = 1, vjust = 1, color = "#222222", size = 6),
+        axis.text.y = element_text(color = "#222222", size = 6),
+        axis.line.x = element_line(color = "#222222"),
+        axis.line.y = element_line(color = "#222222"),
+        axis.ticks.x = element_line(color = "#222222"),
+        axis.ticks.y = element_line(color = "#222222"),
+        axis.title.x = element_text(size = 6),
+        axis.title.y = element_text(size = 6),
+        legend.title = element_text(size = 6),
+        legend.position = "right",
+        legend.key.size = unit(0.2, 'cm'),
+        legend.text = element_text(size = 6))
+ggsave("batch_distribution_subtypes.pdf", p1)
+```
+![batch distribution across subtypes](images/batch_distribution_subtypes.png){fig-alt="batch across subtypes" .align-center width=600px fig-cap="Figure: Batch Distribution Across Subtypes" .lightbox}

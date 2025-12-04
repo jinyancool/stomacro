@@ -1,0 +1,421 @@
+# Seurat object construction
+
+## GSE164690 Seurat object construction
+
+The following code was used to generate the Seurat object and associated metadata for GSE164690, forming the foundation for all subsequent workflows.
+
+```{r}
+#| label: GSE164690 load-packages
+#| include: false
+library(data.table)
+library(magrittr)
+library(rlang)
+library(ggplot2)
+library(Seurat)
+library(dplyr)
+library(patchwork)
+library(janitor)
+wkdir <- "/cluster/home/yliang_jh/projects/scRNA/oral_public_lvjiong/"
+figure_dir <- "/cluster/home/xyzhang_jh/projects/oral_public_lvjiong/figure/"
+rds_dir <- "/cluster/home/xyzhang_jh/projects/oral_public_lvjiong/rds/"
+setwd(wkdir)
+config_fn <- glue::glue("/cluster/home/lixiyue_jh/projects/quarto/stomatology_lvjiong/quarto_book/colors.yaml")
+color_celltype <- jhtools::show_me_the_colors(config_fn, "cell_type")
+spinfo <- fread("sampleinfo_public.csv") ##unsaved
+sps <- spinfo %>% 
+  filter(dataset == "GSE164690" & use) %>%
+  pull(sample_id)
+types <- c("CD45p", "CD45n")
+comb <- expand.grid(sps, types)
+
+srt_lst <- lapply(1:nrow(comb), function(i){
+  sp <- comb[i, "Var1"] %>% as.character()
+  typ <- comb[i, "Var2"] %>% as.character()
+  dir10X <- file.path("GSE164690", paste0(sp, "_", typ))
+  if(file.exists(dir10X)){
+    counts <- Read10X(dir10X)
+    srt <- CreateSeuratObject(counts = counts)
+    srt$sample_id <- sp
+    srt$type <- typ
+  }
+  return(srt)
+})
+srt <- merge(srt_lst[[1]], srt_lst[2:length(srt_lst)])
+srt <- JoinLayers(srt)
+spinfo_s <- spinfo %>% 
+  filter(dataset == "GSE164690" & use) %>%
+  mutate_all(~ na_if(as.character(.), "")) %>%
+  remove_empty("cols") %>%
+  select(-use)
+srt <- AddMetaData(srt, metadata = spinfo_s[match(srt$sample_id, spinfo_s$sample_id), ])
+```
+
+### GSE164690 Seurat object quality control
+
+```{r}
+#| include: false
+srt[["percent.mt"]] <- PercentageFeatureSet(srt, pattern = "^MT-")
+srt <- subset(srt, subset = nFeature_RNA > 200 & nFeature_RNA < 5000 & percent.mt < 10)
+```
+
+### GSE164690 normalize
+
+```{r}
+#| include: false
+srt <- NormalizeData(srt, normalization.method = "LogNormalize", scale.factor = 10000)
+srt <- FindVariableFeatures(srt, selection.method = "vst", nfeatures = 2000)
+srt <- ScaleData(srt, vars.to.regress = c("percent.mt", "nCount_RNA"))
+srt[["RNA"]]$scale.data <- pmax(pmin(srt[["RNA"]]$scale.data, 10), -10)
+srt <- RunPCA(srt) %>%
+  FindNeighbors(dims = 1:10) %>%
+  RunUMAP(dims = 1:10)
+srt <- FindClusters(srt, resolution = 0.8)
+```
+
+### GSE164690 Seurat object marker genes umap plot
+
+```{r}
+p1 <- DimPlot(srt, reduction = "umap") 
+p2 <- DimPlot(srt, reduction = "umap", group.by = "sample_id")
+p <- p1 + p2
+ggsave(glue(figure_dir,"output/preprocess/GSE164690_umap_cluster_sample.pdf"), p, width = 14, height = 6)
+markers <- c("CD3D", "CD8A", "CD4", "IL7R", "FOXP3", "CD19", "CD79A", "CD79B", "IL3RA", "NCAM1", "NCR1", "KLRD1", 
+             "CSF1R", "MST1R", "CD14", "MS4A7", "CD68", "CD83", "FCGR1A", "LAMP3", "FPR1", "THBD", "CD80", "CD86", "CD1C", "CD209",
+             "LYZ", "TPSB2", "TPSAB1", 
+             "CLDN5", "FLT1", "CDH5", "RAMP2", "EPCAM", "KRT14", "KRT17", "COL1A1", "DCN", "COL1A2", "RGS5")
+p <- FeaturePlot(srt, features = markers, ncol = 5, raster = TRUE)
+ggsave(glue(figure_dir,"output/preprocess/GSE164690_umap_markers.pdf"), p, width = 18, height = 26)
+saveRDS(srt, glue(rds_dir, "output/preprocess/GSE164690_srt.rds"))
+```
+
+## GSE172577 Seurat object construction
+
+The following code was used to generate the Seurat object and associated metadata for GSE172577, forming the foundation for all subsequent workflows.
+
+```{r}
+#| include: false
+sps <- spinfo %>% 
+  filter(dataset == "GSE172577" & use) %>%
+  pull(sample_id)
+
+srt_lst <- lapply(sps, function(sp){
+  dir10X <- file.path("GSE172577", sp)
+  if(file.exists(dir10X)){
+    counts <- Read10X(dir10X)
+    srt <- CreateSeuratObject(counts = counts)
+    srt$sample_id <- sp
+  }
+  return(srt)
+})
+srt <- merge(srt_lst[[1]], srt_lst[2:length(srt_lst)])
+spinfo_s <- spinfo %>% 
+  filter(dataset == "GSE172577" & use) %>%
+  mutate_all(~ na_if(as.character(.), "")) %>%
+  remove_empty("cols") %>%
+  select(-use)
+srt <- AddMetaData(srt, metadata = spinfo_s[match(srt$sample_id, spinfo_s$sample_id), ])
+```
+
+### GSE172577 Seurat object quality control
+
+```{r}
+#| include: false
+srt[["percent.mt"]] <- PercentageFeatureSet(srt, pattern = "^MT-")
+srt <- subset(srt, subset = nCount_RNA > 1000 & nFeature_RNA < 6000 & percent.mt < 10)
+```
+
+### GSE172577 Seurat object normalize
+
+```{r}
+#| include: false
+srt <- NormalizeData(srt) %>%
+  FindVariableFeatures(nfeatures = 3000) %>%
+  ScaleData() %>%
+  RunPCA()
+srt <- IntegrateLayers(srt, method = CCAIntegration, 
+                       orig.reduction = "pca", new.reduction = "integrated.cca",
+                       verbose = FALSE)
+srt[["RNA"]] <- JoinLayers(srt[["RNA"]])
+srt <- FindNeighbors(srt, reduction = "integrated.cca", dims = 1:30)
+srt <- FindClusters(srt, resolution = 0.8)
+srt <- RunUMAP(srt, dims = 1:30, reduction = "integrated.cca")
+```
+
+### GSE172577 Seurat object marker genes umap plot
+
+```{r}
+p1 <- DimPlot(srt, reduction = "umap") 
+p2 <- DimPlot(srt, reduction = "umap", group.by = "sample_id")
+p <- p1 + p2
+ggsave(glue(figure_dir,"output/preprocess/GSE172577_umap_cluster_sample.pdf"), p, width = 14, height = 6)
+markers <- c("CD3D", "CD79A", "LYZ", "TPSAB1", 
+             "EPCAM", "RGS5", "PDGFRA", "PECAM1")
+p <- FeaturePlot(srt, features = markers, ncol = 4, raster = TRUE)
+ggsave(glue(figure_dir,"output/preprocess/GSE172577_umap_markers.pdf"), p, width = 15, height = 8)
+saveRDS(srt, glue(rds_dir,"output/preprocess/GSE172577_srt.rds"))
+```
+
+## GSE188737 Seurat object construction
+
+The following code was used to generate the Seurat object and associated metadata for GSE188737, forming the foundation for all subsequent workflows.
+
+```{r}
+#| include: false
+load("./GSE188737/GSE188737_hnscc_seu.RData") ## unsaved
+srt <- CreateSeuratObject(counts = hnscc_seu@assays$RNA$counts, 
+                          meta.data = hnscc_seu@meta.data)
+srt[["RNA"]]$data <- hnscc_seu@assays$RNA$data
+VariableFeatures(srt) <- rownames(hnscc_seu@assays$integrated)
+srt[["RNA"]]$scale.data <- hnscc_seu@assays$integrated$scale.data
+srt@reductions <- hnscc_seu@reductions
+srt@reductions$pca@global <- FALSE
+srt@reductions$umap@global <- FALSE
+
+spinfo_s <- spinfo %>% 
+  filter(dataset == "GSE188737" & use) %>%
+  mutate_all(~ na_if(as.character(.), "")) %>%
+  remove_empty("cols") %>%
+  select(-use)
+srt$sample_id <- paste0("NCC-", srt$patientID)
+srt <- AddMetaData(srt, metadata = spinfo_s[match(srt$sample_id, spinfo_s$sample_id), ])
+```
+
+### GSE215403 Seurat object marker genes umap plot
+
+```{r}
+p1 <- DimPlot(srt, reduction = "umap", group.by = "seurat_clusters") 
+p2 <- DimPlot(srt, reduction = "umap", group.by = "sample_id")
+p3 <- DimPlot(srt, reduction = "umap", group.by = "cell_type")
+p <- p1 + p2 + p3
+ggsave(glue(figure_dir,"output/preprocess/GSE188737_umap_cluster_sample_celltype.pdf"), p, width = 20, height = 6)
+saveRDS(srt, glue("{dat_dir}/GSE188737_srt.rds"))
+```
+
+## GSE215403 Seurat object construction
+
+The following code was used to generate the Seurat object and associated metadata for GSE215403, forming the foundation for all subsequent workflows.
+
+```{r}
+#| include: false
+sps <- spinfo %>% 
+  filter(dataset == "GSE215403" & use) %>%
+  pull(sample_id)
+
+srt_lst <- lapply(sps, function(sp){
+  dir10X <- file.path("GSE215403", sp)
+  if(file.exists(dir10X)){
+    counts <- Read10X(dir10X)
+    srt <- CreateSeuratObject(counts = counts)
+    srt$sample_id <- sp
+  }
+  return(srt)
+})
+
+srt <- merge(srt_lst[[1]], srt_lst[2:length(srt_lst)])
+srt <- JoinLayers(srt)
+
+spinfo_s <- spinfo %>% 
+  filter(dataset == "GSE215403" & use) %>%
+  mutate_all(~ na_if(as.character(.), "")) %>%
+  remove_empty("cols") %>%
+  select(-use)
+srt <- AddMetaData(srt, metadata = spinfo_s[match(srt$sample_id, spinfo_s$sample_id), ])
+```
+
+### GSE215403 Seurat object quality control
+
+```{r}
+#| include: false
+srt[["percent.mt"]] <- PercentageFeatureSet(srt, pattern = "^MT-")
+srt <- subset(srt, subset = nFeature_RNA > 400 & nFeature_RNA < 8000 & percent.mt < 15)
+```
+
+### GSE215403 Seurat object marker genes umap plot
+
+```{r}
+p1 <- DimPlot(srt, reduction = "umap") 
+p2 <- DimPlot(srt, reduction = "umap", group.by = "sample_id")
+p <- p1 + p2
+ggsave(glue(figure_dir,"output/preprocess/GSE215403_umap_cluster_sample.pdf"), p, width = 14, height = 6)
+markers <- c("CD3D", "CD79A", "LYZ", "TPSAB1", 
+             "EPCAM", "RGS5", "PDGFRA", "PECAM1")
+p <- FeaturePlot(srt, features = markers, ncol = 4, raster = TRUE)
+ggsave(glue(figure_dir,"output/preprocess/GSE215403_umap_markers.pdf"), p, width = 15, height = 8)
+saveRDS(srt, glue(rds_dir,"output/preprocess/GSE215403_srt.rds"))
+```
+
+## GSE234933 Seurat object construction
+
+The following code was used to generate the Seurat object and associated metadata for GSE234933, forming the foundation for all subsequent workflows.
+
+```{r}
+#| include: false
+sps <- spinfo %>% 
+  filter(dataset == "GSE234933" & use) %>%
+  filter(grepl("Primary", `Anatomic location of scRNA-seq specimen`)) %>%
+  pull(sample_id)
+
+srt_lst <- lapply(sps, function(sp){
+  f <- file.path("GSE234933", paste0(sp, "_gex_raw_counts.rds"))
+  if(file.exists(f)){
+    counts <- readRDS(f)
+    srt <- CreateSeuratObject(counts = counts)
+    srt$sample_id <- sp
+  }
+  return(srt)
+})
+
+srt <- merge(srt_lst[[1]], srt_lst[2:length(srt_lst)])
+srt <- JoinLayers(srt)
+
+spinfo_s <- spinfo %>% 
+  filter(dataset == "GSE234933" & use) %>%
+  filter(grepl("Primary", `Anatomic location of scRNA-seq specimen`)) %>%
+  mutate_all(~ na_if(as.character(.), "")) %>%
+  remove_empty("cols") %>%
+  select(-use)
+srt <- AddMetaData(srt, metadata = spinfo_s[match(srt$sample_id, spinfo_s$sample_id), ])
+```
+
+### GSE234933 Seurat object quality control
+
+```{r}
+#| include: false
+srt[["percent.mt"]] <- PercentageFeatureSet(srt, pattern = "^MT-")
+srt <- subset(srt, subset = nFeature_RNA > 500 & nFeature_RNA < 5000 & percent.mt < 20)
+```
+
+### GSE234933 Seurat object normalize
+
+```{r}
+#| include: false
+srt <- NormalizeData(srt, normalization.method = "LogNormalize", scale.factor = 10000)
+srt <- FindVariableFeatures(srt, selection.method = "vst", nfeatures = 2000)
+srt <- ScaleData(srt)
+srt <- RunPCA(srt) %>%
+  FindNeighbors(dims = 1:15) %>%
+  RunUMAP(dims = 1:15)
+srt <- FindClusters(srt, resolution = 0.75)
+```
+
+### GSE234933 Seurat object marker genes umap plot
+
+```{r}
+p1 <- DimPlot(srt, reduction = "umap") 
+p2 <- DimPlot(srt, reduction = "umap", group.by = "sample_id")
+p <- p1 + p2
+ggsave(glue(figure_dir,"output/preprocess/GSE234933_umap_cluster_sample.pdf"), p, width = 14, height = 6)
+markers <- c("CD3D", "CD79A", "LYZ", "TPSAB1", 
+             "EPCAM", "RGS5", "PDGFRA", "PECAM1",
+             "FCGR3B", "CXCR1", "CXCR2", "PI3", "G0S2", "CSF3R")
+p <- FeaturePlot(srt, features = markers, ncol = 4, raster = TRUE)
+ggsave(glue(figure_dir, "output/preprocess/GSE234933_umap_markers.pdf"), p, width = 15, height = 16)
+saveRDS(srt, glue(rds_dir,"output/preprocess/GSE234933_srt.rds"))
+```
+
+
+# Seurat object integration
+
+This workflow integrates five scRNA-seq datasets (GSE164690, GSE172577, GSE188737, GSE215403, GSE234933) using Harmony and performs cell type annotation by transferring labels from the GSE188737 reference.
+
+```{r}
+# merge
+files <- list.files(glue(rds_dir,"output/preprocess/"), "_srt.rds", full.names = TRUE)
+srt_lst <- lapply(files, readRDS)
+srt <- merge(srt_lst[[1]], srt_lst[2:length(srt_lst)])
+srt <- NormalizeData(srt) %>%
+  FindVariableFeatures() %>%
+  ScaleData() %>%
+  RunPCA() %>%
+  RunUMAP(dims = 1:30, reduction = "pca", reduction.name = "umap.unintegrated")
+p <- DimPlot(srt, reduction = "umap.unintegrated", group.by = "dataset", raster = TRUE)
+ggsave(glue(figure_dir,"output/integrate/umap_dataset_before_integrate.pdf"), p, width = 6, height = 5)
+markers <- c("CD3D", "CD79A", "LYZ", "TPSAB1", 
+             "EPCAM", "RGS5", "PDGFRA", "PECAM1")
+p <- FeaturePlot(srt, features = markers, ncol = 4, raster = TRUE)
+ggsave(glue(figure_dir,"output/integrate/umap_markers_before_integrate.pdf"), p, width = 16, height = 8)
+```
+
+## Seurat object integration process
+
+```{r}
+# integrate cca
+srt <- IntegrateLayers(srt, method = CCAIntegration, orig.reduction = "pca", new.reduction = "cca")
+srt <- JoinLayers(srt)
+
+srt <- FindNeighbors(srt, reduction = "cca", dims = 1:30) %>%
+  RunUMAP(dims = 1:30, reduction = "cca") %>%
+  FindClusters(resolution = 0.8)
+p <- DimPlot(srt, reduction = "umap", group.by = c("dataset", "seurat_clusters", "cell_type"), raster = TRUE)
+ggsave(glue(figure_dir,"output/integrate/umap_dataset_cluster_integrated.pdf"), p, width = 18, height = 5)
+markers <- c("PTPRC", "CD3D", "NKG7", "CD79A", "JCHAIN", "LYZ", "CD163", "LAMP3", "IGHG1", "TPSAB1", 
+             "EPCAM", "KRT7", "KRT17", "STATH", "COL1A2", "RGS5", "PDGFRA", "PECAM1")
+p <- FeaturePlot(srt, reduction = "umap", features = markers, ncol = 4, raster = TRUE)
+ggsave(glue(figure_dir,"output/integrate/umap_markers_integrated.pdf"), p, width = 15, height = 16)
+
+# integrate harmony
+srt[["RNA"]] <- split(srt[["RNA"]], f = srt$dataset)
+srt <- IntegrateLayers(srt, method = HarmonyIntegration, orig.reduction = "pca", new.reduction = "harmony")
+srt <- JoinLayers(srt)
+
+srt <- FindNeighbors(srt, reduction = "harmony", dims = 1:10) %>%
+  RunUMAP(dims = 1:10, reduction = "harmony", reduction.name = "umap.harmony") %>%
+  FindClusters(resolution = 0.8, cluster.name = "harmony_clusters")
+p <- DimPlot(srt, reduction = "umap.harmony", group.by = c("dataset", "harmony_clusters", "cell_type"), raster = TRUE)
+ggsave(glue(figure_dir,"output/integrate/umap_dataset_cluster_integrated_harmony.pdf"), p, width = 18, height = 5)
+markers <- c("PTPRC", "CD3D", "NKG7", "CD79A", "JCHAIN", "LYZ", "CD163", "LAMP3", "IGHG1", "TPSAB1", 
+             "EPCAM", "KRT7", "KRT17", "STATH", "COL1A2", "RGS5", "PDGFRA", "PECAM1")
+p <- FeaturePlot(srt, reduction = "umap.harmony", features = markers, ncol = 4, raster = TRUE)
+ggsave(glue(figure_dir,"output/integrate/umap_markers_integrated_harmony.pdf"), p, width = 15, height = 16)
+
+# transfer anno
+hnscc.ref <- readRDS(glue(rds_dir, "output/preprocess/GSE188737_srt.rds"))
+hnscc.anchors <- FindTransferAnchors(reference = hnscc.ref, query = srt, dims = 1:30,
+                                     reference.reduction = "pca")
+predictions <- TransferData(anchorset = hnscc.anchors, refdata = hnscc.ref$cell_type, dims = 1:30)
+srt <- AddMetaData(srt, metadata = predictions$predicted.id, col.name = "celltype.pre")
+srt$celltype.pre[srt$celltype.pre == "T cells"] <- "T cell" # 统一名称用
+srt$celltype.pre[srt$celltype.pre == "B cells"] <- "B cell" # 统一名称用
+srt$celltype.pre[srt$celltype.pre == "plasma cells"] <- "Plasma" # 统一名称用
+srt$celltype.pre[srt$celltype.pre == "mature DC"] <- "DC" # 统一名称用
+srt$celltype.pre[srt$celltype.pre == "Mast cells"] <- "Mast" # 统一名称用
+saveRDS(srt, glue(rds_dir,"srt_integrated.rds"))
+p <- DimPlot(srt, reduction = "umap", group.by = "celltype.pre", raster = TRUE) +
+  scale_color_manual(values = color_ct)
+ggsave(glue(figure_dir,"output/integrate/umap_celltype_predicted.pdf"), p, width = 6, height = 5)
+```
+
+## Cluster Annotation of Seurat Objects Using GSE188737
+
+```{r}
+p <- DotPlot(srt, features = markers) + 
+  RotatedAxis() +
+  scale_colour_gradient(low =c("white"), high =c("red"))
+ggsave(glue(figure_dir,"output/integrate/dotplot_cell_types_markers.pdf"), p, width = 12, height = 12)
+p <- DimPlot(srt, reduction = "umap", label = TRUE, raster = TRUE)
+ggsave(glue(figure_dir,"output/integrate/umap_clusters.pdf"), p, width = 6, height = 5)
+dt_anno <- fread("output/integrate/anno.tsv") ## unsaved
+srt$celltype <- dt_anno$celltype[match(srt$seurat_clusters, dt_anno$seurat_clusters)]
+srt <- subset(srt, subset = celltype != "unknown")
+Idents(srt) <- srt$celltype
+srt <- RenameIdents(srt, 
+                   "B cells" = "B cell",      # 统一名称用
+                   "Plasma cells" = "Plasma",     # 统一名称用
+                   "TAMs" = "TAM", # 统一名称用
+                   "Mast cells" = "Mast") # 统一名称用
+srt@meta.data$celltype <- Idents(srt)
+
+n_cells <- round(table(srt$celltype)/6)
+ids <- mapply(function(name, n_cell){
+  subset(srt, idents = name) %>%
+    subset(downsample = n_cell) %>%
+    colnames
+}, names(n_cells), n_cells) %>% unlist
+srt_s <- subset(srt, cells = ids)
+p <- DimPlot(srt_s, reduction = "umap", group.by = "celltype") +
+  scale_color_manual(values = color_celltype)
+ggsave(glue(figure_dir,"output/integrate/umap_celltype.pdf"), p, width = 6, height = 5)
+srt$celltype <- factor(srt$celltype, levels = names(color_celltype))
+srt[["percent.mt"]] <- PercentageFeatureSet(srt, pattern = "^MT-")
+saveRDS(srt, glue(rds_dir, "srt_integrated_anno.rds"))
+```

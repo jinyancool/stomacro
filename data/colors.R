@@ -1,0 +1,235 @@
+default:
+  project_name: "mm"
+dataset: "jilin"
+colors:
+  gender:
+  female: "#C92928"
+male: "#2172A8"
+tumor_descriptor:
+  Primary: "#BF1633"
+Recurrence: "#129a71"
+first_relapse: "#09e409"
+after_relapse:  "#035e03"
+treat_naive: "#0F8FBF"
+initial_treating: "#EBAEA9"
+ethnicity:
+  African: "#2172A8"
+Asian: "#C92928"
+Caucasian: "#EE7B20"
+subtypes:
+  CD1: "#129a71"
+CD1a1: "#09e409"
+CD1a2: "#89e409"
+CD1b: "#7DBFA7"
+CD2: "#035e03"
+Low_purity: "#333333"
+IgD: "#EE934E"
+MAF: "#D1352B"
+MS: "#F5D2A8"
+PR: "#9B5B33"
+HRD15: "#173565"
+HRD_MYC_lowNFkB: "#2e26ee"
+HRD_lowTP53: "#5653a5"
+HRD_chr1qgain: "#1E90FF"
+chr1q_gain_HDR: "#1E90FF"
+chr1qgain: "#0F8FBF"
+RNA_Subtype_Name:
+  CD1: "#129a71"
+CD2a: "#035e03"
+CD2b: "#09e409"
+"Low purity": "#333333"
+"HRD, low TP53": "#1E90FF"
+"HRD, MYC, low NFkB": "#0e06ee"
+"HRD, ++15, MYC": "#7713a0"
+"HRD, ++15": "#5653a5"
+MS: "#ebb415"
+PR: "#8d0a4f"
+MAF: "#EBAEA9"
+"1q gain": "#DC143C"
+batch:
+  commpass: "#C71585"
+jilin: "#00BFFF"
+HRA006164: "#C92928"
+bmc: "#EE934E"
+EGAD00001007813: "#09e409"
+GSE116324: "#98FB98"
+GSE164652: "#FFA500"
+GSE220144: "#F08080"
+GSE230526: "#20B2AA"
+GSE263767: "#1E90FF"
+PRJNA474747: "#9370DB"
+PrimaryCluster:
+  CD1: "#129a71"
+CD2: "#035e03"
+chr1q_gain: "#7713a0"
+HRD: "#0e06ee"
+IgD: "#FF00FF"
+new_cluster1: "#DC143C"
+new_cluster2: "#FF00FF"
+MAF: "#EBAEA9"
+MS: "#ebb415"
+PR: "#8d0a4f"
+HDR: "#0e06ee"
+CD2_HDR: "#09e409"
+chr1q_gain_HDR: "#1E90FF"
+IRF4_mut:
+  TRUE: "#C92928"
+FALSE: "gray"
+Clinical_IgH:
+  Bi-Clonal: "#0e06ee"
+IgA: "#DC143C"
+IgD: "#FF00FF"
+IgG: "#ebb415"
+IgM: "#8d0a4f"
+Negative: "#09e409"
+Clinical_IgL:
+  Bi-Clonal: "#0e06ee"
+Kappa: "#DC143C"
+Lambda: "#FF00FF"
+Negative: "#ebb415"
+wgs_seq:
+  FALSE: "#1E90FF"
+TRUE: "#DC143C"
+rna_seq:
+  FALSE: "#1E90FF"
+TRUE: "#DC143C"
+Tx_MAF:
+  FALSE: "#1E90FF"
+TRUE: "#DC143C"
+Tx_MAFA:
+  FALSE: "#1E90FF"
+TRUE: "#DC143C"
+Tx_MAFB:
+  FALSE: "#1E90FF"
+TRUE: "#DC143C"
+Tx_CCND1:
+  FALSE: "#1E90FF"
+TRUE: "#DC143C"
+Tx_CCND2:
+  FALSE: "#1E90FF"
+TRUE: "#DC143C"
+Tx_CCND3:
+  FALSE: "#1E90FF"
+TRUE: "#DC143C"
+Tx_NSD2:
+  FALSE: "#1E90FF"
+TRUE: "#DC143C"
+Tx_MYC:
+  FALSE: "#1E90FF"
+TRUE: "#DC143C"
+Tx_FGFR3:
+  FALSE: "#1E90FF"
+TRUE: "#DC143C"
+NSD2_fusion:
+  FALSE: "#1E90FF"
+TRUE: "#DC143C"
+FGFR3_fusion:
+  FALSE: "#1E90FF"
+TRUE: "#DC143C"
+"t(4;14)":
+  FALSE: "grey60"
+TRUE: "#DC143C"
+"t(11;14)":
+  FALSE: "grey60"
+TRUE: "#DC143C"
+"t(14;16)":
+  FALSE: "grey60"
+TRUE: "#DC143C"
+"t(8;14)":
+  FALSE: "grey60"
+TRUE: "#DC143C"
+"t(14;20)":
+  FALSE: "grey60"
+TRUE: "#DC143C"
+aMUC3A:
+  sig_up: "#DC143C"
+sig_noup: "#1E90FF"
+nosig: "grey60"
+aMAF:
+  sig_up: "#DC143C"
+sig_noup: "#1E90FF"
+nosig: "grey60"
+aCCND1:
+  sig_up: "#DC143C"
+sig_noup: "#1E90FF"
+nosig: "grey60"
+aSPP1:
+  sig_up: "#DC143C"
+sig_noup: "#1E90FF"
+nosig: "grey60"
+iss_stage:
+  1: "#ebb415"
+2: "#8d0a4f"
+3: "#0e06ee"
+imwg_risk:
+  HR: "#AA3538"
+SR: "#5891BF"
+age:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "#EDCE98", "#DC143C"]
+OS_to_death:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "#EDCE98", "#DC143C"]
+chr1q_fish:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "#EDCE98", "#DC143C"]
+chr3_fish:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "#EDCE98", "#DC143C"]
+chr1p:
+  breaks: [-0.5, 0, 0.7]
+colors: ["#1E90FF", "#EDCE98", "#DC143C"]
+chr1q:
+  breaks: [-0.5, 0, 0.7]
+colors: ["#1E90FF", "#EDCE98", "#DC143C"]
+chr11:
+  breaks: [-0.5, 0, 0.7]
+colors: ["#1E90FF", "#EDCE98", "#DC143C"]
+chr15:
+  breaks: [-0.5, 0, 0.7]
+colors: ["#1E90FF", "#EDCE98", "#DC143C"]
+chr19:
+  breaks: [-0.5, 0, 0.7]
+colors: ["#1E90FF", "#EDCE98", "#DC143C"]
+chr3:
+  breaks: [-0.5, 0, 0.7]
+colors: ["#1E90FF", "#EDCE98", "#DC143C"]
+chr5:
+  breaks: [-0.5, 0, 0.7]
+colors: ["#1E90FF", "#EDCE98", "#DC143C"]
+chr7:
+  breaks: [-0.5, 0, 0.7]
+colors: ["#1E90FF", "#EDCE98", "#DC143C"]
+chr9:
+  breaks: [-0.5, 0, 0.7]
+colors: ["#1E90FF", "#EDCE98", "#DC143C"]
+CCND1:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "white", "#DC143C"]
+CCND2:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "white", "#DC143C"]
+CCND3:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "white", "#DC143C"]
+MAF:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "white", "#DC143C"]
+MAFA:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "white", "#DC143C"]
+MAFB:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "white", "#DC143C"]
+SPP1:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "white", "#DC143C"]
+NSD2:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "white", "#DC143C"]
+HOXA10:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "white", "#DC143C"]
+CEBPE:
+  breaks: [0.1, 0.5, 0.9]
+colors: ["#1E90FF", "white", "#DC143C"]

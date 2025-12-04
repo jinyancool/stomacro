@@ -1,0 +1,6 @@
+# European Genome-phenome Archive (EGA)
+We performed a search using the keyword "Multiple Myeloma" on the European Genome-phenome Archive (EGA), accessible at [https://ega-archive.org/](https://ega-archive.org/). The search yielded several datasets, most of which were under controlled access, requiring specific permissions for use. Despite our efforts, we were unable to obtain access to some of these datasets due to application constraints.
+
+However, we successfully gained access to the following  dataset: EGAD00001007813. The dataset have been incorporated into our study, providing critical genomic and phenomic data to support our research on Multiple Myeloma.
+
+

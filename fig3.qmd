@@ -1,0 +1,159 @@
+---
+title: "Figure 3"
+format: html
+---
+## Figure 3
+
+
+### Functional relavances of samples in the IgD-enriched subtype
+
+code:
+
+```{r, eval = FALSE} 
+
+pkgs <- c("GSVA", "fs", "futile.logger", "configr", "stringr", "ggpubr", 
+          "jhtools", "glue", "ggsci", "patchwork", "tidyverse", "dplyr", 
+          "SummarizedExperiment", "jhuanglabRNAseq", "DESeq2", "maftools", 
+          "matrixStats", "Matrix", "furrr", "ComplexHeatmap", "rstatix",
+          "clusterProfiler", "DOSE", "enrichplot", "org.Hs.eg.db", 
+          "ggthemes", "EnhancedVolcano", "GseaVis", "glmnet", "tidyplots")
+for (pkg in pkgs){
+  suppressPackageStartupMessages(library(pkg, character.only = T))
+} 
+
+# set workdir
+setwd("/cluster/home/yjliu_jh/projects/mm/analysis/meta/human/figures/heatmap/check_new_cluster_addsamples/fixed_check")
+
+# get samples
+clusterings <- readxl::read_excel("/cluster/home/jhuang/projects/mm/analysis/meta/human/figures/heatmap/eda/check_new_cluster_addsamples/fixed_samples_3/sampleinfo_0.95.xlsx")
+colnames(clusterings)[1] <- "sample_id"
+
+# get exp data
+mm1330 <- read_rds("~/projects/mm/analysis/meta/human/rnaseq/exp/mm1330.rds") %>% convert_df_plot()
+
+# get rna sequencing type
+pred_rna_lib <- function (dat_mat) {
+  his_genes1 <- c("H4C11", "H2BC3", "H4C4", "H3C12", "H2BC14", 
+                  "H4C6", "H2AC16", "H2AC11", "H2AC12", "H1−5", "H3C2", 
+                  "H3C3", "H3C11", "H2AC17", "H2AC13", "H2BC13", "H2AC4", 
+                  "H2AC14", "H4C9", "H4C1", "H4C2", "H4C13", "H3C7", "H2BC9", 
+                  "H2BC10", "H3C8", "H3C13", "H2BC7", "H2BC18", "H2BC15", 
+                  "H4C14", "H4C8", "H2BC17", "H3C10", "H2BC11", "H4C12", 
+                  "H3C15", "H2BC8", "H2AC8", "H2BC6", "H4C5", "H2AC15", 
+                  "H1−3", "H3C4", "H4−16", "H2AC20", "H2AC21", "H3C1", 
+                  "H2BC5", "H1−4", "H2AC7", "H2BC4", "H1−2", "H2AC6")
+  inter_genes <- intersect(his_genes1, rownames(dat_mat))
+  stopifnot("please make sure histone genes is contained in the data" = length(inter_genes) > 0)
+  dat_mat <- dat_mat[rownames(dat_mat) %in% inter_genes, ]
+  clust <- data.frame(cluster = cutree(hclust(dist(t(dat_mat))), k = 2))
+  diff <- mean(unlist(dat_mat[, clust$cluster %in% 1])) - mean(unlist(dat_mat[, clust$cluster %in% 2]))
+  clust$rna_type <- "mRNA"
+  clust$rna_type[clust$cluster == (2 - sum(diff > 0))] <- "total_RNA"
+  new_dat <- data.frame(sample_id = rownames(clust), rna_type = clust$rna_type)
+  return(new_dat)
+}
+rna_lib_part <- pred_rna_lib(mm1330)
+
+# get count
+mmdatasets <- c("jilin", "commpass", "public")
+count_files <- glue::glue("/cluster/home/jhuang/projects/mm/analysis/{mmdatasets}/human/rnaseq/exp/tables/{mmdatasets}_human_counts.csv")
+total_counts_list <- lapply(count_files[file.exists(count_files)], read_csv)
+names <- mmdatasets[file.exists(count_files)]
+counts_all <- total_counts_list[[1]]
+for (i in 2:length(total_counts_list)) {
+  counts_all <- bind_cols(counts_all, total_counts_list[[i]][, -(1:2)])
+}
+
+# load new gene symbol info 
+hugo_anno <- readr::read_delim("/cluster/home/yjliu_jh/projects/mm/data/hgnc_complete_set.txt",
+                               col_types = cols(intermediate_filament_db = col_character()))
+hugo_anno <- hugo_anno[, c("symbol", "ensembl_gene_id", "locus_group")] %>% as.data.frame() 
+colnames(hugo_anno)[2] <- "gene_id"
+
+# prepare counts data
+counts_all <- counts_all[, -2] %>% left_join(hugo_anno) %>% na.omit() %>% 
+  dplyr::select(-c(gene_id, locus_group)) %>% as.data.frame() %>% remove_rownames() %>% 
+  column_to_rownames(var = "symbol") %>% as.matrix() %>% round()
+counts_part <- counts_all[, intersect(clusterings$sample_id, colnames(counts_all))]
+
+# prepare anno data
+sinfo_part <- data.frame(sample_id = colnames(counts_part))
+sinfo_part <- left_join(sinfo_part, clusterings[, c("sample_id", "sub_groups")])
+sinfo_part <- left_join(sinfo_part, rna_lib_part)
+merged_sinfo <- read_rds("~/projects/mm/docs/meta/sampleinfo/sampleinfo_jilin_commpass.rds")
+sinfo_part <- left_join(sinfo_part, merged_sinfo[, c("sample_id", "batch")])
+rownames(sinfo_part) <- sinfo_part$sample_id
+sinfo_part$group <- ifelse(sinfo_part$sub_groups %in% "G3", "igd_like", "others")
+
+# construct DESeq2 object
+dds <- DESeqDataSetFromMatrix(counts_part, sinfo_part, ~ batch + rna_type + group)
+keep <- rowSums(counts(dds) >= 5) > ceiling(0.2 * ncol(dds))  
+dds <- dds[keep, ]
+keep2 <- rowSums(counts(dds) == 0) < ceiling(0.5 * ncol(dds))
+dds <- dds[keep2, ]
+dds <- DESeq(dds)
+readr::write_rds(dds, "dds_corrected.rds")
+
+# order and add columns to the results
+add_col <- function(data){
+  data$gene_name <- rownames(data)
+  data$absFC <- abs(data$log2FoldChange)
+  data <- data[order(data$pvalue), ]
+  data2 <- left_join(as.data.frame(data), hugo_anno[, c("symbol", "gene_id")], by = c("gene_name" = "symbol"))
+  data$ensembl_id <- data2$gene_id
+  data
+}
+
+# get result for  comparison
+res_igd <- add_col(results(dds, c("group", "igd_like", "others")))
+GSEAInput_i <- data.frame(rownames(res_igd), res_igd$log2FoldChange)
+colnames(GSEAInput_i) <- c("Symbol", "logFC")
+GSEA2 <- GSEAInput_i$logFC
+names(GSEA2) <- as.character(GSEAInput_i$Symbol)
+GSEA2 <- sort(GSEA2, decreasing = TRUE)
+gseGO_res_i <- gseGO(GSEA2, OrgDb = org.Hs.eg.db, keyType = "SYMBOL", ont = "BP",
+                     minGSSize = 5, maxGSSize = 1000, pvalueCutoff = 0.2)
+
+# volcano function
+quick_volcano <- function (resA, title, col = "gene_name", fc_cutoff = 2, sel_lab = NULL) {
+  if (is.null(sel_lab)) {
+    sel_lab <- unique(c(resA[order(resA$padj), ][1:10, col],
+                        resA[order(resA$absFC, decreasing = T), ][1:10, col]))
+  }
+  p <- EnhancedVolcano(resA, lab = resA[[col]],
+                       title = title, subtitle = NULL, caption = NULL,
+                       legendPosition = "none", 
+                       selectLab = sel_lab,
+                       drawConnectors = TRUE, widthConnectors = 0.3,
+                       x = 'log2FoldChange', y = 'pvalue',
+                       pCutoff = 0.05, FCcutoff = fc_cutoff,
+                       gridlines.major = FALSE,
+                       gridlines.minor = FALSE)
+  p
+} 
+volcano_p <- quick_volcano(as.data.frame(res_igd), "IgD group vs others")
+ggsave("volcano_igd_comparison_altered.pdf", volcano_p, dpi = 300, width = 6, height = 6, units = "in")
+
+
+```
+
+plot:
+
+```{r, echo = FALSE, fig.cap = "figure temp 3a", fig.align = "center", out.width = "100%"}
+knitr::include_graphics("images/volcano_igd_comparison_label_altered.png")
+```
+
+code:
+
+```{r, eval = FALSE} 
+# gsea result
+pdf("igd_comparison_gsea.pdf", width = 12, height = 9)
+print(dotplot(gseGO_res_i, showCategory = 9, split = ".sign", orderBy = "p.adjust") + facet_grid(.~.sign))
+dev.off()
+```
+
+plot:
+
+```{r, echo = FALSE, fig.cap = "figure temp 3b", fig.align = "center", out.width = "100%"}
+knitr::include_graphics("images/igd_comparison_gsea.png")
+```

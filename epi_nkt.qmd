@@ -1,0 +1,377 @@
+# Tumor Epithelial cells clustering and differential gene analysis
+This workflow identified the subtype of Epithelial cells and calculated differential genes between sepcific epithelial clusters.
+
+## Load data and packages
+
+```{r}
+#| label: load-packages
+#| include: false
+library(data.table)
+library(magrittr)
+library(rlang)
+library(ggplot2)
+library(ggpubr)
+library(Seurat)
+library(dplyr)
+library(clusterProfiler)
+library(org.Hs.eg.db)
+wkdir <- "/cluster/home/yliang_jh/projects/scRNA/oral_public_lvjiong/"
+setwd(wkdir)
+figure_dir <- "/cluster/home/xyzhang_jh/projects/oral_public_lvjiong/figure/"
+rds_dir <- "/cluster/home/xyzhang_jh/projects/oral_public_lvjiong/rds/"
+srt_s <- readRDS(glue(rds_dir,"srt_epi.rds"))
+config_fn <- glue::glue("/cluster/home/lixiyue_jh/projects/quarto/stomatology_lvjiong/quarto_book/colors.yaml")
+color_celltype <- jhtools::show_me_the_colors(config_fn, "cell_type")
+```
+
+## identify tumor cell cluster 
+
+```{r}
+# doublets
+genes <- c("PTPRC", "CD3D", "NKG7", "CD79A", "JCHAIN", "LYZ", "CD163", "LAMP3", "IGHG1", "TPSAB1", 
+             "EPCAM", "KRT7", "KRT17", "STATH", "COL1A2", "RGS5", "PDGFRA", "PECAM1")
+p <- DotPlot(srt_s, features = genes, cluster.idents = TRUE) +
+  coord_flip() +
+  scale_color_viridis_c()
+ggsave(glue(figure_dir,"output/epi/doublets_dotplot_markers_epi.pdf"), p, width = 14, height = 8)
+
+p <- VlnPlot(srt_s, features = c("nFeature_RNA", "nCount_RNA", "pct_mito"), ncol = 1)
+ggsave(glue(figure_dir,"output/epi/doublets_vlnplot_qc_epi.pdf"), p, width = 12, height = 8)
+
+# violin stemness marker
+genes <- c("CD44", "SOX2", "BMI1", "ALDH1A1", "CytoTRACE2_Relative_Score")
+p <- VlnPlot(srt_s, features = genes, ncol = 1, pt.size = 0)
+ggsave(glue(figure_dir,"output/epi/vlnplot_stemness_marker_epi.pdf"), p, width = 8, height = 16)
+
+# umap cluster
+p <- DimPlot(srt_s, reduction = "umap", group.by = "seurat_clusters", label = TRUE)
+ggsave(glue(figure_dir,"output/epi/umap_cluster_epi.pdf"), p, width = 6, height = 5)
+
+# anno
+dt_anno <- fread("output/epi/anno_epi.tsv") #unsaved
+srt_s$subtype <- dt_anno$anno[match(srt_s$seurat_clusters, dt_anno$cluster)] %>%
+  factor(levels = rev(c("CSC_CD44+", "CSC_CD44+SOX2+", "CSC_BMI1+", "CSC_ALDH1A1+", 
+                        "CSC_allpositive", "CSC_allnegative", "Non_CSC")))
+saveRDS(srt_s, glue(rds_dir,"srt_epi.rds"))
+
+# subtype dotplot
+genes <- c("CD44", "SOX2", "BMI1", "ALDH1A1", "CytoTRACE2_Relative_Score")
+p <- DotPlot(srt_s, features = genes, group.by = "subtype") +
+  scale_color_viridis_c() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+ggsave(glue(figure_dir,"output/epi/dotplot_stemness_markers_epi_subtype.pdf"), p, width = 8, height = 5)
+
+# umap anno
+p <- DimPlot(srt_s, reduction = "umap", group.by = "subtype", cols = color_celltype)
+ggsave(glue(figure_dir,"output/epi/umap_epi_subtype.pdf"), p, width = 7, height = 6)
+```
+
+## Differential gene expression patterns across defined epithelial clusters
+### # diff CD44+ vs CD44-
+```{r}
+markers <- FindMarkers(srt_s, ident.1 = c(0,2,3,6,7,13,19), ident.2 = c(20,21,23,24))
+write.csv(markers, glue(figure_dir,"output/epi/CD44pos_vs_CD44neg_diff_genes.csv"))
+
+df_sig <- markers %>%
+  filter(abs(avg_log2FC) > 1 & p_val_adj < 0.05) %>%
+  filter(pct.1 > 0.1 | pct.2 > 0.1) %>%
+  mutate(type = ifelse(avg_log2FC > 0, "CD44+ up", "CD44+ down")) %>%
+  tibble::rownames_to_column("gene")
+write.csv(df_sig, glue(figure_dir,"output/epi/CD44pos_vs_CD44neg_diff_genes_sig.csv"))
+
+gene_entrez <- bitr(unique(df_sig$gene), fromType = "SYMBOL", toType = "ENTREZID", OrgDb = "org.Hs.eg.db")
+df_sig <- merge(df_sig, gene_entrez, all.x = TRUE, by.x = "gene", by.y = "SYMBOL")
+
+res <- compareCluster(ENTREZID ~ type,
+                      data = df_sig,
+                      organism = "hsa",
+                      fun = "enrichKEGG",
+                      use_internal_data = TRUE)
+
+p <- dotplot(res) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave(glue(figure_dir,"output/epi/CD44pos_vs_CD44neg_enrich_kegg.pdf"), p, width = 7, height = 6)
+
+df_res <- setReadable(res, OrgDb = "org.Hs.eg.db", keyType="ENTREZID") %>%
+  as.data.frame()
+write.csv(df_res, glue(figure_dir,"output/epi/CD44pos_vs_CD44neg_enrich_kegg.csv"))
+```
+
+
+### diff CD44+SOX2+ vs CD44+SOX2-
+```{r}
+markers <- FindMarkers(srt_s, ident.1 = c(2, 19), ident.2 = c(0,3,6,7,13))
+write.csv(markers, glue(figure_dir,"output/epi/CD44pos_SOX2pos_vs_SOX2neg_diff_genes.csv"))
+
+df_sig <- markers %>%
+  filter(abs(avg_log2FC) > 1 & p_val_adj < 0.05) %>%
+  filter(pct.1 > 0.1 | pct.2 > 0.1) %>%
+  mutate(type = ifelse(avg_log2FC > 0, "SOX2+ up", "SOX2+ down")) %>%
+  tibble::rownames_to_column("gene")
+write.csv(df_sig, glue(figure_dir,"output/epi/CD44pos_SOX2pos_vs_SOX2neg_diff_genes_sig.csv"))
+
+gene_entrez <- bitr(unique(df_sig$gene), fromType = "SYMBOL", toType = "ENTREZID", OrgDb = "org.Hs.eg.db")
+df_sig <- merge(df_sig, gene_entrez, all.x = TRUE, by.x = "gene", by.y = "SYMBOL")
+
+res <- compareCluster(ENTREZID ~ type,
+                      data = df_sig,
+                      organism = "hsa",
+                      fun = "enrichKEGG",
+                      use_internal_data = TRUE)
+
+p <- dotplot(res) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave(glue(figure_dir,"output/epi/CD44pos_SOX2pos_vs_SOX2neg_enrich_kegg.pdf"), p, width = 7, height = 6)
+
+df_res <- setReadable(res, OrgDb = "org.Hs.eg.db", keyType="ENTREZID") %>%
+  as.data.frame()
+write.csv(df_res, glue(figure_dir,"output/epi/CD44pos_SOX2pos_vs_SOX2neg_enrich_kegg.csv"))
+```
+
+
+### diff ALDH1A1+ vs other CSC
+```{r}
+markers <- FindMarkers(srt_s, ident.1 = c(2,20), ident.2 = c(0,3,6,7,13,19,21,23,24))
+write.csv(markers, glue(figure_dir,"output/epi/ALDH1A1pos_vs_otherCSC_diff_genes.csv"))
+
+df_sig <- markers %>%
+  filter(abs(avg_log2FC) > 1 & p_val_adj < 0.05) %>%
+  filter(pct.1 > 0.1 | pct.2 > 0.1) %>%
+  mutate(type = ifelse(avg_log2FC > 0, "ALDH1A1+ up", "ALDH1A1+ down")) %>%
+  tibble::rownames_to_column("gene")
+write.csv(df_sig, glue(figure_dir,"output/epi/ALDH1A1pos_vs_otherCSC_diff_genes_sig.csv"))
+
+gene_entrez <- bitr(unique(df_sig$gene), fromType = "SYMBOL", toType = "ENTREZID", OrgDb = "org.Hs.eg.db")
+df_sig <- merge(df_sig, gene_entrez, all.x = TRUE, by.x = "gene", by.y = "SYMBOL")
+
+res <- compareCluster(ENTREZID ~ type,
+                      data = df_sig,
+                      organism = "hsa",
+                      fun = "enrichKEGG",
+                      use_internal_data = TRUE)
+
+p <- dotplot(res) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave(glue(figure_dir,"output/epi/ALDH1A1pos_vs_otherCSC_enrich_kegg.pdf"), p, width = 7, height = 6)
+
+df_res <- setReadable(res, OrgDb = "org.Hs.eg.db", keyType="ENTREZID") %>%
+  as.data.frame()
+write.csv(df_res, glue(figure_dir,"output/epi/ALDH1A1pos_vs_otherCSC_enrich_kegg.csv"))
+```
+
+### diff BMI1+ vs other CSC
+```{r}
+markers <- FindMarkers(srt_s, ident.1 = c(2,23), ident.2 = c(0,3,6,7,13,19,21,20,24))
+write.csv(markers, glue(figure_dir,"output/epi/BMI1pos_vs_otherCSC_diff_genes.csv"))
+
+df_sig <- markers %>%
+  filter(abs(avg_log2FC) > 1 & p_val_adj < 0.05) %>%
+  filter(pct.1 > 0.1 | pct.2 > 0.1) %>%
+  mutate(type = ifelse(avg_log2FC > 0, "BMI1+ up", "BMI1+ down")) %>%
+  tibble::rownames_to_column("gene")
+write.csv(df_sig, glue(figure_dir,"output/epi/BMI1pos_vs_otherCSC_diff_genes_sig.csv"))
+
+gene_entrez <- bitr(unique(df_sig$gene), fromType = "SYMBOL", toType = "ENTREZID", OrgDb = "org.Hs.eg.db")
+df_sig <- merge(df_sig, gene_entrez, all.x = TRUE, by.x = "gene", by.y = "SYMBOL")
+
+res <- compareCluster(ENTREZID ~ type,
+                      data = df_sig,
+                      organism = "hsa",
+                      fun = "enrichKEGG",
+                      use_internal_data = TRUE)
+
+p <- dotplot(res) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave(glue(figure_dir,"output/epi/BMI1pos_vs_otherCSC_enrich_kegg.pdf"), p, width = 7, height = 6)
+
+df_res <- setReadable(res, OrgDb = "org.Hs.eg.db", keyType="ENTREZID") %>%
+  as.data.frame()
+write.csv(df_res, glue(figure_dir,"output/epi/BMI1pos_vs_otherCSC_enrich_kegg.csv"))
+```
+
+## Enriched pathway in compared clusters
+
+```{r}
+# pathway of interest
+df1 <- read.csv("output/epi/CD44pos_vs_CD44neg_enrich_kegg_poi.csv", row.names = 1) ##unsaved
+pt1 <- df1 %>%
+  mutate(log10p = ifelse(Cluster == "CD44+ up", -log10(p.adjust), log10(p.adjust)),
+         just = ifelse(Cluster == "CD44+ up", 1.01, -0.01)) %>%
+  arrange(log10p) %>%
+  mutate(Description = factor(Description, levels = Description),
+         Cluster = factor(Cluster, levels = c("CD44+ up", "CD44- up")))
+p1 <- ggplot(pt1, aes(Description, log10p, fill = Cluster)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("#4696E6", "#e8d056")) +
+  scale_y_continuous("-log10(p.adjust)", limits = c(-6, 11), 
+                     breaks = seq(-4, 10, 2),labels = c(4, 2, 0, 2, 4, 6, 8, 10)) +
+  scale_x_discrete("", labels = NULL) +
+  coord_flip() +
+  geom_text(aes(Description, 0, label = Description), hjust = pt1$just) +
+  theme_classic() +
+  theme(axis.line.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  labs(fill = "")
+ggsave(glue(figure_dir,"output/epi/CD44pos_vs_CD44neg_enrich_kegg_poi_barplot.pdf"), p1, width = 8, height = 8)
+
+df2 <- read.csv("output/epi/CD44pos_SOX2pos_vs_SOX2neg_enrich_kegg_poi.csv", row.names = 1)##unsaved
+pt2 <- df2 %>%
+  mutate(log10p = ifelse(Cluster == "SOX2+ up", -log10(p.adjust), log10(p.adjust)),
+         just = ifelse(Cluster == "SOX2+ up", 1.01, -0.01)) %>%
+  arrange(log10p) %>%
+  mutate(Description = factor(Description, levels = Description),
+         Cluster = factor(factor(Cluster, levels = c("SOX2+ up", "SOX2+ down")),
+                          labels = c("CD44+SOX2+ up", "CD44+SOX2- up")))
+p2 <- ggplot(pt2, aes(Description, log10p, fill = Cluster)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = c("#4696E6", "#e8d056")) +
+  scale_y_continuous("-log10(p.adjust)", limits = c(-13, 6), 
+                     breaks = seq(-12, 4, 2),labels = c(12, 10, 8, 6, 4, 2, 0, 2, 4)) +
+  scale_x_discrete("", labels = NULL) +
+  coord_flip() +
+  geom_text(aes(Description, 0, label = Description), hjust = pt2$just) +
+  theme_classic() +
+  theme(axis.line.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  labs(fill = "")
+ggsave(glue(figure_dir,"output/epi/CD44pos_SOX2pos_vs_SOX2neg_enrich_kegg_poi_barplot.pdf"), p2, width = 8, height = 8)
+```
+
+
+# T&NK cells clustering and differential gene analysis
+
+This workflow identified the subtype of T/NK cells and calculated differential genes between sepcific T/NK clusters.
+
+## Load data 
+
+```{r}
+srt <- readRDS(glue(rds_dir,"srt_integrated_anno.rds"))
+srt_s <- subset(srt, subset = celltype %in% c("T/NK"))
+```
+
+
+## reclustering T cell and NK cells
+
+```{r}
+srt_s[["RNA"]] <- split(srt_s[["RNA"]], f = srt_s$dataset)
+srt_s <- NormalizeData(srt_s) %>%
+  FindVariableFeatures(nfeatures = 1500) %>%
+  ScaleData() %>%
+  RunPCA()
+ElbowPlot(srt_s, ndims = 50);dev.off()
+srt_s <- IntegrateLayers(srt_s, method = HarmonyIntegration,
+                         orig.reduction = "pca", new.reduction = "harmony", 
+                         group.by.vars = c("dataset", "sample_id"),
+                         dims.use = 1:10)
+srt_s <- FindNeighbors(srt_s, k.param = 20, reduction = "harmony", dims = 1:10) %>%
+  FindClusters(resolution = 0.8) %>%
+  RunUMAP(reduction = "harmony", dims = 1:10)
+
+# tsne/umap cluster & samples
+p <- DimPlot(srt_s, reduction = "umap", label = TRUE)
+ggsave(glue(figure_dir,"output/tnk/umap_tnk_cluster.pdf"), p, width = 6, height = 5)
+
+p <- DimPlot(srt_s, reduction = "umap", group.by = "dataset")
+ggsave(glue(figure_dir,"output/tnk/umap_tnk_dataset.pdf"), p, width = 6, height = 5)
+
+genes <- c("CD69", "CD3D", "CD8B", "CD4", "NKG7",
+           "SELL", "CCR7", "LEF1", "GZMA", "GZMB", "GZMK", "GZMH",
+           "GNLY", "PDCD1", "FOXP3", "IL2RA", "LAG3", "CTLA4", 
+           "CXCL13", "MKI67", "IL17A", "CX3CR1", "TOB1",
+           "PRF1", "XCL1", "XCL2", "BATF", "TIGIT", "TNFRSF4", "TNFRSF18")
+p <- DotPlot(srt_s, features = genes, cluster.idents = TRUE) +
+  coord_flip() +
+  scale_color_viridis_c()
+ggsave(glue(figure_dir,"output/tnk/dotplot_markers_tnk_cluster.pdf"), p, width = 10, height = 7)
+
+# doublets
+markers <- c("PTPRC", "CD3D", "NKG7", "CD79A", "IGHG1", 
+             "LYZ", "CD163", "LAMP3", "LILRA4", "TPSAB1", 
+             "KRT7", "KRT17", "EPCAM", "STATH", 
+             "COL1A2", "MMP2", "ACTA2", "RGS5", "PECAM1")
+p <- DotPlot(srt_s, features = markers, cluster.idents = TRUE) +
+  coord_flip() +
+  scale_color_viridis_c()
+ggsave(glue(figure_dir,"output/tnk/dotplot_markers_doublets_tnk_cluster.pdf"), p, width = 10, height = 6)
+
+p <- VlnPlot(srt_s, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 1, pt.size = 0)
+ggsave(glue(figure_dir,"output/tnk/vlnplot_qc_tnk_cluster.pdf"), p, width = 12, height = 12)
+
+srt_s <- subset(srt_s, subset = !seurat_clusters %in% c(7, 12))
+saveRDS(srt_s, glue(rds_dir,"srt_tnk.rds"))
+
+# feature plot
+genes <- c("CD69", "CD3D", "CD8B", "CD4", "NKG7",
+           "SELL", "CCR7", "LEF1", "GZMB", "GZMK",
+           "GNLY", "PDCD1", "FOXP3", "IL2RA", "LAG3", "CTLA4", 
+           "CXCL13", "MKI67", "IL17A", "CX3CR1", "TOB1",
+           "PRF1", "XCL2", "BATF", "TIGIT", "TNFRSF4", "TNFRSF18")
+p_lst <- list(FeaturePlot(srt_s, features = genes[1:9], reduction = "umap", raster = TRUE),
+              FeaturePlot(srt_s, features = genes[10:18], reduction = "umap", raster = TRUE),
+              FeaturePlot(srt_s, features = genes[19:27], reduction = "umap", raster = TRUE))
+pdf(glue(figure_dir,"output/tnk/featureplot_tnk_umap.pdf"), width = 15, height = 12)
+purrr::walk(p_lst, print)
+dev.off()
+```
+
+## Annotating T cell and NK cells
+
+```{r}
+# add anno
+dt_anno <- fread("output/tnk/anno_tnk.tsv") #unsaved
+dt_anno[, subtype := factor(subtype, levels = c("CD4Tnaive", "CD4Tex", "Treg",
+                                                "CD8Tnaive", "CD8Teff", "CD8Tprolif", "CD8Tex",
+                                                "NK"))]
+srt_s$subtype <- dt_anno[match(srt_s$seurat_clusters, seurat_clusters), ]$subtype 
+srt_s$subtype1 <- dt_anno[match(srt_s$seurat_clusters, seurat_clusters), ]$subtype1
+saveRDS(srt_s, glue(rds_dir,"srt_tnk.rds"))
+
+# anno umap/tsne
+p <- DimPlot(srt_s, reduction = "umap", group.by = "subtype", cols = color_celltype)
+ggsave(glue(figure_dir,"output/tnk/umap_tnk_subtype.pdf"), p, width = 8, height = 6)
+
+# stacked bar subtype by cd44 cluster
+df_cl <- fread(glue(figure_dir,"output/CD44/density_CD44_sample_hclust_k3.csv")) %>%
+  arrange(order)
+pt <- srt_s[[c("sample_id", "subtype")]]
+pt$cluster <- df_cl$cluster[match(pt$sample_id, df_cl$sample_id)]
+pt <- pt %>%
+  mutate(sample_id = factor(sample_id, df_cl$sample_id)) %>%
+  filter(!is.na(cluster))
+
+p <- ggplot(pt, aes(sample_id, fill = subtype)) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = color_celltype) +
+  facet_grid(~ cluster, scales = "free_x", space = "free_x") +
+  theme_classic()
+ggsave(glue(figure_dir,"output/tnk/stack_bar_tnk_subtype_CD44_cluster_k3.pdf"), width = 15, height = 8)
+```
+
+## Boxplot shows T/NK subtype by CD44 cluster
+
+```{r}
+pt_box <- pt %>%
+  count(sample_id, subtype, name = "n") %>%
+  group_by(sample_id) %>%
+  mutate(prop = n / sum(n)) %>%
+  ungroup
+pt_box$cluster <- df_cl$cluster[match(pt_box$sample_id, df_cl$sample_id)] %>% as.factor()
+colors_cl <- c("brown2", "#4696E6", "#3CB371")
+
+p <- ggplot(pt_box, aes(subtype, prop, color = cluster)) +
+  geom_boxplot(width = 0.6, outlier.shape = NA) +
+  scale_color_manual(values = colors_cl) +
+  theme_classic() +
+  stat_compare_means(aes(group = cluster, label = ..p.format..), size = 2, method = "anova", label.y = 0.6)
+ggsave(glue(figure_dir,"output/tnk/boxplot_tnk_subtype_CD44_cluster_k3_wo_pt.pdf"), p, width = 8, height = 4)
+
+p <- ggboxplot(pt_box, x = "subtype", y = "prop", 
+               color = "cluster", palette = colors_cl,
+               add = "jitter") +
+  stat_compare_means(aes(group = cluster, label = ..p.format..), size = 4, method = "anova")
+ggsave(glue(figure_dir,"output/tnk/boxplot_tnk_subtype_CD44_cluster_k3.pdf"), p, width = 12, height = 6)
+
+fwrite(pt_box, glue(figure_dir,"output/tnk/boxplot_tnk_subtype_CD44_cluster_k3.csv"))
+
+```
+

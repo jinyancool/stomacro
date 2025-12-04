@@ -1,0 +1,20 @@
+# Acknowledgement
+I would like to express my gratitude to the following organizations and individuals for their invaluable support in completing this research project.
+
+First of all, I would like to express my sincere gratitude to my [name of the supervisor] for his/her support and guidance throughout the doctoral programme. The [professor name] ‘s insights and feedback have been helpful in shaping the scope and directions of this study.
+
+I am also grateful to [names of all contributors] for their assistance with data collection, analysis, and interpretation, which made the study possible.
+
+I would also like to express my gratitude to the members of [names of research committee members] for their constructive criticism and valuable feedback, which contributed to enhancing the quality of this research.
+
+Finally, I thank [institution] for providing the necessary facilities and resources to conduct my research.
+
+I extend my gratitude to all for your invaluable contributions that significantly enhanced the quality of the paper.
+
+::: {#notes .notes}
+
+## Note
+
+We get some colors setting from: [https://zhuanlan.zhihu.com/p/693124785](https://zhuanlan.zhihu.com/p/693124785).
+
+:::

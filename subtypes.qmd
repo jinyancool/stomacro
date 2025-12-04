@@ -1,0 +1,87 @@
+# Subtypes
+## Unsupervised cluster
+
+We defined subtypes based on the clustering of gene expression data, which was performed using the most highly variable genes across the samples. The clustering results were visualized using a heatmap, where each sample was annotated with its corresponding subtype. This approach allowed us to identify distinct subgroups within the dataset, facilitating further analysis of their unique characteristics and potential clinical implications.
+
+```{r, echo=TRUE, message=FALSE, warning=FALSE, eval=FALSE}
+pkgs <- c("fs", "futile.logger", "configr", "ggpubr", "ggthemes",
+          "jhtools", "glue", "ggsci", "patchwork", "tidyverse",
+          "circlize", "ComplexHeatmap", "GenomicRanges", "jhuanglabRNAseq", "ggh4x")
+for (pkg in pkgs){
+  suppressPackageStartupMessages(library(pkg, character.only = T))
+}
+project <- "mm"
+dataset <- "meta"
+species <- "human"
+workdir <- glue("~/projects/{project}/analysis/{dataset}/{species}/rnaseq/figures/heatmap") |> checkdir()
+setwd(workdir)
+set.seed(2025)
+df <- "~/projects/mm/docs/meta/sampleinfo/sampleinfo_jilin_commpass.rds" |>
+  read_rds()
+
+jinlin_commpass_heatmap_only <- "~/projects/mm/analysis/meta/human/rnaseq/exp/jinlin_commpass_heatmap_only.rds" |> read_rds()
+dat_exp <- "~/projects/mm/analysis/meta/human/rnaseq/exp/mm_heatmap1117.rds" |>
+  read_rds() |> convert_df_plot()
+cogene <- base::intersect(rownames(dat_exp), rownames(jinlin_commpass_heatmap_only))
+
+subdf <- df |> dplyr::filter(sample_id %in% colnames(dat_exp))
+
+
+config_fn = "~/projects/mm/analysis/jilin/human/rnaseq/configs/colors.yaml"
+config_list <- show_me_the_colors(config_fn, "all")
+
+col <- config_list[c(
+  "batch","Clinical_IgH", "RNA_Subtype_Name",
+  "PrimaryCluster", "Tx_MAF","Tx_MAFA","Tx_MAFB",
+  "Tx_CCND1", "Tx_CCND2", "Tx_CCND3", "Tx_NSD2"
+)]
+col$Dom_IgH_Type <- col$Clinical_IgH
+names(col$Dom_IgH_Type) <- c("IGHE", "IGHA", "IGHD", "IGHG", "IGHM", "others")
+col$PrimaryCluster <- c(col$PrimaryCluster, "IgD" = "#FF00FF")
+col$batch[] <- "gray"
+col$datasets <- c(col$batch, "EGAD00001007813" = "green", "HRA006164" = "red", bmc = "orange")
+col$datasets <- c(col$batch, "EGAD00001007813" = "gray", "HRA006164" = "red", bmc = "orange")
+col$IRF4_mut <- c("TRUE" = "#DC143C" , "FALSE" = "gray")
+all_scores <- c(
+  "Zhan_et_al_CD-1","Zhan_et_al_CD-2","Zhan_et_al_HP","Zhan_et_al_LB","Zhan_et_al_MF",
+  "Zhan_et_al_MS","Zhan_et_al_PR","Broyl_et_al_MF","Broyl_et_al_CTA","Broyl_et_al_CD2",
+  "Broyl_et_al_LB","Broyl_et_al_Myeloid","Broyl_et_al_CD1","Broyl_et_al_MS","Broyl_et_al_PR",
+  "Broyl_et_al_HP","Broyl_et_al_NFKB","Broyl_et_al_PRL3","GEP70","Sheri_et_al_MAF",
+  "Sheri_et_al_CD1","Sheri_et_al_CD2a","Sheri_et_al_CD2b","Sheri_et_al_MS",
+  "Sheri_et_al_1q gain","Sheri_et_al_PR","Sheri_et_al_HRD, MYC, low NFkB",
+  "Sheri_et_al_Low purity","Sheri_et_al_HRD, low TP53","Sheri_et_al_HRD, ++15",
+  "Sheri_et_al_HRD, ++15, MYC"
+)
+for(i in all_scores){
+  col[[i]] <- circlize::colorRamp2(quantile(subdf[[i]], c(0.1,0.5,0.9), na.rm = T), colors = c("#1E90FF", "white", "#DC143C"))
+}
+out_dir <- "step1" |> checkdir()
+all_col <- c("datasets",
+             "Dom_IgH_Type", "Clinical_IgH", "PrimaryCluster","RNA_Subtype_Name", "IRF4_mut","GEP70",
+             "Tx_MAF","Tx_MAFA","Tx_MAFB", "Tx_CCND1", "Tx_CCND2", "Tx_CCND3", "Tx_NSD2",
+             all_scores)
+hasub2 <- HeatmapAnnotation(df = subdf[, all_col] |> as.data.frame(),
+                            annotation_name_side = "left",
+                            show_legend = all_col %in% c("datasets", "Dom_IgH_Type",
+                                                         "Clinical_IgH", "PrimaryCluster",
+                                                         "RNA_Subtype_Name"),
+                            col = col)
+quick_heatmap(dat_exp[cogene, subdf$sample_id], hasub2, outdir = out_dir,
+              hdf = subdf[,c("sample_id","cn_name","PrimaryCluster","RNA_Subtype_Name", "tumor_descriptor", "Tx_CCND1", "Tx_CCND2", "Tx_CCND3")] |>
+                mutate(
+                  CCNDx = Tx_CCND1|Tx_CCND2|Tx_CCND3,
+                  cn_name = case_when(
+                    is.na(cn_name) ~ str_extract(sample_id, pattern = "MMRF_\\d+|MM\\d+"),
+                    T ~ cn_name
+                  )
+                ) |>
+                dplyr::select(-c(Tx_CCND1, Tx_CCND2, Tx_CCND3)),
+              top_var_percent = 0.9,
+              keep_annotation = T,
+              column_split = 16,
+              height = 15,
+              out_put_rds = T,
+              cluster_columns = T,
+              show_column_names= F)
+
+```

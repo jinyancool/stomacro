@@ -1,0 +1,11 @@
+# Contact us
+
+We welcome inquiries and collaboration to maximize the impact of our research. To ensure your questions are directed to the most appropriate team member, please use the following contact guidelines:
+
+-   Clinical Questions: For inquiries related to clinical implications, diagnostic applications, or patient management, please contact Prof. Fengyan Jin.
+
+-   Wet Lab and Experimental Questions: For questions about sample preparation, library preparation, functional assays, or other experimental methodologies, please reach out to Prof. Yun Dai.
+
+-   Bioinformatics and Computational Questions: For assistance with bioinformatics troubleshooting, methodology, or replicating our analytical pipelines, please contact me directly at [hiekeen\@gmail.com](mailto:hiekeen@gmail.com).
+
+General Inquiries or Collaborative Opportunities: For all other questions, including data access, interdisciplinary collaborations, or feedback on the project, we encourage you to email Prof. Fengyan Jin, Prof. Yun Dai, and me collectively. We are deeply invested in enabling others to explore and build upon this dataset.

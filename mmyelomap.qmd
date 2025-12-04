@@ -1,0 +1,171 @@
+# The MMyeloMap R package
+
+To distill the key patterns embedded in the large-scale transcriptomic dataset generated in this study and to support downstream research, we developed multiple predictive models based on diverse machine learning algorithms. These models were trained on the integrated dataset described in this work. To assess their performance and identify the most reliable classifier for subtype prediction, we incorporated an independent external cohort and processed it using the same analytical pipeline. Predictions from each model were compared against subtype assignments derived from standard clustering procedures. This comparison enabled the identification of the optimal model, which demonstrated high predictive accuracy. Building on these results, we assembled a suite of molecular profiling tools for multiple myeloma (MM), which have been packaged into an R toolkit, MMyeloMap, supporting comprehensive, single-sample subtype inference.
+
+By using expression quantification results generated via Salmon as input, a comprehensive sample prediction report can be obtained by running the following code. Selected components of the report are illustrated in the subsequent sections:
+
+```{r, echo=TRUE, eval=FALSE}
+
+library(MMyeloMap)
+testpath <- path_package("MMyeloMap", "extdata/files/quant.sf.gz")
+fs::dir_create("test")
+generate_qmd_from_template(testpath,
+                           "pmm03", 
+                           "test/out.qmd")
+```
+
+Based on transcriptomic features, predicted subtypes were inferred and visualized using an interpolated heatmap, as shown below:
+
+![Interpolated heatmap of newly added sample](images/add_heatmap.png){.align-center width=700px fig-cap="Interpolated heatmap of newly added sample" .lightbox}
+
+The UMAP visualization of the sample distribution is shown below, with the queried sample marked by a cross (✕):
+
+![UMAP visualization of new sample](images/umap_pred.png){.align-center width=700px fig-cap="UMAP visualization of new sample" .lightbox}
+
+The following figure displays the key features contributing to the relapse prediction model:
+
+![Subtype prediction of new sample](images/label_pred.png){.align-center width=700px fig-cap="Subtype prediction of new sample" .lightbox}
+
+
+
+In addition to analyzing differences between primary and relapsed samples (see the DEG section for example), we also aimed to predict the future risk of relapse using baseline transcriptomic features. Known samples were split into training and testing sets to train a predictive model. The example code and resulting performance are shown below:
+
+
+```{r, echo=TRUE, eval=FALSE}
+
+pkgs <- c("fs", "futile.logger", "configr", "stringr", "ggpubr", "ggthemes",
+          "jhtools", "glue", "ggsci", "patchwork", "tidyverse", "dplyr", 
+          "SummarizedExperiment", "jhuanglabRNAseq", "DESeq2", "maftools", 
+          "matrixStats", "Matrix", "furrr", "ComplexHeatmap", "caret", 
+          "glmnet", "pROC", "ranger")
+for (pkg in pkgs){
+  suppressPackageStartupMessages(library(pkg, character.only = T))
+} 
+
+# load data
+setwd("/cluster/home/yjliu_jh/projects/mm/output/relapse_prediction")
+merged_sinfo <- read_rds("~/projects/mm/docs/meta/sampleinfo/sampleinfo_jilin_commpass.rds")
+mm1330 <- read_rds("~/projects/mm/analysis/meta/human/rnaseq/exp/mm1330.rds") 
+
+# load new gene symbol info 
+hugo_anno <- readr::read_delim("/cluster/home/yjliu_jh/projects/mm/data/hgnc_complete_set.txt",
+                               col_types = cols(intermediate_filament_db = col_character()))
+hugo_anno <- hugo_anno[, c("symbol", "ensembl_gene_id", "locus_group")] %>% as.data.frame() 
+colnames(hugo_anno)[2] <- "gene_id"
+exp_mm <- mm1330[, -2] %>% left_join(hugo_anno) %>% na.omit() %>% 
+  dplyr::select(-c(gene_id, locus_group)) %>% as.data.frame() %>% remove_rownames() %>% 
+  column_to_rownames(var = "symbol") %>% as.matrix()
+
+# select primary samples and divide them based on recurrence
+sinfo_commpass <- merged_sinfo[merged_sinfo$batch %in% "commpass", ]
+sinfo_commpass$patient_id <- substr(sinfo_commpass$sample_id, 1, 9)
+sinfo_c_fil <- sinfo_commpass[!grepl("PB", sinfo_commpass$sample_id), ]
+dup_patients <- intersect(sinfo_c_fil$patient_id[sinfo_c_fil$tumor_descriptor %in% c("primary", "Primary")], sinfo_c_fil$patient_id[sinfo_c_fil$tumor_descriptor %in% "recurrence"])
+sinfo_commpass2 <- sinfo_c_fil[sinfo_c_fil$patient_id %in% dup_patients, c("sample_id", "patient_id", "tumor_descriptor")]
+sinfo_commpass2 <- sinfo_commpass2[sinfo_commpass2$tumor_descriptor %in% "primary", ]
+
+sinfo_jilin <- merged_sinfo[merged_sinfo$batch %in% "jilin", c("sample_id", "cn_name", "tumor_descriptor")] %>% unique()
+sinfo_jilin2 <- sinfo_jilin[sinfo_jilin$tumor_descriptor %notin% "initial_treating", ]
+temp_count <- sinfo_jilin2 %>% group_by(cn_name) %>% summarise(c = length(unique(tumor_descriptor)))
+temp_patients <- temp_count$cn_name[temp_count$c > 1]
+sinfo_jilin2 <- sinfo_jilin2[sinfo_jilin2$cn_name %in% temp_patients & sinfo_jilin2$tumor_descriptor %in% "primary", ]
+sinfo_jilin3 <- sinfo_jilin2[!duplicated(sinfo_jilin2[, 2:3]), ] %>% as.data.frame()
+sinfo_jilin3 <- sinfo_jilin3[order(sinfo_jilin3$cn_name, sinfo_jilin3$tumor_descriptor), ]
+jilin_extra <- anti_join(sinfo_jilin2, sinfo_jilin3)$sample_id
+
+extra_set <- merged_sinfo$sample_id[merged_sinfo$datasets %in% "EGAD00001007813" & merged_sinfo$tumor_descriptor %in% "primary"]
+
+# set metadata
+all_relapse_samples <- c(sinfo_commpass2$sample_id, sinfo_jilin3$sample_id, extra_set)
+sinfo_fil <- merged_sinfo[merged_sinfo$datasets %in% c("jilin", "commpass", "EGAD00001007813") & merged_sinfo$tumor_descriptor %in% c("primary", "Primary"), ]
+sinfo_fil <- sinfo_fil[sinfo_fil$sample_id %in% colnames(mm1330), ]
+sinfo_fil$relapse_status <- ifelse(sinfo_fil$sample_id %in% c(all_relapse_samples, jilin_extra), "relapse", "non-relapse")
+
+# === RF model ===
+
+relapse_samples <- sample(sinfo_fil$sample_id[sinfo_fil$relapse_status %in% "relapse"], 72)
+remaining_samples <- c(setdiff(all_relapse_samples, relapse_samples), jilin_extra)
+all_baseline_samples <- setdiff(sinfo_fil$sample_id, c(all_relapse_samples, jilin_extra))
+baseline_samples <- sample(all_baseline_samples, 800)
+remaining_baseline <- setdiff(all_baseline_samples, baseline_samples)
+
+exp_mm_fil <- exp_mm[, c(baseline_samples, relapse_samples)]
+exp_mm_fil <- as.data.frame(exp_mm_fil) %>% dplyr::arrange(desc(rowVars(exp_mm_fil)))
+hvg <- rownames(exp_mm_fil)[1:750]
+exp_diff <- rowMeans(exp_mm_fil[, baseline_samples]) - rowMeans(exp_mm_fil[, relapse_samples])
+dfg <- names(tail(sort(abs(exp_diff)), 250))
+
+names_info <- data.frame(ori_names = rownames(exp_mm))
+names_info$new_names <- colnames(janitor::clean_names(t(exp_mm)))
+
+exp_t <- as.data.frame(t(exp_mm_fil[unique(c(hvg, dfg)), ]))
+exp_t$sample_id <- rownames(exp_t)
+expr_cols <- setdiff(colnames(exp_t), "sample_id")
+# covariates <- c("subtypes", "age", "gender", "Clinical_IgH", "iss_stage")  
+# feature_cols <- c(expr_cols, covariates)    ## doesn't work after tests, remove for convenience
+feature_cols <- expr_cols
+
+data_all <- left_join(exp_t, sinfo_fil[, c("sample_id", "relapse_status")], by = "sample_id")
+x <- data_all[, feature_cols]
+y <- as.factor(data_all$relapse_status)
+x <- janitor::clean_names(x)
+
+rf_model <- ranger::ranger(  ## may go further on parameter selection
+  formula = relapse_status ~ .,
+  data = cbind(relapse_status = y, x),
+  probability = TRUE,               
+  importance = "impurity", ## based on Gini impurity 
+  num.trees = 2000
+)
+
+# test_other <- merged_sinfo$sample_id[merged_sinfo$datasets %in% "bmc" & merged_sinfo$tumor_descriptor %in% "primary"] %>% sample(10)
+exp_new <- exp_mm[, intersect(c(remaining_samples, remaining_baseline), colnames(exp_mm))]
+
+exp_new_t <- as.data.frame(t(exp_new))
+exp_new_t$sample_id <- rownames(exp_new_t)
+exp_new_t <- left_join(exp_new_t, merged_sinfo[, c("sample_id", covariates)], by = "sample_id")
+exp_new_t <- janitor::clean_names(exp_new_t)
+
+new_pred <- predict(rf_model, data = exp_new_t)$predictions
+y_new <- sinfo_fil$relapse_status[match(colnames(exp_new), sinfo_fil$sample_id)]
+
+cbind(new_pred, y_new)
+roc_obj <- roc(factor(y_new), new_pred[, 1])
+
+
+
+pdf("rf_test.pdf", width = 5, height = 4)
+plot(roc_obj, print.auc = TRUE, main = "Relapse Prediction ROC")
+dev.off()
+
+varimp <- sort(rf_model$variable.importance, decreasing = TRUE)
+top_features <- head(varimp, 30)
+names(top_features) <- names_info$ori_names[match(names(head(varimp, 30)), names_info$new_names)]
+
+
+pdf("rf_top_features.pdf", width = 7, height = 6)
+ggplot(data.frame(Feature = names(top_features), Importance = top_features),
+       aes(x = reorder(Feature, Importance), y = Importance)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(title = "Top 30 Important Features", x = "", y = "Importance")
+dev.off()
+
+
+```
+
+The ROC visualization:
+
+![Subtype prediction of new sample](images/rf_test.png){.align-center width=400px fig-cap="Subtype prediction of new sample" .lightbox}
+
+Top genes contributing to the prediction model:
+
+![Subtype prediction of new sample](images/rf_top_features.png){.align-center width=700px fig-cap="Subtype prediction of new sample" .lightbox}
+
+
+
+
+
+
+
+

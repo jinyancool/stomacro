@@ -1,0 +1,8 @@
+# Welcome {.unnumbered}
+This book presents a comprehensive analysis of molecular subtyping in multiple myeloma among Chinese patients, one of the largest projects I have undertaken. It also marks my first concerted effort to share all code publicly, ensuring accessibility and reproducibility. While exposing potential inefficiencies in the code is humbling, I welcome feedback to refine our approach, code, and scientific methods. I will continue to update this resource to reflect the latest methodologies as the project evolves. Our findings aim to engage clinicians, genomics and bioinformatics specialists, and oncogenesis researchers. The results section offers concise, actionable insights into molecular subtypes, their clinical implications, and potential therapeutic targets, supporting personalized patient care.
+
+## Reproducible research
+Another goal of this book is to help readers to make our result reproducible. The hope is to get readers can reproduce most of our results. For genomics and bioinformatics specialists, we prioritize reproducibility. A companion book will accompany the article, detailing bioinformatics workflows, including data preprocessing, analytical pipelines, software versions, and parameter settings. This resource ensures transparency and enables precise replication of our computational methods.
+
+
+By addressing these diverse audiences, our work bridges clinical practice, computational reproducibility, and mechanistic research, advancing the diagnosis, treatment, and understanding of multiple myeloma in Chinese populations.

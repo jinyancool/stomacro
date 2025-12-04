@@ -1,0 +1,2 @@
+# DNA Data Bank of Japan(DDBJ)
+We performed a search using the keyword "Multiple Myeloma" on the DNA Data Bank of Japan(DDBJ), accessible at [https://www.ddbj.nig.ac.jp/index-e.html](https://www.ddbj.nig.ac.jp/index-e.html).  We identified only one relevant dataset, JGAD000856, which contains single-cell RNA sequencing (scRNA-seq) coupled with VDJ targeted sequencing data. Since our study focuses on transcriptome analysis, we did not utilize this dataset in our research.

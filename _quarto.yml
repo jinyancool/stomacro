@@ -1,0 +1,108 @@
+project:
+  type: book
+  output-dir: docs
+
+book:
+  title: "Stomatology"
+  reader-mode: true
+
+  page-footer:
+    left: |
+      Build by Jhuanglab
+  cover-image: cover.jpg
+  favicon: cover.jpg
+  site-url: https://github.com/jinyancool/
+  repo-url: https://github.com/jinyancool/
+  repo-branch: main
+  repo-actions: [issue]
+  chapters:
+
+    - href: index.qmd
+      text: Preface
+
+    - href: welcome.qmd
+      text: Welcome
+    - href: intro.qmd
+      text: Introduction
+
+    - part: Data Collection
+      chapters:
+        - href: jilin.qmd
+          text: Jilin dataset
+        - href: ngdc.qmd
+          text: Data from NGDC
+
+    - part: Data Preprocessing
+      chapters:
+        - href: qc.qmd
+          text: Quality Control
+        - href: batchrnaseq.qmd
+          text: Batch RNAseq
+        - href: batchscrnaseq.qmd
+          text: Batch SingleCell
+        - href: single_cell_integrate.qmd
+          text: Cell Integration
+    - part: Unsupervised cluster
+      chapters:
+
+        - href: subtypes.qmd
+          text: Subtypes
+        - href: reduce_dim.qmd
+          text: Reduce Dim
+
+    - part: Analysis
+      chapters:
+
+        - href: clinical_info.qmd
+          text: Clinical features
+        - href: polaris.qmd
+          text: Polaris
+        - href: cd44.qmd
+          text: CD44
+        - href: epi_nkt.qmd
+          text: EPI NKT
+
+
+    - part: Visualization
+      chapters:
+        - href: fig1.qmd
+          text: "Figure 1"
+        - href: fig2.qmd
+          text: "Figure 2"
+        - href: fig3.qmd
+          text: "Figure 3"
+
+    - part: Communication
+      chapters:
+        - href: faq.qmd
+          text: FAQ
+        - href: contactus.qmd
+          text: Contact us
+
+    - part: Appendix
+      chapters:
+        - href: functions.qmd
+          text: Functions
+        - href: acknowledgement.qmd
+          text: Acknowledgement
+        - href: final.qmd
+          text: Final Words
+
+    - href: references.qmd
+      text: References
+
+format:
+  html:
+    bibliography: references.bib
+    reference-location: document
+    theme:
+      - cosmo
+      - mm.scss
+    code-link: false
+    code-exec-button: false
+    author-meta: "Jinyan Huang"
+    callout-appearance: simple
+execute:
+  eval: false
+  echo: true
+editor: source

@@ -1,0 +1,15 @@
+# Datasets from the first hospital of Jilin University
+
+This dataset was newly curated for the current study and originates from The First Hospital of Jilin University. Sample collection spanned from 2017 through the end of 2023. The dataset includes 156 RNA-seq and 84 whole-genome sequencing (WGS) datasets derived from 135 individuals, and is expected to reflect the characteristics of Chinese or broader Asian populations to some extent.
+
+Among the collected samples, there are 186 baseline (newly diagnosed) cases, 29 first relapse samples, 17 post-treatment (remission) cases, and 8 others. A total of 202 samples were purified CD138⁺ bone marrow cells, and 38 samples of paired PBMCs were also included, covering multiple clinical timepoints and sample types.
+
+Following Jonathan J. Keats' recommendation, we sequenced whole-genome sequencing (WGS) data to >90x coverage for tumor samples and >30x for matched normals. Typically, 100 Gb corresponds to just over 30x coverage, which may suffice for copy number variation (CNV) analysis in some myeloma samples but is underpowered for detecting structural variants and mutations. Additionally, for mRNA sequencing, we targeted approximately 100 million reads per patient to account for the fact that ~50% of RNA derives from immunoglobulin production, ensuring robust gene expression profiling.
+
+
+In addition, we generated single-cell RNA-seq data from two IgD-type MM samples at The First Hospital of Jilin University. These new data were assembled with public single-cell RNA-seq datasets of MM samples from multiple sources. All single-cell datasets were processed using a standardized pipeline to ensure consistent integration and quality control.
+
+<!-- Below are the basic statistics of this dataset: -->
+
+
+

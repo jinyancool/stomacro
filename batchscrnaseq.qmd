@@ -1,0 +1,5 @@
+# Batch correction for single-cell RNA-seq data
+
+To enable integrative analysis of single-cell RNA-seq data collected from multiple sources, we performed batch effect correction using the Seurat (v5.1) integration workflow. Briefly, each dataset was first normalized and processed independently using NormalizeData(), FindVariableFeatures(), and ScaleData(). Highly variable genes were identified within each dataset and used for subsequent anchor-based integration.
+
+Integration anchors were computed using FindIntegrationAnchors() across datasets, followed by IntegrateData() to generate a batch-corrected expression matrix. The integrated data were then used for downstream dimensionality reduction, clustering, and visualization. To verify the effectiveness of batch correction, we assessed sample mixing in low-dimensional embeddings and examined the alignment of known biological signals across datasets.

@@ -1,0 +1,19 @@
+# Quality control
+Quality control of RNA-seq, WGS and Single cell.
+
+
+## RNA-seq
+Raw RNA-seq reads were first assessed using FastQC to evaluate per-base sequence quality, GC content, adapter contamination, and overrepresented sequences. Trimming of low-quality bases and adapter sequences was performed using trimgalore where necessary.
+Quantification was conducted using Salmon in quasi-mapping mode, with the GENCODE GRCh38 transcriptome as the reference. Transcript-level estimates were summarized to the gene level using tximport, and samples with low mapping rates, abnormal expression distributions, or poor complexity were excluded. Additional checks included principal component analysis (PCA) for outlier detection and sample identity verification via gender marker expression (e.g., XIST, DDX3Y).
+
+## WGS
+Initial QC involving FastQC and trimgalore were also applied for WGS data, where potential low quality bases, adapter contamination, and sequencing errors will be removed in this step. For WGS data, raw reads were aligned to the GRCh38 reference genome using BWA. Duplicates were marked using Picard, and base quality score recalibration (BQSR) was performed with GATK. Coverage metrics, insert size distributions, and depth uniformity were assessed using samtools.
+
+## Single cell
+Single-cell RNA-seq data were processed and quality-controlled following established best practices. Raw sequencing data were aligned and quantified using Cell Ranger (v9.01, 10x Genomics) against the GRCh38 human reference genome. Downstream filtering and normalization were performed using the Seurat (v5.1) R package.
+Low-quality cells were excluded based on three primary metrics:
+* Number of detected genes (nFeature_RNA): Cells with fewer than 200 or more than 5,000 detected genes were excluded to remove likely empty droplets and potential doublets, respectively.
+* UMI counts (nCount_RNA): Cells with abnormally low or high total RNA counts were removed to avoid low-complexity cells and potential multiplets.
+* Mitochondrial gene percentage (%MT): Cells with >15% of total reads mapping to mitochondrial genes were excluded, as this indicates potential apoptosis or technical stress.
+After initial filtering, datasets were log-normalized and scaled. Highly variable genes were selected for dimensionality reduction, and principal component analysis (PCA) was used to identify potential batch effects and outliers.
+In addition to these general QC metrics, a biological filter was applied due to the CD138⁺ selection of bone marrow plasma cells prior to sequencing. To ensure that the resulting single-cell data represented the intended plasma cell population, we retained only samples in which plasma cells accounted for at least 50% of the total cells, as determined by canonical plasma cell markers (e.g., SDC1/CD138, MZB1, PRDM1, XBP1). This threshold ensured consistency with the experimental design and reduced the impact of technical noise or sample impurity in CD138-enriched datasets. Samples failing this criterion were excluded from downstream analysis.
