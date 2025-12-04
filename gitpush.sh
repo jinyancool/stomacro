@@ -1,6 +1,6 @@
 #!/bin/bash
 
-COMMIT_MSG=${1-"MultipleMyeloma"}
+COMMIT_MSG=${1-"stomatology"}
 BRANCH=${2-"main"}
 # Usage: ./gitpush.sh "Your commit message" "branch-name"
 git add .
