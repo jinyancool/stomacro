@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.26">
+<meta name="generator" content="quarto-1.7.31">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -36,15 +36,14 @@ ul.task-list li input[type="checkbox"] {
 <link href="./cover.jpg" rel="icon" type="image/jpeg">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-8df9fc159a2c64db71ab329accd4d345.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-442386bcaee29f7246100ac1b47b78b4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -375,7 +374,10 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>To begin, I assume that you have read through our paper. In the chapters of this book, I present the key components of this study, encompassing the full analytical workflow from data collection to result interpretation. Particular emphasis is placed on the major findings of the research. I hope this book offers useful insights for readers and also contributes, in a small way, to the broader reproducibility community.</p>
+<p>Oral squamous cell carcinoma (OSCC) represents the most common malignancy of the oral cavity and remains a major public health challenge in many regions, particularly in East Asia where incidence rates are among the highest worldwide. Despite advances in surgery, radiotherapy, and systemic therapy, long-term survival has improved only modestly over the past decades, underscoring the need for a deeper molecular understanding to enable precision oncology approaches.</p>
+<p>In this study, we performed comprehensive molecular subtyping of OSCC in one of the largest comprehensively profiled Chinese patient cohorts reported to date. By integrating multi-omics data with detailed clinical annotation, we aimed to define robust, clinically relevant subtypes, elucidate their biological drivers, and identify subtype-specific therapeutic vulnerabilities.</p>
+<p>The following sections and accompanying Supplementary Materials describe the complete analytical workflow—from raw data acquisition and rigorous quality control through integrative clustering, downstream interpretation, and independent validation. All computational steps were implemented in a fully scripted, version-controlled, and containerized pipeline that is publicly released to ensure maximal transparency and reproducibility. We provide all source code, processed datasets, intermediate files, software environments, and detailed documentation in a dedicated repository<a href="https://github.com/jinyancool/stomacro"></a>.</p>
+<p>We anticipate that the molecular framework and open analytical resources presented here will facilitate refined diagnostic classification, inform treatment decision-making, and accelerate the development of targeted therapeutic strategies for OSCC, particularly in East Asian populations.</p>
 
 
 
@@ -431,14 +433,13 @@ ul.task-list li input[type="checkbox"] {
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-      const outerScaffold = trigger.parentElement.cloneNode(true);
-      const codeEl = outerScaffold.querySelector('code');
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
         }
-      }
-      return codeEl.innerText;
+        return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

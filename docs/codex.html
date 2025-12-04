@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.26">
+<meta name="generator" content="quarto-1.7.31">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -71,15 +71,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="./cover.jpg" rel="icon" type="image/jpeg">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-8df9fc159a2c64db71ab329accd4d345.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-442386bcaee29f7246100ac1b47b78b4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -427,7 +426,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="package-load-and-plot-settings." class="level2" data-number="11.1">
 <h2 data-number="11.1" class="anchored" data-anchor-id="package-load-and-plot-settings."><span class="header-section-number">11.1</span> Package load and plot settings.</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.libPaths</span>(<span class="fu">c</span>(<span class="fu">.libPaths</span>(), <span class="st">"/cluster/home/yliang_jh/sbin/R/library/4.3.0"</span>))</span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.libPaths</span>(<span class="fu">c</span>(<span class="fu">.libPaths</span>(), <span class="st">"/cluster/home/yliang_jh/sbin/R/library/4.3.0"</span>))</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pkgs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"fs"</span>, <span class="st">"configr"</span>, <span class="st">"stringr"</span>, </span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">"jhtools"</span>, <span class="st">"glue"</span>, <span class="st">"patchwork"</span>, <span class="st">"tidyverse"</span>, <span class="st">"dplyr"</span>, <span class="st">"Seurat"</span>, <span class="st">"magrittr"</span>, </span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>          <span class="st">"readxl"</span>, <span class="st">"writexl"</span>, <span class="st">"ComplexHeatmap"</span>, </span>
@@ -453,13 +452,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>config <span class="ot">&lt;-</span> <span class="fu">read.config</span>(config_fn)</span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>cell_type_order <span class="ot">&lt;-</span> config<span class="sc">$</span>cell_type_order</span>
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>sampleinfo <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./doc/sampleinfo.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>sampleinfo <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./doc/sampleinfo.rds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="a-barplot-stacked-celltype-frequency" class="level2" data-number="11.2">
 <h2 data-number="11.2" class="anchored" data-anchor-id="a-barplot-stacked-celltype-frequency"><span class="header-section-number">11.2</span> (a) Barplot: stacked celltype frequency</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>srt <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./result/codex/srt_split_anno.rds"</span>)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>srt <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./result/codex/srt_split_anno.rds"</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sampleinfo <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./doc/sampleinfo.rds"</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>spinfo <span class="ot">&lt;-</span> sampleinfo<span class="sc">$</span>codex <span class="sc">%&gt;%</span> <span class="fu">filter</span>(type <span class="sc">==</span> <span class="st">"Tumor"</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -522,13 +521,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major.x =</span> <span class="fu">element_blank</span>(),</span>
 <span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.margin =</span> <span class="fu">margin</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>))</span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"./result/codex/stacked_bar_celltype_freq.pdf"</span>, p_bar, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"./result/codex/stacked_bar_celltype_freq.pdf"</span>, p_bar, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="b-celltype_cn-heatmap_celltype_cn_composition" class="level2" data-number="11.3">
 <h2 data-number="11.3" class="anchored" data-anchor-id="b-celltype_cn-heatmap_celltype_cn_composition"><span class="header-section-number">11.3</span> (b) celltype_cn, heatmap_celltype_cn_composition</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cluster_message <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(<span class="st">"{wkdir}/result/codex/codex_cluster_message.rds"</span>))</span>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>cluster_message <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(<span class="st">"{wkdir}/result/codex/codex_cluster_message.rds"</span>))</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dt_fil <span class="ot">&lt;-</span> cluster_message<span class="sc">$</span>celltype_cn <span class="sc">%&gt;%</span> <span class="fu">as.data.table</span>()</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>mat <span class="ot">&lt;-</span> <span class="fu">melt</span>(dt_fil[, <span class="sc">-</span><span class="st">"n"</span>], <span class="at">id.vars =</span> <span class="fu">c</span>(<span class="st">"cell_id"</span>, <span class="st">"cluster"</span>), <span class="at">variable.name =</span> <span class="st">"celltype"</span>, <span class="at">value.name =</span> <span class="st">"frequency"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  .[, .(<span class="at">freq =</span> <span class="fu">mean</span>(frequency)), by <span class="ot">=</span> .(cluster, celltype)] <span class="sc">%&gt;%</span></span>
@@ -563,13 +562,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>              <span class="at">row_labels =</span> row_labels[<span class="fu">rownames</span>(mat_scale)])</span>
 <span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"./result/codex/heatmap_celltype_cn_composition.pdf"</span>, <span class="at">width =</span> <span class="dv">10</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
 <span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="fu">draw</span>(ht, <span class="at">heatmap_legend_list =</span> lgd_list)</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="c-subtype_cn-heatmap_subtype_cn_composition" class="level2" data-number="11.4">
 <h2 data-number="11.4" class="anchored" data-anchor-id="c-subtype_cn-heatmap_subtype_cn_composition"><span class="header-section-number">11.4</span> (c) subtype_cn, heatmap_subtype_cn_composition</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cluster_message <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(<span class="st">"{wkdir}/result/codex/codex_cluster_message.rds"</span>))</span>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cluster_message <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(<span class="st">"{wkdir}/result/codex/codex_cluster_message.rds"</span>))</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>dt_fil <span class="ot">&lt;-</span> cluster_message<span class="sc">$</span>subtype_cn <span class="sc">%&gt;%</span> <span class="fu">as.data.table</span>()</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -616,13 +615,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>              <span class="at">row_labels =</span> row_labels[<span class="fu">rownames</span>(mat_scale)])</span>
 <span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"./result/codex/heatmap_subtype_cn_composition.pdf"</span>, <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">12</span>)</span>
 <span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a><span class="fu">draw</span>(ht, <span class="at">heatmap_legend_list =</span> lgd_list, <span class="at">padding =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">30</span>), <span class="st">"mm"</span>), <span class="at">heatmap_legend_side =</span> <span class="st">"bottom"</span>)</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="d-celltype_cn-sample_cluster_heatmap_celltype_cn" class="level2" data-number="11.5">
 <h2 data-number="11.5" class="anchored" data-anchor-id="d-celltype_cn-sample_cluster_heatmap_celltype_cn"><span class="header-section-number">11.5</span> (d) celltype_cn, sample_cluster_heatmap_celltype_cn</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>srt <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./result/codex/srt_split_anno.rds"</span>)</span>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>srt <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./result/codex/srt_split_anno.rds"</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>spinfo <span class="ot">&lt;-</span> sampleinfo<span class="sc">$</span>codex</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> srt[[<span class="fu">c</span>(<span class="st">"orig.ident"</span>, <span class="st">"celltype_cn"</span>)]] <span class="sc">%&gt;%</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>() <span class="sc">%&gt;%</span></span>
@@ -660,13 +659,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>              <span class="at">left_annotation =</span> ha)</span>
 <span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="st">"./result/codex/sample_cluster_heatmap_celltype_cn.pdf"</span>, <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">8</span>)</span>
 <span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>ht <span class="ot">&lt;-</span> <span class="fu">draw</span>(ht, <span class="at">padding =</span> <span class="fu">unit</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">2</span>), <span class="st">"mm"</span>))</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="e-subtype_cn-sample_cluster_heatmap_subtype_cn-survival_curve-k10-cl5" class="level2" data-number="11.6">
 <h2 data-number="11.6" class="anchored" data-anchor-id="e-subtype_cn-sample_cluster_heatmap_subtype_cn-survival_curve-k10-cl5"><span class="header-section-number">11.6</span> (e) subtype_cn, sample_cluster_heatmap_subtype_cn, survival_curve (k=10, cl=5)</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">=</span> <span class="dv">10</span></span>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">=</span> <span class="dv">10</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>srt <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"./result/codex/srt_split_anno.rds"</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>spinfo <span class="ot">&lt;-</span> sampleinfo<span class="sc">$</span>codex</span>
@@ -734,13 +733,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>                    <span class="at">palette =</span> config_list<span class="sc">$</span>split_2,</span>
 <span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>                    <span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"RFS - Subtype CN cluster"</span>, i))</span>
 <span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">arrange_ggsurvplots</span>(<span class="fu">list</span>(p), <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">print =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">file.path</span>(<span class="st">"./result/codex/"</span>, <span class="fu">paste0</span>(<span class="st">"sample_cluster_surv_curve_subtype_cn_cl"</span>, i, <span class="st">".pdf"</span>)), p, <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">file.path</span>(<span class="st">"./result/codex/"</span>, <span class="fu">paste0</span>(<span class="st">"sample_cluster_surv_curve_subtype_cn_cl"</span>, i, <span class="st">".pdf"</span>)), p, <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="f-pairwise-cell-interaction-subtype-macrophage_cd44---tumor_cd44-cd4t_cd44---tumor_cd44-cd8t_cd44---tumor_cd44" class="level2" data-number="11.7">
 <h2 data-number="11.7" class="anchored" data-anchor-id="f-pairwise-cell-interaction-subtype-macrophage_cd44---tumor_cd44-cd4t_cd44---tumor_cd44-cd8t_cd44---tumor_cd44"><span class="header-section-number">11.7</span> (f) pairwise cell interaction (subtype): Macrophage_CD44+ - Tumor_CD44+; CD4T_CD44+ - Tumor_CD44+; CD8T_CD44+ - Tumor_CD44+;</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>lst_pci_message <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(<span class="st">"{wkdir}/result/codex/pci_message.rds"</span>))</span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>lst_pci_message <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(<span class="st">"{wkdir}/result/codex/pci_message.rds"</span>))</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>df_res2 <span class="ot">&lt;-</span> lst_pci_message<span class="sc">$</span>df_res</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>df_surv2 <span class="ot">&lt;-</span> lst_pci_message<span class="sc">$</span>df_surv</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -768,13 +767,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> pair_fig[<span class="st">"Macrophage_CD44+-Tumor_CD44+"</span>]</span>
 <span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> pair_fig[<span class="st">"CD8T_CD44+-Tumor_CD44+"</span>]</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> pair_fig[<span class="st">"CD8T_CD44+-Tumor_CD44+"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> pair_fig[<span class="st">"CD8T_CD44+-Tumor_CD44+"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="g-voronoi-plot-in-situ-message-3-2-4-3-4-3-3-5-4" class="level2" data-number="11.8">
 <h2 data-number="11.8" class="anchored" data-anchor-id="g-voronoi-plot-in-situ-message-3-2-4-3-4-3-3-5-4"><span class="header-section-number">11.8</span> (g) voronoi plot in situ message: 3-2-4, 3-4-3, 3-5-4</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>lst_sf_invert <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(<span class="st">"{wkdir}/result/codex/sf_invert_insitu_celltype_message.rds"</span>))</span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>lst_sf_invert <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(<span class="st">"{wkdir}/result/codex/sf_invert_insitu_celltype_message.rds"</span>))</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>voronoi_fig <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>Images <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"3-2-4"</span>, <span class="st">"3-4-3"</span>, <span class="st">"3-5-4"</span>)</span>
@@ -795,13 +794,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> voronoi_fig[<span class="st">"3-2-4"</span>]</span>
 <span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> voronoi_fig[<span class="st">"3-4-3"</span>]</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> voronoi_fig[<span class="st">"3-5-4"</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> voronoi_fig[<span class="st">"3-5-4"</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="h-voronoi-plot-in-situ-message-3-2-4-subtype" class="level2" data-number="11.9">
 <h2 data-number="11.9" class="anchored" data-anchor-id="h-voronoi-plot-in-situ-message-3-2-4-subtype"><span class="header-section-number">11.9</span> (h) voronoi plot in situ message: 3-2-4 subtype</h2>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>lst_sf_invert <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(<span class="st">"{wkdir}/result/codex/sf_invert_insitu_subtype_message.rds"</span>))</span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>lst_sf_invert <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(<span class="st">"{wkdir}/result/codex/sf_invert_insitu_subtype_message.rds"</span>))</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -817,7 +816,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_void</span>() </span>
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="fu">paste0</span>(<span class="st">"./result/codex/voronoi_"</span>, img, <span class="st">"_spatial_subtype_cn_top_map.pdf"</span>), p, </span>
 <span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>         <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">6</span>)</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
@@ -875,14 +874,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-      const outerScaffold = trigger.parentElement.cloneNode(true);
-      const codeEl = outerScaffold.querySelector('code');
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
         }
-      }
-      return codeEl.innerText;
+        return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

@@ -1,16 +1,21 @@
 # Welcome {.unnumbered}
-Here, we report a comprehensive molecular subtyping analysis of oral squamous cell carcinoma (OSCC) performed on one of the largest cohorts of Chinese patients assembled to date. To our knowledge, this study provides the first fully open-source, end-to-end analytical pipeline for genomic subtyping of OSCC. All source code, processed datasets, intermediate files, software environments, and detailed documentation are publicly released to maximize transparency, facilitate independent validation, and promote community-driven refinement.
-We acknowledge that complete openness of the codebase exposes opportunities for methodological and computational improvement. We view this as a deliberate and necessary step toward collaborative science and actively encourage feedback from the research community to strengthen analytical rigor, efficiency, and robustness. The accompanying repository will be continuously maintained and updated to reflect evolving best practices and new algorithmic developments.
-This work is designed to serve multiple audiences: (i) clinicians managing oral cancer, (ii) genomicists and bioinformatics researchers, and (iii) investigators elucidating the molecular pathogenesis of oral cavity malignancies. The Results section emphasizes concise, clinically actionable findings, including subtype prevalence, defining molecular features, prognostic associations, subtype-specific therapeutic vulnerabilities, and prioritized candidate targets—all aimed at accelerating precision oncology strategies for this patient population.
 
-## Reproducible research
-Reproducibility of the complete analytical workflow represents a primary goal of this study, with particular emphasis placed on the needs of the genomics and bioinformatics communities. A dedicated, version-controlled companion repository is provided alongside the manuscript. It contains:
+We are grateful to all patients and clinicians who contributed to this study. This work was designed to serve three primary audiences: (i) clinicians managing oral cancer, (ii) genomicists and bioinformatics researchers, and (iii) investigators seeking to elucidate the molecular pathogenesis of oral cavity malignancies. The Results section therefore prioritizes concise, clinically actionable findings, including subtype prevalence, defining molecular features, prognostic associations, subtype-specific therapeutic vulnerabilities, and prioritized candidate targets, with the aim of accelerating precision oncology approaches in this population.
 
-fully scripted, end-to-end bioinformatics workflows
-exhaustive documentation of data preprocessing and quality-control steps
-exact software versions, dependency lists, and containerized environments (Docker/Singularity) where applicable
-all parameter settings and random seeds employed
-intermediate and final datasets sufficient for bit-for-bit replication
+## Reproducible Research and Open Science
+
+Reproducibility of the entire analytical workflow was a central objective of this study, with particular attention to the needs of the genomics and bioinformatics communities. A dedicated, version-controlled companion repository[ ](https://github.com/%5Byour-repo%5D/OSCC_Chinese_Cohort_Subtyping) is provided alongside this manuscript. The repository contains:
+
+-   Fully scripted, end-to-end bioinformatics workflows implemented in Nextflow/Snakemake and R/Python
+-   Exhaustive documentation of data preprocessing and quality-control procedures
+-   Exact software versions, complete dependency lists, and containerized environments (Docker/Singularity) where applicable
+-   All parameter settings and random seeds used
+-   Intermediate and final datasets sufficient for bit-for-bit replication of results
 
 These resources enable any qualified research group to independently regenerate virtually all figures, tables, and statistical results reported herein when starting from the same raw or processed input data.
-By integrating clinical relevance, computational transparency, and mechanistic insight, this study seeks to bridge translational oncology, reproducible computational research, and fundamental oral cancer biology. We anticipate that the openly available data and methods will support improved diagnostic classification, refined therapeutic decision-making, and deeper understanding of OSCC, particularly in Chinese and East Asian populations, while providing a reusable framework for molecular subtyping studies worldwide.
+
+We deliberately adopted a policy of complete codebase openness, acknowledging that this exposes opportunities for methodological and computational refinement. We regard such openness as essential for collaborative science and actively encourage feedback from the research community to enhance analytical rigor, efficiency, and robustness. The repository will be continuously maintained and updated to incorporate evolving best practices and new algorithmic developments.
+
+By integrating clinical relevance, computational transparency, and mechanistic insight, this study aims to bridge translational oncology, reproducible computational research, and fundamental oral cancer biology. We anticipate that the publicly available data and methods will facilitate improved diagnostic classification, more informed therapeutic decision-making, and deeper understanding of OSCC—particularly in Chinese and broader East Asian populations—while providing a reusable framework for molecular subtyping studies worldwide.
+
+All data supporting the findings of this study are available within the article and its supplementary information files or from the corresponding author upon reasonable request. The source code and analysis pipeline are openly accessible at https://github.com/\[your-repo\]/OSCC_Chinese_Cohort_Subtyping under the MIT license.
