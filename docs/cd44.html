@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.31">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Jinyan Huang">
 
-<title>12&nbsp; CD44 expression level in different groups and clusters – Stomatology</title>
+<title>10&nbsp; CD44 expression level in different groups and clusters – Stomatology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -71,14 +71,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="./cover.jpg" rel="icon" type="image/jpeg">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-e1a5c8363afafaef2c763b6775fbf3ca.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-442386bcaee29f7246100ac1b47b78b4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-8df9fc159a2c64db71ab329accd4d345.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -119,7 +120,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./clinical_info.html">Analysis</a></li><li class="breadcrumb-item"><a href="./cd44.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">CD44</span></a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./clinical_info.html">Analysis</a></li><li class="breadcrumb-item"><a href="./cd44.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">CD44</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -181,14 +182,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./jilin.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Jilin dataset</span></span></a>
+  <a href="./zheyi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Zheyi dataset</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./ngdc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data from NGDC</span></span></a>
+  <a href="./geo.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Data from GEO</span></span></a>
   </div>
 </li>
       </ul>
@@ -231,7 +232,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
- <span class="menu-text">Unsupervised cluster</span></a>
+ <span class="menu-text">Analysis</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -239,14 +240,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./subtypes.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Subtypes</span></span></a>
+  <a href="./clinical_info.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Clinical features</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./reduce_dim.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Reduce Dim</span></span></a>
+  <a href="./polaris.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Polaris</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./codex.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">CODEX</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./cd44.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">CD44</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./epi_nkt.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">EPI NKT</span></span></a>
   </div>
 </li>
       </ul>
@@ -254,7 +273,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true">
- <span class="menu-text">Analysis</span></a>
+ <span class="menu-text">Visualization</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -262,32 +281,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./clinical_info.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Clinical features</span></span></a>
+  <a href="./fig1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Figure 1</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./polaris.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Polaris</span></span></a>
+  <a href="./fig2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Figure 2</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./codex.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">CODEX</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./cd44.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">CD44</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./epi_nkt.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">EPI NKT</span></span></a>
+  <a href="./fig3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Figure 3</span></span></a>
   </div>
 </li>
       </ul>
@@ -295,7 +302,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true">
- <span class="menu-text">Visualization</span></a>
+ <span class="menu-text">Communication</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -303,20 +310,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./fig1.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Figure 1</span></span></a>
+  <a href="./faq.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">FAQ</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./fig2.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Figure 2</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./fig3.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Figure 3</span></span></a>
+  <a href="./contactus.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Contact us</span></span></a>
   </div>
 </li>
       </ul>
@@ -324,7 +325,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true">
- <span class="menu-text">Communication</span></a>
+ <span class="menu-text">Appendix</span></a>
           <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
@@ -332,43 +333,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./faq.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">FAQ</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="./contactus.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Contact us</span></span></a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true">
- <span class="menu-text">Appendix</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" role="navigation" aria-expanded="true" aria-label="Toggle section">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="./functions.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Functions</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Functions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./acknowledgement.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Acknowledgement</span></span></a>
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Acknowledgement</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="./final.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Final Words</span></span></a>
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Final Words</span></span></a>
   </div>
 </li>
       </ul>
@@ -389,27 +367,27 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-  <li><a href="#tidy-sample-id" id="toc-tidy-sample-id" class="nav-link active" data-scroll-target="#tidy-sample-id"><span class="header-section-number">12.1</span> tidy sample id</a></li>
-  <li><a href="#dotplot-visualization-of-cd44-expression-levels-across-individual-clusters-and-samples" id="toc-dotplot-visualization-of-cd44-expression-levels-across-individual-clusters-and-samples" class="nav-link" data-scroll-target="#dotplot-visualization-of-cd44-expression-levels-across-individual-clusters-and-samples"><span class="header-section-number">12.2</span> Dotplot visualization of CD44 expression levels across individual clusters and samples</a></li>
-  <li><a href="#visualize-cd44-expression-levels-by-umap-plot" id="toc-visualize-cd44-expression-levels-by-umap-plot" class="nav-link" data-scroll-target="#visualize-cd44-expression-levels-by-umap-plot"><span class="header-section-number">12.3</span> Visualize CD44 expression levels by umap plot</a></li>
-  <li><a href="#correlation-analysis-of-cd44-with-other-stemness-markers" id="toc-correlation-analysis-of-cd44-with-other-stemness-markers" class="nav-link" data-scroll-target="#correlation-analysis-of-cd44-with-other-stemness-markers"><span class="header-section-number">12.4</span> Correlation Analysis of CD44 with Other Stemness Markers</a></li>
-  <li><a href="#cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k5" id="toc-cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k5" class="nav-link" data-scroll-target="#cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k5"><span class="header-section-number">12.5</span> CD44 expression patterns across samples analyzed by hierarchical clustering (k=5)</a></li>
-  <li><a href="#epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5" id="toc-epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5" class="nav-link" data-scroll-target="#epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5"><span class="header-section-number">12.6</span> EpiCutree-based clustering of immune microenvironment clusters with k=5</a></li>
-  <li><a href="#gene-expression-correlation-between-aldh1a1-and-cd44-in-epi-cluster" id="toc-gene-expression-correlation-between-aldh1a1-and-cd44-in-epi-cluster" class="nav-link" data-scroll-target="#gene-expression-correlation-between-aldh1a1-and-cd44-in-epi-cluster"><span class="header-section-number">12.7</span> Gene expression correlation between ALDH1A1 and CD44 in epi cluster</a></li>
-  <li><a href="#cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k3" id="toc-cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k3" class="nav-link" data-scroll-target="#cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k3"><span class="header-section-number">12.8</span> CD44 expression patterns across samples analyzed by hierarchical clustering (k=3)</a></li>
-  <li><a href="#epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5-1" id="toc-epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5-1" class="nav-link" data-scroll-target="#epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5-1"><span class="header-section-number">12.9</span> EpiCutree-based clustering of immune microenvironment clusters with k=5</a></li>
-  <li><a href="#gene-expression-patterns-and-pathway-enrichment-across-epi-clusters" id="toc-gene-expression-patterns-and-pathway-enrichment-across-epi-clusters" class="nav-link" data-scroll-target="#gene-expression-patterns-and-pathway-enrichment-across-epi-clusters"><span class="header-section-number">12.10</span> Gene Expression Patterns and Pathway Enrichment across Epi-Clusters</a></li>
-  <li><a href="#cytotrace-score-in-all-samples" id="toc-cytotrace-score-in-all-samples" class="nav-link" data-scroll-target="#cytotrace-score-in-all-samples"><span class="header-section-number">12.11</span> Cytotrace score in all samples</a></li>
-  <li><a href="#cytotrace-score-in-tumor-cells" id="toc-cytotrace-score-in-tumor-cells" class="nav-link" data-scroll-target="#cytotrace-score-in-tumor-cells"><span class="header-section-number">12.12</span> Cytotrace score in tumor cells</a></li>
+  <li><a href="#tidy-sample-id" id="toc-tidy-sample-id" class="nav-link active" data-scroll-target="#tidy-sample-id"><span class="header-section-number">10.1</span> tidy sample id</a></li>
+  <li><a href="#dotplot-visualization-of-cd44-expression-levels-across-individual-clusters-and-samples" id="toc-dotplot-visualization-of-cd44-expression-levels-across-individual-clusters-and-samples" class="nav-link" data-scroll-target="#dotplot-visualization-of-cd44-expression-levels-across-individual-clusters-and-samples"><span class="header-section-number">10.2</span> Dotplot visualization of CD44 expression levels across individual clusters and samples</a></li>
+  <li><a href="#visualize-cd44-expression-levels-by-umap-plot" id="toc-visualize-cd44-expression-levels-by-umap-plot" class="nav-link" data-scroll-target="#visualize-cd44-expression-levels-by-umap-plot"><span class="header-section-number">10.3</span> Visualize CD44 expression levels by umap plot</a></li>
+  <li><a href="#correlation-analysis-of-cd44-with-other-stemness-markers" id="toc-correlation-analysis-of-cd44-with-other-stemness-markers" class="nav-link" data-scroll-target="#correlation-analysis-of-cd44-with-other-stemness-markers"><span class="header-section-number">10.4</span> Correlation Analysis of CD44 with Other Stemness Markers</a></li>
+  <li><a href="#cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k5" id="toc-cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k5" class="nav-link" data-scroll-target="#cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k5"><span class="header-section-number">10.5</span> CD44 expression patterns across samples analyzed by hierarchical clustering (k=5)</a></li>
+  <li><a href="#epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5" id="toc-epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5" class="nav-link" data-scroll-target="#epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5"><span class="header-section-number">10.6</span> EpiCutree-based clustering of immune microenvironment clusters with k=5</a></li>
+  <li><a href="#gene-expression-correlation-between-aldh1a1-and-cd44-in-epi-cluster" id="toc-gene-expression-correlation-between-aldh1a1-and-cd44-in-epi-cluster" class="nav-link" data-scroll-target="#gene-expression-correlation-between-aldh1a1-and-cd44-in-epi-cluster"><span class="header-section-number">10.7</span> Gene expression correlation between ALDH1A1 and CD44 in epi cluster</a></li>
+  <li><a href="#cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k3" id="toc-cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k3" class="nav-link" data-scroll-target="#cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k3"><span class="header-section-number">10.8</span> CD44 expression patterns across samples analyzed by hierarchical clustering (k=3)</a></li>
+  <li><a href="#epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5-1" id="toc-epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5-1" class="nav-link" data-scroll-target="#epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5-1"><span class="header-section-number">10.9</span> EpiCutree-based clustering of immune microenvironment clusters with k=5</a></li>
+  <li><a href="#gene-expression-patterns-and-pathway-enrichment-across-epi-clusters" id="toc-gene-expression-patterns-and-pathway-enrichment-across-epi-clusters" class="nav-link" data-scroll-target="#gene-expression-patterns-and-pathway-enrichment-across-epi-clusters"><span class="header-section-number">10.10</span> Gene Expression Patterns and Pathway Enrichment across Epi-Clusters</a></li>
+  <li><a href="#cytotrace-score-in-all-samples" id="toc-cytotrace-score-in-all-samples" class="nav-link" data-scroll-target="#cytotrace-score-in-all-samples"><span class="header-section-number">10.11</span> Cytotrace score in all samples</a></li>
+  <li><a href="#cytotrace-score-in-tumor-cells" id="toc-cytotrace-score-in-tumor-cells" class="nav-link" data-scroll-target="#cytotrace-score-in-tumor-cells"><span class="header-section-number">10.12</span> Cytotrace score in tumor cells</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/jinyancool/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./clinical_info.html">Analysis</a></li><li class="breadcrumb-item"><a href="./cd44.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">CD44</span></a></li></ol></nav>
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./clinical_info.html">Analysis</a></li><li class="breadcrumb-item"><a href="./cd44.html"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">CD44</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">CD44 expression level in different groups and clusters</span></h1>
+<h1 class="title"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">CD44 expression level in different groups and clusters</span></h1>
 </div>
 
 
@@ -427,13 +405,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>This workflow illustrates the expression patterns of stemness markers, particularly CD44, across different experimental samples and Epithelial clusters.</p>
-<section id="tidy-sample-id" class="level2" data-number="12.1">
-<h2 data-number="12.1" class="anchored" data-anchor-id="tidy-sample-id"><span class="header-section-number">12.1</span> tidy sample id</h2>
+<section id="tidy-sample-id" class="level2" data-number="10.1">
+<h2 data-number="10.1" class="anchored" data-anchor-id="tidy-sample-id"><span class="header-section-number">10.1</span> tidy sample id</h2>
 </section>
-<section id="dotplot-visualization-of-cd44-expression-levels-across-individual-clusters-and-samples" class="level2" data-number="12.2">
-<h2 data-number="12.2" class="anchored" data-anchor-id="dotplot-visualization-of-cd44-expression-levels-across-individual-clusters-and-samples"><span class="header-section-number">12.2</span> Dotplot visualization of CD44 expression levels across individual clusters and samples</h2>
+<section id="dotplot-visualization-of-cd44-expression-levels-across-individual-clusters-and-samples" class="level2" data-number="10.2">
+<h2 data-number="10.2" class="anchored" data-anchor-id="dotplot-visualization-of-cd44-expression-levels-across-individual-clusters-and-samples"><span class="header-section-number">10.2</span> Dotplot visualization of CD44 expression levels across individual clusters and samples</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CD44 dotplot - sample vs celltype</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CD44 dotplot - sample vs celltype</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>dt_expr <span class="ot">&lt;-</span> <span class="fu">FetchData</span>(srt, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">"sample_id"</span>, <span class="st">"celltype"</span>, <span class="st">"CD44"</span>), <span class="at">layer =</span> <span class="st">"data"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.table</span>()</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> dt_expr[, .(<span class="at">pct_expr =</span> <span class="fu">mean</span>(CD44 <span class="sc">&gt;</span> <span class="dv">0</span>) <span class="sc">*</span> <span class="dv">100</span>,</span>
@@ -449,13 +427,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Sample ID"</span>, <span class="at">y =</span> <span class="st">"Cell Type"</span>,  </span>
 <span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">color =</span> <span class="st">"Average Expression"</span>, <span class="at">size =</span> <span class="st">"Percent Expressed"</span>)</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir,<span class="st">"output/CD44/CD44_expr_in_sample_vs_celltype.pdf"</span>), p, <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">6</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir,<span class="st">"output/CD44/CD44_expr_in_sample_vs_celltype.pdf"</span>), p, <span class="at">width =</span> <span class="dv">15</span>, <span class="at">height =</span> <span class="dv">6</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="visualize-cd44-expression-levels-by-umap-plot" class="level2" data-number="12.3">
-<h2 data-number="12.3" class="anchored" data-anchor-id="visualize-cd44-expression-levels-by-umap-plot"><span class="header-section-number">12.3</span> Visualize CD44 expression levels by umap plot</h2>
+<section id="visualize-cd44-expression-levels-by-umap-plot" class="level2" data-number="10.3">
+<h2 data-number="10.3" class="anchored" data-anchor-id="visualize-cd44-expression-levels-by-umap-plot"><span class="header-section-number">10.3</span> Visualize CD44 expression levels by umap plot</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CD44 and other stemness markers in tumor</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CD44 and other stemness markers in tumor</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>srt_epi <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"srt_epi.rds"</span>) <span class="do">## unsavedbu</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>marker_stem <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"CD44"</span>, <span class="st">"PROM1"</span>, <span class="st">"SOX2"</span>, <span class="st">"NANOG"</span>, <span class="st">"POU5F1"</span>, <span class="st">"BMI1"</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">FeaturePlot</span>(srt_epi, <span class="at">reduction =</span> <span class="st">"umap"</span>, <span class="at">features =</span> marker_stem, <span class="at">ncol =</span> <span class="dv">3</span>, <span class="at">raster =</span> <span class="cn">TRUE</span>)</span>
@@ -463,13 +441,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">plot_density</span>(srt_epi, marker_stem, <span class="at">reduction =</span> <span class="st">"umap"</span>, <span class="at">raster =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">ncol =</span> <span class="dv">3</span>)</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir,<span class="st">"output/CD44/umap_density_stemness_markers.pdf"</span>), p, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir,<span class="st">"output/CD44/umap_density_stemness_markers.pdf"</span>), p, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="correlation-analysis-of-cd44-with-other-stemness-markers" class="level2" data-number="12.4">
-<h2 data-number="12.4" class="anchored" data-anchor-id="correlation-analysis-of-cd44-with-other-stemness-markers"><span class="header-section-number">12.4</span> Correlation Analysis of CD44 with Other Stemness Markers</h2>
+<section id="correlation-analysis-of-cd44-with-other-stemness-markers" class="level2" data-number="10.4">
+<h2 data-number="10.4" class="anchored" data-anchor-id="correlation-analysis-of-cd44-with-other-stemness-markers"><span class="header-section-number">10.4</span> Correlation Analysis of CD44 with Other Stemness Markers</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> <span class="fu">FetchData</span>(srt_epi, <span class="at">vars =</span> marker_stem, <span class="at">layer =</span> <span class="st">"data"</span>) <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> <span class="fu">FetchData</span>(srt_epi, <span class="at">vars =</span> marker_stem, <span class="at">layer =</span> <span class="st">"data"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> PROM1<span class="sc">:</span>BMI1, <span class="at">names_to =</span> <span class="st">"gene"</span>, <span class="at">values_to =</span> <span class="st">"expr"</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> pt <span class="sc">%&gt;%</span> <span class="fu">filter</span>(CD44 <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> expr <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pt, <span class="fu">aes</span>(CD44, expr)) <span class="sc">+</span></span>
@@ -479,13 +457,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_cor</span>(<span class="at">method =</span> <span class="st">"pearson"</span>) <span class="sc">+</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir,<span class="st">"output/CD44/correlation_CD44_stemness_markers.pdf"</span>), p, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir,<span class="st">"output/CD44/correlation_CD44_stemness_markers.pdf"</span>), p, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k5" class="level2" data-number="12.5">
-<h2 data-number="12.5" class="anchored" data-anchor-id="cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k5"><span class="header-section-number">12.5</span> CD44 expression patterns across samples analyzed by hierarchical clustering (k=5)</h2>
+<section id="cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k5" class="level2" data-number="10.5">
+<h2 data-number="10.5" class="anchored" data-anchor-id="cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k5"><span class="header-section-number">10.5</span> CD44 expression patterns across samples analyzed by hierarchical clustering (k=5)</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> <span class="fu">FetchData</span>(srt_epi, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">"CD44"</span>, <span class="st">"sample_id"</span>), <span class="at">layer =</span> <span class="st">"data"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> <span class="fu">FetchData</span>(srt_epi, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">"CD44"</span>, <span class="st">"sample_id"</span>), <span class="at">layer =</span> <span class="st">"data"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pt, <span class="fu">aes</span>(CD44, sample_id)) <span class="sc">+</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_density_ridges</span>(<span class="fu">aes</span>(<span class="at">fill =</span> sample_id)) <span class="sc">+</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
@@ -523,14 +501,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>clusters <span class="ot">&lt;-</span> <span class="fu">cutree</span>(hc, <span class="at">k =</span> <span class="dv">5</span>)</span>
 <span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>df_cl <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">sample_id =</span> <span class="fu">names</span>(clusters),</span>
 <span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>                    <span class="at">cluster =</span> clusters)</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="fu">fwrite</span>(df_cl, <span class="fu">glue</span>(figure_dir,<span class="st">"output/CD44/density_CD44_sample_hclust.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="fu">fwrite</span>(df_cl, <span class="fu">glue</span>(figure_dir,<span class="st">"output/CD44/density_CD44_sample_hclust.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5" class="level2" data-number="12.6">
-<h2 data-number="12.6" class="anchored" data-anchor-id="epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5"><span class="header-section-number">12.6</span> EpiCutree-based clustering of immune microenvironment clusters with k=5</h2>
+<section id="epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5" class="level2" data-number="10.6">
+<h2 data-number="10.6" class="anchored" data-anchor-id="epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5"><span class="header-section-number">10.6</span> EpiCutree-based clustering of immune microenvironment clusters with k=5</h2>
 <p>The following code generates a visualization displaying both immune microenvironment clusters across samples and tumor cell-driven sample clustering, dividing the dataset into five distinct subgroups.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>srt <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(rds_dir,<span class="st">"srt_integrated_anno.rds"</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>srt <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(rds_dir,<span class="st">"srt_integrated_anno.rds"</span>))</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> srt[[<span class="fu">c</span>(<span class="st">"sample_id"</span>, <span class="st">"celltype"</span>)]]</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span>cluster <span class="ot">&lt;-</span> df_cl<span class="sc">$</span>cluster[<span class="fu">match</span>(pt<span class="sc">$</span>sample_id, df_cl<span class="sc">$</span>sample_id)]</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span>sample_id <span class="ot">&lt;-</span> <span class="fu">factor</span>(pt<span class="sc">$</span>sample_id, <span class="at">levels =</span> sp_order)</span>
@@ -569,13 +547,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>df_res <span class="ot">&lt;-</span> <span class="fu">setReadable</span>(res, <span class="at">OrgDb =</span> <span class="st">"org.Hs.eg.db"</span>, <span class="at">keyType=</span><span class="st">"ENTREZID"</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.frame</span>()</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="fu">fwrite</span>(<span class="fu">glue</span>(figure_dir, df_res, <span class="st">"output/CD44/CD44_cluster_markers_enrichment_KEGG.csv"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="fu">fwrite</span>(<span class="fu">glue</span>(figure_dir, df_res, <span class="st">"output/CD44/CD44_cluster_markers_enrichment_KEGG.csv"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="gene-expression-correlation-between-aldh1a1-and-cd44-in-epi-cluster" class="level2" data-number="12.7">
-<h2 data-number="12.7" class="anchored" data-anchor-id="gene-expression-correlation-between-aldh1a1-and-cd44-in-epi-cluster"><span class="header-section-number">12.7</span> Gene expression correlation between ALDH1A1 and CD44 in epi cluster</h2>
+<section id="gene-expression-correlation-between-aldh1a1-and-cd44-in-epi-cluster" class="level2" data-number="10.7">
+<h2 data-number="10.7" class="anchored" data-anchor-id="gene-expression-correlation-between-aldh1a1-and-cd44-in-epi-cluster"><span class="header-section-number">10.7</span> Gene expression correlation between ALDH1A1 and CD44 in epi cluster</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>srt_epi <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"srt_epi.rds"</span>) <span class="do">## unsaved</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>srt_epi <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"srt_epi.rds"</span>) <span class="do">## unsaved</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">FeaturePlot</span>(srt_epi, <span class="at">reduction =</span> <span class="st">"umap"</span>, <span class="at">features =</span> <span class="st">"ALDH1A1"</span>, <span class="at">raster =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir,<span class="st">"output/CD44/umap_stemness_markers_ALDH1A1.pdf"</span>), p, <span class="at">width =</span> <span class="dv">5</span>, <span class="at">height =</span> <span class="dv">5</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -592,13 +570,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_cor</span>(<span class="at">method =</span> <span class="st">"pearson"</span>) <span class="sc">+</span></span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir,<span class="st">"output/CD44/correlation_CD44_stemness_markers_ALDH1A1.pdf"</span>), p, <span class="at">width =</span> <span class="dv">5</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir,<span class="st">"output/CD44/correlation_CD44_stemness_markers_ALDH1A1.pdf"</span>), p, <span class="at">width =</span> <span class="dv">5</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k3" class="level2" data-number="12.8">
-<h2 data-number="12.8" class="anchored" data-anchor-id="cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k3"><span class="header-section-number">12.8</span> CD44 expression patterns across samples analyzed by hierarchical clustering (k=3)</h2>
+<section id="cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k3" class="level2" data-number="10.8">
+<h2 data-number="10.8" class="anchored" data-anchor-id="cd44-expression-patterns-across-samples-analyzed-by-hierarchical-clustering-k3"><span class="header-section-number">10.8</span> CD44 expression patterns across samples analyzed by hierarchical clustering (k=3)</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>srt_epi <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"srt_epi.rds"</span>)<span class="do">## unsaved</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>srt_epi <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"srt_epi.rds"</span>)<span class="do">## unsaved</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> <span class="fu">FetchData</span>(srt_epi, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">"CD44"</span>, <span class="st">"sample_id"</span>), <span class="at">layer =</span> <span class="st">"data"</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ks test &amp; hclust</span></span>
@@ -638,14 +616,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"brown2"</span>, <span class="st">"#4696E6"</span>, <span class="st">"#3CB371"</span>)) <span class="sc">+</span></span>
 <span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">fill =</span> <span class="st">"cluster"</span>) <span class="sc">+</span></span>
 <span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir, <span class="st">"output/CD44/density_CD44_sample_cluster_k3.pdf"</span>), p, <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">12</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir, <span class="st">"output/CD44/density_CD44_sample_cluster_k3.pdf"</span>), p, <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">12</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5-1" class="level2" data-number="12.9">
-<h2 data-number="12.9" class="anchored" data-anchor-id="epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5-1"><span class="header-section-number">12.9</span> EpiCutree-based clustering of immune microenvironment clusters with k=5</h2>
+<section id="epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5-1" class="level2" data-number="10.9">
+<h2 data-number="10.9" class="anchored" data-anchor-id="epicutree-based-clustering-of-immune-microenvironment-clusters-with-k5-1"><span class="header-section-number">10.9</span> EpiCutree-based clustering of immune microenvironment clusters with k=5</h2>
 <p>The following code generates a visualization displaying both immune microenvironment clusters across samples and tumor cell-driven sample clustering, dividing the dataset into three distinct subgroups.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>srt <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(rds_dir,<span class="st">"srt_integrated_anno.rds"</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>srt <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(rds_dir,<span class="st">"srt_integrated_anno.rds"</span>))</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> srt[[<span class="fu">c</span>(<span class="st">"sample_id"</span>, <span class="st">"celltype"</span>)]]</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span>cluster <span class="ot">&lt;-</span> df_cl<span class="sc">$</span>cluster[<span class="fu">match</span>(pt<span class="sc">$</span>sample_id, df_cl<span class="sc">$</span>sample_id)]</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>pt<span class="sc">$</span>sample_id <span class="ot">&lt;-</span> <span class="fu">factor</span>(pt<span class="sc">$</span>sample_id, <span class="at">levels =</span> sp_order)</span>
@@ -686,13 +664,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">width =</span> <span class="fl">0.6</span>, <span class="at">outlier.shape =</span> <span class="cn">NA</span>) <span class="sc">+</span></span>
 <span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> colors_cl) <span class="sc">+</span></span>
 <span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir, <span class="st">"output/CD44/boxplot_CD44_cluster_celltype_prop_k3.pdf"</span>), p, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir, <span class="st">"output/CD44/boxplot_CD44_cluster_celltype_prop_k3.pdf"</span>), p, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">4</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="gene-expression-patterns-and-pathway-enrichment-across-epi-clusters" class="level2" data-number="12.10">
-<h2 data-number="12.10" class="anchored" data-anchor-id="gene-expression-patterns-and-pathway-enrichment-across-epi-clusters"><span class="header-section-number">12.10</span> Gene Expression Patterns and Pathway Enrichment across Epi-Clusters</h2>
+<section id="gene-expression-patterns-and-pathway-enrichment-across-epi-clusters" class="level2" data-number="10.10">
+<h2 data-number="10.10" class="anchored" data-anchor-id="gene-expression-patterns-and-pathway-enrichment-across-epi-clusters"><span class="header-section-number">10.10</span> Gene Expression Patterns and Pathway Enrichment across Epi-Clusters</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># diff gene &amp; enrich</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># diff gene &amp; enrich</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Idents</span>(srt_epi) <span class="ot">&lt;-</span> df_cl<span class="sc">$</span>cluster[<span class="fu">match</span>(srt_epi<span class="sc">$</span>sample_id, df_cl<span class="sc">$</span>sample_id)]</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>markers <span class="ot">&lt;-</span> <span class="fu">FindAllMarkers</span>(srt_epi)</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">fwrite</span>(markers, <span class="fu">glue</span>(figure_dir, <span class="st">"output/CD44/CD44_cluster_markers_k3.csv"</span>))</span>
@@ -742,13 +720,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>hts <span class="ot">&lt;-</span> pt <span class="sc">%&gt;%</span> <span class="fu">count</span>(cluster) <span class="sc">%&gt;%</span> <span class="fu">pull</span>(n)</span>
 <span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">wrap_plots</span>(p_lst, <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">heights =</span> hts)</span>
-<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir,<span class="st">"output/CD44/CD44_cluster_markers_enrichment_KEGG_k3_poi_barplot.pdf"</span>), p, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir,<span class="st">"output/CD44/CD44_cluster_markers_enrichment_KEGG_k3_poi_barplot.pdf"</span>), p, <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">8</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="cytotrace-score-in-all-samples" class="level2" data-number="12.11">
-<h2 data-number="12.11" class="anchored" data-anchor-id="cytotrace-score-in-all-samples"><span class="header-section-number">12.11</span> Cytotrace score in all samples</h2>
+<section id="cytotrace-score-in-all-samples" class="level2" data-number="10.11">
+<h2 data-number="10.11" class="anchored" data-anchor-id="cytotrace-score-in-all-samples"><span class="header-section-number">10.11</span> Cytotrace score in all samples</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dss <span class="ot">&lt;-</span> srt<span class="sc">$</span>dataset <span class="sc">%&gt;%</span> <span class="fu">unique</span>()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>dss <span class="ot">&lt;-</span> srt<span class="sc">$</span>dataset <span class="sc">%&gt;%</span> <span class="fu">unique</span>()</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>res_lst <span class="ot">&lt;-</span> <span class="fu">lapply</span>(dss, <span class="cf">function</span>(ds){</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  srt_s <span class="ot">&lt;-</span> <span class="fu">subset</span>(srt, <span class="at">subset =</span> dataset <span class="sc">==</span> ds)</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  srt_s <span class="ot">&lt;-</span> <span class="fu">cytotrace2</span>(srt_s,   </span>
@@ -768,13 +746,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>srt <span class="ot">&lt;-</span> <span class="fu">AddMetaData</span>(srt, <span class="at">metadata =</span> res)</span>
 <span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>srt<span class="sc">$</span>CytoTRACE2_Relative_Score <span class="ot">&lt;-</span> scales<span class="sc">::</span><span class="fu">rescale</span>(srt<span class="sc">$</span>CytoTRACE2_Score)</span>
 <span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(res, <span class="fu">glue</span>(rds_dir,<span class="st">"output/cytotrace/res_cytotrace.rds"</span>))</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(srt, <span class="fu">glue</span>(rds_dir,<span class="st">"srt_integrated_anno.rds"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(srt, <span class="fu">glue</span>(rds_dir,<span class="st">"srt_integrated_anno.rds"</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
-<section id="cytotrace-score-in-tumor-cells" class="level2" data-number="12.12">
-<h2 data-number="12.12" class="anchored" data-anchor-id="cytotrace-score-in-tumor-cells"><span class="header-section-number">12.12</span> Cytotrace score in tumor cells</h2>
+<section id="cytotrace-score-in-tumor-cells" class="level2" data-number="10.12">
+<h2 data-number="10.12" class="anchored" data-anchor-id="cytotrace-score-in-tumor-cells"><span class="header-section-number">10.12</span> Cytotrace score in tumor cells</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>srt_epi <span class="ot">&lt;-</span> <span class="fu">subset</span>(srt, <span class="at">subset =</span> celltype <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Epithelial"</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>srt_epi <span class="ot">&lt;-</span> <span class="fu">subset</span>(srt, <span class="at">subset =</span> celltype <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"Epithelial"</span>))</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>srt_epi[[<span class="st">"RNA"</span>]] <span class="ot">&lt;-</span> <span class="fu">split</span>(srt_epi[[<span class="st">"RNA"</span>]], <span class="at">f =</span> srt_epi<span class="sc">$</span>dataset)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>srt_epi <span class="ot">&lt;-</span> <span class="fu">NormalizeData</span>(srt_epi) <span class="sc">%&gt;%</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">FindVariableFeatures</span>() <span class="sc">%&gt;%</span></span>
@@ -829,7 +807,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
 <span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_cor</span>(<span class="at">method =</span> <span class="st">"pearson"</span>) <span class="sc">+</span></span>
 <span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
-<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir,<span class="st">"output/cytotrace/correlation_CD44_cytotrace.pdf"</span>), p, <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(figure_dir,<span class="st">"output/cytotrace/correlation_CD44_cytotrace.pdf"</span>), p, <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 
@@ -887,13 +865,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
@@ -1238,12 +1217,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
       <a href="./codex.html" class="pagination-link" aria-label="CODEX">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">CODEX</span></span>
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">CODEX</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="./epi_nkt.html" class="pagination-link" aria-label="EPI NKT">
-        <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">EPI NKT</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">EPI NKT</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
