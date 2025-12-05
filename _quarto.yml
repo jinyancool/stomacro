@@ -27,10 +27,10 @@ book:
 
     - part: Data Collection
       chapters:
-        - href: jilin.qmd
-          text: Jilin dataset
-        - href: ngdc.qmd
-          text: Data from NGDC
+        - href: zheyi.qmd
+          text: Zheyi dataset
+        - href: geo.qmd
+          text: Data from GEO
 
     - part: Data Preprocessing
       chapters:
