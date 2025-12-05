@@ -1,7 +1,5 @@
 # CODEX
-
 ## Package load and plot settings.
-
 
 ```{r warning=FALSE}
 .libPaths(c(.libPaths(), "/cluster/home/yliang_jh/sbin/R/library/4.3.0"))
@@ -14,28 +12,19 @@ for (pkg in pkgs){
   suppressPackageStartupMessages(library(pkg, character.only = T))
 }
 source("func_utils.R")
-
 knitr::opts_chunk$set(message = FALSE)
-
 wkdir <- glue("/cluster/home/lixiyue_jh/projects/quarto/stomatology_lvjiong/quarto_book") %>% setwd()
 fs::dir_create("./result/codex")
-
-
 
 # colors setting
 config_fn = "/cluster/home/lixiyue_jh/projects/quarto/stomatology_lvjiong/quarto_book/colors.yaml"
 config_list <- show_me_the_colors(config_fn, "all")
 colors_celltype <- config_list$cell_type
-
 config <- read.config(config_fn)
 cell_type_order <- config$cell_type_order
-
 sampleinfo <- readRDS("./doc/sampleinfo.rds")
 
 ```
-
-
-
 
 ## (a) Barplot: stacked celltype frequency
 
@@ -459,11 +448,7 @@ print(p3)
 
 ```{r warning=FALSE, message=FALSE, cache=FALSE}
 
-
 lst_sf_invert <- readRDS(glue("{wkdir}/result/codex/sf_invert_insitu_subtype_message.rds"))
-
-
-
 
 imgs = c("3-2-4")
 

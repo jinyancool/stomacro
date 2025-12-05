@@ -8,7 +8,7 @@
 
 <meta name="author" content="Jinyan Huang">
 
-<title>The Oral Carcinoma Project</title>
+<title>5&nbsp; Batch correction for single-cell RNA-seq data – Stomatology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -21,27 +21,7 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-/* CSS for citations */
-div.csl-bib-body { }
-div.csl-entry {
-  clear: both;
-  margin-bottom: 0em;
-}
-.hanging-indent div.csl-entry {
-  margin-left:2em;
-  text-indent:-2em;
-}
-div.csl-left-margin {
-  min-width:2em;
-  float:left;
-}
-div.csl-right-inline {
-  margin-left:2em;
-  padding-left:1em;
-}
-div.csl-indent {
-  margin-left: 2em;
-}</style>
+</style>
 
 
 <script src="site_libs/quarto-nav/quarto-nav.js"></script>
@@ -51,7 +31,8 @@ div.csl-indent {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
-<link href="./welcome.html" rel="next">
+<link href="./single_cell_integrate.html" rel="next">
+<link href="./batchrnaseq.html" rel="prev">
 <link href="./cover.jpg" rel="icon" type="image/jpeg">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -103,7 +84,7 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./index.html">Preface</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./qc.html">Data Preprocessing</a></li><li class="breadcrumb-item"><a href="./batchscrnaseq.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Batch SingleCell</span></a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -138,7 +119,7 @@ div.csl-indent {
     <ul class="list-unstyled mt-1">
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./index.html" class="sidebar-item-text sidebar-link active">
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Preface</span></a>
   </div>
 </li>
@@ -200,7 +181,7 @@ div.csl-indent {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./batchscrnaseq.html" class="sidebar-item-text sidebar-link">
+  <a href="./batchscrnaseq.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Batch SingleCell</span></span></a>
   </div>
 </li>
@@ -368,21 +349,15 @@ div.csl-indent {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">Table of contents</h2>
-   
-  <ul>
-  <li><a href="#preface" id="toc-preface" class="nav-link active" data-scroll-target="#preface">Preface</a></li>
-  </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/jinyancool/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
-<header id="title-block-header" class="quarto-title-block default">
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./qc.html">Data Preprocessing</a></li><li class="breadcrumb-item"><a href="./batchscrnaseq.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Batch SingleCell</span></a></li></ol></nav>
 <div class="quarto-title">
-<h1 class="title">The Oral Carcinoma Project</h1>
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Batch correction for single-cell RNA-seq data</span></h1>
 </div>
 
 
@@ -399,31 +374,10 @@ div.csl-indent {
 </header>
 
 
-
-<section id="preface" class="level1 unnumbered">
-<h1 class="unnumbered">Preface</h1><p><img src="cover.jpg" title="Stomatology" class="quarto-cover-image nolightbox img-fluid"></p>
-<p>I would like to express my sincere gratitude to the Chinese Association for Blood Sciences (CABS) for their outstanding organization of the 2022 conference and the memorable football match held in Shanghai. These events provided a valuable platform for scientific exchange and helped foster meaningful connections among researchers.</p>
-<p>During the conference, I had the privilege of engaging in a stimulating discussion with Professor Dai Yun from the First Hospital of Jilin University. Our conversation took place at our hotel following the football match and focused on recent advancements in the molecular subtyping of hematological malignancies. I highlighted the significant progress made in refining molecular classifications for B-cell precursor acute lymphoblastic leukemia (BCP-ALL)<span class="citation" data-cites="RN4 RN2">(<a href="#ref-RN4" role="doc-biblioref">Liu et al. 2016</a>; <a href="#ref-RN2" role="doc-biblioref">Li et al. 2018</a>)</span> and T-cell acute lymphoblastic leukemia (T-ALL)<span class="citation" data-cites="RN3 RN1">(<a href="#ref-RN3" role="doc-biblioref">Chen et al. 2018</a>; <a href="#ref-RN1" role="doc-biblioref">Dai et al. 2022</a>)</span>. These advances have enhanced diagnostic precision and opened new avenues for targeted therapies.</p>
-<p>In response, Professor Dai shared his insights on the molecular classification of multiple myeloma, emphasizing its inherent complexity—particularly in Chinese and broader Asian populations. He noted that patients in these groups often exhibit distinct molecular and clinical features compared to their Western counterparts, posing unique challenges for diagnosis and treatment. Intrigued by this perspective, Professor Dai proposed a collaborative research initiative aimed at improving molecular subtyping specifically for Chinese patients with multiple myeloma. He suggested that methodologies and insights from BCP-ALL and T-ALL research could be adapted to address these challenges.</p>
-<p>I found Professor Dai’s proposal both compelling and timely, as it aligns with the growing demand for precision medicine tailored to diverse populations. Our discussion sparked enthusiasm for exploring how cutting-edge molecular techniques—such as next-generation sequencing and integrated genomic profiling—could be leveraged to better characterize multiple myeloma in Chinese patients. This exchange laid the groundwork for our current collaborative project, which seeks to bridge the gap in molecular subtyping and improve patient outcomes through personalized approaches.</p>
-<p>This initiative reflects the spirit of international collaboration encouraged by events such as the CABS conference, and I am optimistic about its potential to advance our understanding of multiple myeloma and contribute to more effective, population-specific therapeutic strategies.</p>
+<p>To enable integrative analysis of single-cell RNA-seq data collected from multiple sources, we performed batch effect correction using the Seurat (v5.1) integration workflow. Briefly, each dataset was first normalized and processed independently using NormalizeData(), FindVariableFeatures(), and ScaleData(). Highly variable genes were identified within each dataset and used for subsequent anchor-based integration.</p>
+<p>Integration anchors were computed using FindIntegrationAnchors() across datasets, followed by IntegrateData() to generate a batch-corrected expression matrix. The integrated data were then used for downstream dimensionality reduction, clustering, and visualization. To verify the effectiveness of batch correction, we assessed sample mixing in low-dimensional embeddings and examined the alignment of known biological signals across datasets.</p>
 
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
-<div id="ref-RN3" class="csl-entry" role="listitem">
-Chen, B., L. Jiang, M. L. Zhong, J. F. Li, B. S. Li, L. J. Peng, Y. T. Dai, et al. 2018. <span>“Identification of Fusion Genes and Characterization of Transcriptome Features in t-Cell Acute Lymphoblastic Leukemia.”</span> Journal Article. <em>Proc Natl Acad Sci U S A</em> 115 (2): 373–78. <a href="https://doi.org/10.1073/pnas.1717125115">https://doi.org/10.1073/pnas.1717125115</a>.
-</div>
-<div id="ref-RN1" class="csl-entry" role="listitem">
-Dai, Y. T., F. Zhang, H. Fang, J. F. Li, G. Lu, L. Jiang, B. Chen, et al. 2022. <span>“Transcriptome-Wide Subtyping of Pediatric and Adult t Cell Acute Lymphoblastic Leukemia in an International Study of 707 Cases.”</span> Journal Article. <em>Proc Natl Acad Sci U S A</em> 119 (15): e2120787119. <a href="https://doi.org/10.1073/pnas.2120787119">https://doi.org/10.1073/pnas.2120787119</a>.
-</div>
-<div id="ref-RN2" class="csl-entry" role="listitem">
-Li, J. F., Y. T. Dai, H. Lilljebjorn, S. H. Shen, B. W. Cui, L. Bai, Y. F. Liu, et al. 2018. <span>“Transcriptional Landscape of b Cell Precursor Acute Lymphoblastic Leukemia Based on an International Study of 1,223 Cases.”</span> Journal Article. <em>Proc Natl Acad Sci U S A</em> 115 (50): E11711–20. <a href="https://doi.org/10.1073/pnas.1814397115">https://doi.org/10.1073/pnas.1814397115</a>.
-</div>
-<div id="ref-RN4" class="csl-entry" role="listitem">
-Liu, Y. F., B. Y. Wang, W. N. Zhang, J. Y. Huang, B. S. Li, M. Zhang, L. Jiang, et al. 2016. <span>“Genomic Profiling of Adult and Pediatric b-Cell Acute Lymphoblastic Leukemia.”</span> Journal Article. <em>EBioMedicine</em> 8: 173–83. <a href="https://doi.org/10.1016/j.ebiom.2016.04.038">https://doi.org/10.1016/j.ebiom.2016.04.038</a>.
-</div>
-</div>
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -827,10 +781,13 @@ Liu, Y. F., B. Y. Wang, W. N. Zhang, J. Y. Huang, B. S. Li, M. Zhang, L. Jiang, 
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
+      <a href="./batchrnaseq.html" class="pagination-link" aria-label="Batch RNAseq">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Batch RNAseq</span></span>
+      </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="./welcome.html" class="pagination-link" aria-label="Welcome">
-        <span class="nav-page-text">Welcome</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="./single_cell_integrate.html" class="pagination-link" aria-label="Cell Integration">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Cell Integration</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
@@ -842,7 +799,7 @@ Liu, Y. F., B. Y. Wang, W. N. Zhang, J. Y. Huang, B. S. Li, M. Zhang, L. Jiang, 
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/jinyancool/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions"><ul><li><a href="https://github.com/jinyancool/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
