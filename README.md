@@ -2,9 +2,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/) [![Nextflow](https://img.shields.io/badge/nextflow-%3E%2023.10-099acd.svg)](https://www.nextflow.io) [![Snakemake](https://img.shields.io/badge/snakemake-%E2%89%A57.32-brightgreen.svg)](https://snakemake.readthedocs.io)
 
-**Repository**: https://github.com/jinyancool/stomacro\
-**Principal Investigator**: \[Your Name / Lab\]\
-**Contact**: jinyan\[at\]domain.edu (replace with real email when public)
+**Repository**: https://github.com/jinyancool/stomacro
+
+**Principal Investigator**: Jhuanglab
+
+**Contact**: hiekeen \[at\] gmail.com
 
 ## Project Overview
 
@@ -27,15 +29,7 @@ Oral squamous cell carcinoma (OSCC) is the most common head-and-neck malignancy 
 4.  Identify spatially confined therapeutic targets (PARP inhibitors, CXCR4 blockade, bispecific antibodies)
 5.  Build AI-enhanced prognostic models incorporating spatial features
 
-## Key Findings (Preprint / Manuscript in Preparation)
-
--   Invasive fronts are universally enriched in EMT, hypoxia, and oxidative stress programs
--   Subcellular Xenium data reveal polyamine-synthesis hubs in apCAF subpopulations driving immune exclusion
--   Inverse spatial relationship between EGFR-amplified tumor cores and immune-hot regions
--   High MDSC density at tumor–stroma interfaces is the strongest predictor of early recurrence
--   Spatially informed candidate therapies: PARP inhibitors (DNA-repair deficient edges), anti-CXCR4, bispecific T-cell engagers
-
-## Quick Start (Nextflow – Recommended)
+## Quick Start 
 
 ``` bash
 # 1. Clone the repository
