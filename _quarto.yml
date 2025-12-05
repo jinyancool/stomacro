@@ -42,13 +42,6 @@ book:
           text: Batch SingleCell
         - href: single_cell_integrate.qmd
           text: Cell Integration
-    - part: Unsupervised cluster
-      chapters:
-
-        - href: subtypes.qmd
-          text: Subtypes
-        - href: reduce_dim.qmd
-          text: Reduce Dim
 
     - part: Analysis
       chapters:
