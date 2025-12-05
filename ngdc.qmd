@@ -1,8 +1,0 @@
-# National Genomics Data Center (NGDC)
-We conducted a search for datasets related to "Multiple Myeloma" in the Genome Sequence Archive (GSA) for human studies at the [National Genomics Data Center (NGDC)](https://ngdc.cncb.ac.cn), accessible via the URL: [https://ngdc.cncb.ac.cn/search/specific?db=hra&q=Multiple+Myeloma](https://ngdc.cncb.ac.cn/search/specific?db=hra&q=Multiple+Myeloma). 
-
-The search returned 18 entries, of which two datasets, with accession numbers HRA005897 and HRA006164, were deemed relevant to our research objectives. These datasets were subsequently applied for and successfully incorporated into our study, providing valuable genomic data critical to advancing our understanding of Multiple Myeloma.
-
-We express our sincere gratitude to Prof. Juan Li and Prof. Gang An for their contributions in generating and providing these high-quality datasets. Their expertise and dedication have significantly enriched our research. Additionally, we extend our appreciation to the National Genomics Data Center (NGDC) for hosting and maintaining the GSA, which facilitated seamless access to these datasets and supported our research efforts. 
-
-
