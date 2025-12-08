@@ -2,9 +2,7 @@
 
 ## Package load and plot settings.
 
-
 ```{r warning=FALSE}
-.libPaths(c(.libPaths(), "/cluster/home/yliang_jh/sbin/R/library/4.3.0"))
 pkgs <- c("fs", "configr", "stringr", 
           "jhtools", "glue", "patchwork", "tidyverse", "dplyr", "Seurat", "magrittr", 
           "readxl", "writexl", "ComplexHeatmap", 
@@ -13,11 +11,9 @@ pkgs <- c("fs", "configr", "stringr",
 for (pkg in pkgs){
   suppressPackageStartupMessages(library(pkg, character.only = T))
 }
-source("./R/func_utils.R")
 
-knitr::opts_chunk$set(message = FALSE)
 
-wkdir <- "/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript"
+dat_dir <- "/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript"
 rds_dir <- "/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/codex"
 fig_dir <- "/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/figs/fig2"
 
@@ -30,7 +26,7 @@ colors_celltype <- config_list$cell_type
 config <- read.config(config_fn)
 cell_type_order <- config$cell_type_order
 
-sampleinfo <- readRDS("/cluster/home/lixiyue_jh/projects/quarto/stomatology_lvjiong/quarto_book/doc/sampleinfo.rds")
+sampleinfo <- readRDS("/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo/sampleinfo.rds")
 
 ```
 
@@ -89,6 +85,7 @@ pdf(glue("{fig_dir}/heatmap_celltype_freq.pdf"), width = 10, height = 8)
 ht <- draw(ht, heatmap_legend_side = "bottom", annotation_legend_side = "bottom")
 dev.off()
 
+
 col_order <- column_order(ht)
 dend_order <- rownames(mat)[col_order]
 
@@ -107,16 +104,14 @@ ggsave(glue("{fig_dir}/stacked_bar_celltype_freq.pdf"), p_bar, width = 10, heigh
 
 ```
 
-(glue("{fig_dir}/heatmap_celltype_freq.pdf")){fig_alt = "clustered heatmap with clinical info" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
-(glue("{fig_dir}/stacked_bar_celltype_freq.pdf")){fig_alt = "stacked bar celltype freq" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
+![](images/heatmap_celltype_freq.png){.align-center .lightbox width="900px" 
+										fig_alt="clustered heatmap with clinical info" 
+                                        fig-cap="Figure: heatmap of samples' celltype frequency with clinical information"}
+![](images/stacked_bar_celltype_freq.png){.align-center .lightbox width="900px" 
+										fig_alt="stacked bar celltype freq" 
+										fig-cap="Figure: stacked barplot of samples' celltype frequency without clinical information"}
 
 
-
-```{r echo=FALSE, fig.width = 10, fig.height = 6}
-p_bar
-```
 
 
 
@@ -163,14 +158,10 @@ dev.off()
 
 ```
 
-(glue("{fig_dir}/heatmap_celltype_cn_composition.pdf")){fig_alt = "heatmap with celltype CN composition" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
+![](images/heatmap_celltype_cn_composition.png){.align-center .lightbox width="900px"
+												fig_alt="heatmap with celltype CN composition" fig-cap="Figure: CN's celltype composition"}
 
 
-
-```{r echo=FALSE, fig.width = 10, fig.height = 6}
-ht
-```
 
 
 
@@ -229,14 +220,11 @@ dev.off()
 
 ```
 
-(glue("{fig_dir}/heatmap_subtype_cn_composition.pdf")){fig_alt = "heatmap with subtype CN composition" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
+![](images/heatmap_subtype_cn_composition.png){.align-center .lightbox width="900px" 
+											fig_alt="heatmap with subtype CN composition" fig-cap="Figure: CN's sub celltype composition"}
 
 
 
-```{r echo=FALSE, fig.width = 15, fig.height = 12}
-ht
-```
 
 
 ## (d) celltype_cn, sample_cluster_heatmap_celltype_cn
@@ -285,15 +273,11 @@ dev.off()
 
 ```
 
-(glue("{fig_dir}/sample_cluster_heatmap_celltype_cn.pdf")){fig_alt = "heatmap with celltype sample cluster" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
+![](images/sample_cluster_heatmap_celltype_cn.png){.align-center .lightbox width="900px" 
+	fig_alt="heatmap of sample cluster by celltype CN" fig-cap="Figure: heatmap of sample cluster by celltype CN"}
 
 
 
-
-```{r echo=FALSE, fig.width = 6, fig.height = 8, fig.align='center'}
-ht
-```
 
 
 
@@ -371,24 +355,17 @@ p <- ggsurvplot(fit, data = df_surv, xlab = "Time (Months)", pval = TRUE, risk.t
 p <- arrange_ggsurvplots(list(p), ncol = 1, print = FALSE)
 ggsave(glue("{fig_dir}/sample_cluster_surv_curve_subtype_cn_cl{i}.pdf"), p, width = 6, height = 8)
 
+
 ```
 
 
-(glue("{fig_dir}/sample_cluster_heatmap_subtype_cn_k10.pdf")){fig_alt = "heatmap with subtype sample cluster k10" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
+![](images/sample_cluster_heatmap_subtype_cn_k10.png){.align-center .lightbox width="900px" 
+	fig_alt="heatmap of sample cluster by subtype CN" fig-cap="Figure: heatmap of sample cluster by subtype CN"}
 
-(glue("{fig_dir}/sample_cluster_surv_curve_subtype_cn_cl5.pdf")){fig_alt = "surv curve with subtype sample cluster k10 cl5" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
+![](images/sample_cluster_surv_curve_subtype_cn_cl5.png){.align-center .lightbox width="900px" 
+	fig_alt="surv curve of subtype CN cluster5 vs others" fig-cap="Figure: surv curve of subtype CN cluster5 vs others"}
 
 
-
-```{r echo=FALSE, fig.width = 12, fig.height = 8, fig.align='center'}
-print(ht)
-```
-
-```{r echo=FALSE, fig.width = 6, fig.height = 8, fig.align='center'}
-print(p)
-```
 
 
 
@@ -432,22 +409,15 @@ p3 <- pair_fig["CD8T_CD44+-Tumor_CD44+"]
 
 ```
 
-(glue("{fig_dir}/surv_curve_pci_subtype_Macrophage_CD44+-Tumor_CD44+.pdf")){fig_alt = "surv curve pci subtype: Macrophage_CD44+-Tumor_CD44+" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
-(glue("{fig_dir}/surv_curve_pci_subtype_CD4T_CD44+-Tumor_CD44+.pdf")){fig_alt = "surv curve pci subtype: CD4T_CD44+-Tumor_CD44+" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
-(glue("{fig_dir}/surv_curve_pci_subtype_CD8T_CD44+-Tumor_CD44+.pdf")){fig_alt = "surv curve pci subtype: CD8T_CD44+-Tumor_CD44+" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
-
-
-
-
-```{r echo=FALSE, fig.width = 12, fig.height = 8, fig.align='center'}
-
-print(p1)
-print(p2)
-print(p3)
-```
+![](images/surv_curve_pci_subtype_Macrophage_CD44+-Tumor_CD44+.png){.align-center .lightbox width="900px" 
+													fig_alt="surv curve pci subtype: Macrophage_CD44+-Tumor_CD44+"
+                                                    fig-cap="Figure: surv curve pci subtype: Macrophage_CD44+-Tumor_CD44+"}
+![](images/surv_curve_pci_subtype_CD4T_CD44+-Tumor_CD44+.png){.align-center .lightbox width="900px" 
+													fig_alt="surv curve pci subtype: CD4T_CD44+-Tumor_CD44+" 
+                                                    fig-cap="Figure: surv curve pci subtype: Macrophage_CD44+-Tumor_CD44+"}
+![](images/surv_curve_pci_subtype_CD8T_CD44+-Tumor_CD44+.png){.align-center .lightbox width="900px" 
+													fig_alt="surv curve pci subtype: CD8T_CD44+-Tumor_CD44+" 
+                                                    fig-cap="Figure: surv curve pci subtype: CD8T_CD44+-Tumor_CD44+"}
 
 
 
@@ -472,7 +442,6 @@ for(img in Images){
     scale_fill_manual(values = config_list$cell_type) +
     theme_void() 
   ggsave(glue("{fig_dir}/voronoi_{img}_spatial_celltype_map.pdf"), p, width = 6, height = 6)
-
  voronoi_fig[[img]] <- p
 }
 
@@ -482,21 +451,16 @@ p3 <- voronoi_fig["3-5-4"]
 
 
 ```
-![](glue("{fig_dir}/voronoi_3-2-4_spatial_celltype_map.pdf")){fig_alt = "voronoi 3-2-4 spatial celltype" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
-![](glue("{fig_dir}/voronoi_3-4-3_spatial_celltype_map.pdf")){fig_alt = "voronoi 3-4-3 spatial celltype" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
-![](glue("{fig_dir}/voronoi_3-5-4_spatial_celltype_map.pdf")){fig_alt = "voronoi 3-5-4 spatial celltype" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
+![](images/voronoi_3-2-4_spatial_celltype_map.png){.align-center .lightbox width="900px" 
+													fig_alt="voronoi 3-2-4 spatial celltype"
+                                                    fig-cap="Figure: voronoi 3-2-4 spatial celltype"}
+![](images/voronoi_3-4-3_spatial_celltype_map.png){.align-center .lightbox width="900px"
+													fig_alt="voronoi 3-4-3 spatial celltype"
+                                                    fig-cap="Figure: voronoi 3-4-3 spatial celltype"}
+![](images/voronoi_3-5-4_spatial_celltype_map.png){.align-center .lightbox width="900px" 
+													fig_alt="voronoi 3-5-4 spatial celltype" 
+                                                    fig-cap="Figure: voronoi 3-5-4 spatial celltype"}
 
-
-
-
-```{r echo=FALSE, fig.width = 6, fig.height = 8, fig.align='center'}
-print(p1)
-print(p2)
-print(p3)
-```
 
 
 
@@ -526,14 +490,10 @@ for(img in imgs){
 
 
 ```
-(glue("{fig_dir}/voronoi_3-2-4_spatial_subtype_cn_top_map.pdf")){fig_alt = "voronoi 3-2-4 spatial subtype cn top" width="900px" 
-                                                    fig-cap="Figure: 1st round clustering" .align-center .lightbox}
+![](images/voronoi_3-2-4_spatial_subtype_cn_top_map.png){.align-center .lightbox width="900px" 
+												fig_alt="voronoi 3-2-4 spatial subtype cn top"
+                                                fig-cap="Figure: voronoi 3-2-4 spatial subtype cn(top)"}
 
 
 
 
-
-```{r echo=FALSE, fig.width = 3, fig.height = 7, fig.align='center'}
-
-print(p)
-```

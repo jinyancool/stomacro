@@ -1,0 +1,231 @@
+default:
+  project_name: "stomatology"
+  dataset: "lvjiong"
+colors:
+  gender:
+    female: "#d80700"
+    male: "#00599F"
+  differentiation:
+    G1: "#D1352B"
+    G2: "#1E90FF"
+    G3: "#129a71"
+    G4: "#FFA500"
+  diff_level:
+    high: "red"
+    median: "darkorange"
+    low: "deepskyblue4"
+  tissue_site:
+    Adjacent: "#2f4a99ff"
+    Tumor: "#b92923ff"
+  tumor_site:
+    Buccal_mucosa: "#A6CEE3"
+    Tongue: "#FFFF99"
+    Gingiva: "#FB9A99"
+    Maxillary_sinus: "#FDBF6F"
+    Floor_of_mouth: "#B2DF8A"
+    Palate: "#CAB2D6"
+  T_stage:
+    1: "#FFDAD1FF"
+    2: "#FFB6A4FF"
+    3: "#F99179FF"
+    4: "#EE6A50FF"
+  clinical_stage:
+    1: "#C5D7BEFF"
+    2: "#8BB07FFF"
+    3: "#528A44FF"
+    4: "#006400FF"
+  metastasis:
+    0: "darkolivegreen1"
+    1: "darkorange3"
+  cell_type: 
+    CD4 T: "#6EBEE6"
+    CD8 T: "deepskyblue4"
+    T cell: "deepskyblue4"
+    T/NK: "#1E90FF"
+    NKT: "#4696E6"
+    NK: "aquamarine3"
+    B cell: "#00802A"
+    Plasma: "darkgreen"
+    Macrophage: "#C88CFA"
+    DC: "#FF9BFF"
+    pDC: "#FF00FF"
+    Mast: "#6E5082"
+    Neutrophil: "#C4C4E4"
+    Immune cell: "#8ddfdbff"
+    Fibroblast: "#fccde5"
+    Endothelial: "#D854AA"
+    Blood vessel: "#F2AD88"
+    Tumor cell: "#b92923ff"
+    Epithelial: "darkorange"
+    smoothMC: "#edc9af"
+    skeletalMC: "#D6BDA1"
+    Glial: "#E9D074"
+    CAFs: "#fccde5"
+    mix: "#bdd12bff"
+    other: "grey50"
+    Ignore: "white"
+
+    Myofib: "#F08080"
+    Salivary: "#FA339A"
+
+    TAM: "#6E5082"
+    TAM_THBS1: "#F2ADBE"
+    TAM_H19: "#fccde5"
+    TAM_MMP9: "#BE96BE"
+    TAM_MMP12: "#a543f7"
+
+    TAM_CCL8: "#918cfa"
+    TAM_CCL18: "#9664AA"
+    TAM_CCL22: "#a665dcff"
+    TAM_CCL24: "#D4A4FF"
+    TAM_immusuppress: "#D854AA"
+    mo_macrophage: "#FF9BCF"
+    IL1b_macrophage: "#b3b3e3ff"
+    macrophage_inflam: "#fa8cf5"
+      
+    basal_like_epi: "#FFAE24"
+    Langerhans_cDC2: "#9664AA"
+    mo_DC: "#BE96BE"
+    TIL_mix: "#F2ADBE"
+    myCAF: "#8ddfdbff"
+    
+
+    Proliferating: "#FFE5C2"
+    spinous: "#FFE774"
+    spinous_CD8A+: "#FFF7A3"
+    spinous_inflam: "#FFCA00"
+    spinous_mix: "#D39A00"
+    spinous_1: "#B6865A"
+    spinous_2_cuticula: "#D9C3A5"
+
+    Invasive: "#A01D00"
+    Invasive_KARS+: "#FF6B54"
+    Proliferating_Invasive: "#E63119"
+    
+
+    CCND2+SFRP1: "#E4BF31"
+    basal_cell: "#FFD6E7"
+    basal_CD36+: "#FF9BCF"
+    basal_EPCAM+: "#FF4A1A"
+    basal_KARS+: "#F25DAF"
+    basal_inflam: "#C31E7A"
+    basal_inflam_CD68+_CD4+: "#FF00FF"
+
+    Non_CSC: "#FFF7A3"
+    CSC_BMI1: "#FFE774"
+    CSC_CD44+: "#FFD53C"
+    CSC_CD44+SOX2+: "#FFC000"
+    CSC_allpositive: "#E19A00"
+    CSC_allnegative: "#C67F00"
+    
+    CD4Tnaive: "lightblue"
+    CD4Tex: "#A7FFD6"
+    Treg: "#1E90FF"
+    CD8Tnaive: "#2E63FF"
+    CD8Teff: "#00B94A"
+    CD8Tprolif: "#002CCF"
+    CD8Tex: "#00B7CA"
+    
+    mix_epi_boundary: "#E92E0A"
+    mix_drop: "transplant"
+    mix_epi: "#FF930A"
+    mix_corneocyte: "#FF7F00"
+    mix_T: "#456684ff"
+    mix_fibro: "#b68da2ff"
+
+    Spinous: "#8358CF"
+    Spinous_2: "#D083FF"
+    Spinous_EMT: "#27A7FA"
+    EMT: "#62FFFF"
+    Basal: "#a6cee3"
+    Basal_KI67+: "#fdd0a2"
+    Basal_distant: "#fccde5"
+    Distant: "#b3de69"
+    Small_dense: "#74F882"
+    Nuclei Dense_kera: "#F6D026"
+    Kera_CK-: "#EE6600"
+    Fragment: "#AE2519"
+    CD44++: "#FA339A"
+
+  cluster:
+    1: "brown2"
+    2: "#4696E6"
+    3: "#3CB371"
+    4: "#9575aa"
+    5: "#e8d056"
+    6: "#F2ADBE"
+    7: "darkorange4"
+    8: "chocolate1"
+    9: "darkkhaki"
+    10: "lightblue"
+    11: "darkgreen"
+    12: "darkslateblue"
+    13: "darkgray"
+    14: "darksalmon"
+    15: "aquamarine2"
+
+  CN_cluster:
+    CN1: "brown2"
+    CN2: "#4696E6"
+    CN3: "#3CB371"
+    CN4: "#9575aa"
+    CN5: "#e8d056"
+    CN6: "#F2ADBE"
+    CN7: "darkorange4"
+    CN8: "chocolate1"
+    CN9: "darkkhaki"
+    CN10: "lightblue"
+    CN11: "darkgreen"
+    CN12: "darkslateblue"
+    CN13: "darkgray"
+    CN14: "darksalmon"
+    CN15: "aquamarine2"
+  
+  CN_subtype:
+    CN2: "#FA339A"
+    CN7: "#8358CF"
+    CN8": "#3CB371"
+    CN16: "#b3de69"
+    CN22: "#27A7FA"
+    CN25: "darkorange"
+    CN30: "#F6D026"
+    CN32: "#fccde5"
+    CN33: "deepskyblue4"
+    CN34: "#AE2519"
+    other: "grey90"
+    
+  col_map:
+    0: "#94C6E5"
+    0.5: "white"
+    0.8: "#F4AB89"
+    0.9: "#BD2333"
+    1: "#6D001E"
+
+  age_color: ["white", "darkorchid4"]
+  dend_color: ["#bdd12bff", "#1E90FF", "#F2AD88", "#b92923ff"]
+  pci_color: ["#4696E6", "#e8d056"]
+
+  split_2: ["brown2", "#4696E6"]
+  scale_6: ["#2B6CA2", "#94C6E5", "white", "#F4AB89", "#BD2333", "#6D001E"]
+  scale_7: ["#2B6CA2", "#5AA1C9", "#94C6E5", "white", "#F4AB89", "#BD2333", "#6D001E"]
+
+cell_type_order : ["CD4 T", "CD8 T", "T cell", "T/NK", "NKT", "NK", "B cell", "Plasma", 
+                    "DC", "pDC", "Mast", "Neutrophil", "Macrophage", "Immune cell", "Fibroblast", "Endothelial", "Blood vessel", 
+                    "Tumor cell", "Epithelial", "smoothMC", "skeletalMC", "Glial", "CAFs", "mix", "other", "Ignore", 
+                    "Myofib", "Salivary", "TAM", "TAM_THBS1", "TAM_H19", "TAM_MMP9", "TAM_MMP12", 
+                    "TAM_CCL8", "TAM_CCL18", "TAM_CCL22", "TAM_CCL24", "TAM_immusuppress", 
+                    "mo_macrophage", "IL1b_macrophage", "macrophage_inflam", 
+                    "basal_like_epi", "Langerhans_cDC2", "mo_DC", "TIL_mix", "myCAF", 
+                    "Proliferating", "spinous", "spinous_CD8A+", "spinous_inflam", "spinous_mix", "spinous_1", "spinous_2_cuticula", 
+                    "Invasive", "Invasive_KARS+", "Proliferating_Invasive", "CCND2+SFRP1", 
+                    "basal_cell", "basal_CD36+", "basal_EPCAM+", "basal_KARS+", "basal_inflam", "basal_inflam_CD68+_CD4+", 
+                    "Non_CSC", "CSC_BMI1", "CSC_CD44+", "CSC_CD44+SOX2+", "CSC_allpositive", "CSC_allnegative", 
+                    "CD4Tnaive", "CD4Tex", "Treg", "CD8Tnaive", "CD8Teff", "CD8Tprolif", "CD8Tex", 
+                    "mix_epi_boundary", "mix_drop", "mix_epi", "mix_corneocyte", "mix_T", "mix_fibro", 
+                    "Spinous", "Spinous_2", "Spinous_EMT", "EMT", "Basal", "Basal_KI67+", "Basal_distant", "Distant", "Small_dense", "Nuclei Dense_kera", "Kera_CK-", "Fragment", "CD44++"]
+
+
+
+
+
+
