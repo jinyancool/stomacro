@@ -30,7 +30,6 @@ config <- read.config(config_fn)
 cell_type_order <- config$cell_type_order
 
 sampleinfo <- readRDS("/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo/sampleinfo.rds")
-sampleinfo <- readRDS("/cluster/home/lixiyue_jh/projects/quarto/stomatology_lvjiong/quarto_book/doc/sampleinfo.rds")
 
 ```
 
@@ -38,15 +37,17 @@ sampleinfo <- readRDS("/cluster/home/lixiyue_jh/projects/quarto/stomatology_lvji
 
 ## xenium umap
 ```{r echo=TRUE, eval=FALSE}
-srat <- readRDS(glue("{rds_dir}/xenium_sketch_celltyped.rds"))
-DefaultAssay(srat) <- "Xenium"
-srat <- subset(srat, subset = !is.na(cell_type) & !is.na(`Diff. level`))
+srt <- readRDS(glue("{rds_dir}/xenium_sketch_celltyped.rds"))
+DefaultAssay(srt) <- "Xenium"
+srat <- subset(srt, subset = !is.na(cell_type) & !is.na(`Diff. level`))
 
-Idents(srat) <- srat$cell_type
+
 srat$cell_type <- factor(srat$cell_type, levels = intersect(cell_type_order, unique(srat$cell_type)))
 srat$`Diff. level` <- factor(srat$`Diff. level`, levels = c("high", "median", "low"))
 srat$Epithelial.1.subtype <- factor(srat$Epithelial.1.subtype, levels = intersect(cell_type_order, unique(srat$Epithelial.1.subtype)))
 srat$Macrophage.1.subtype <- factor(srat$Macrophage.1.subtype, levels = intersect(cell_type_order, unique(srat$Macrophage.1.subtype)))
+Idents(srat) <- srat$cell_type
+
 
 meta_srat <- srat@meta.data %>% as.data.frame()
 meta_srat_tumor <- srat@meta.data %>% filter(Type == "tumor") %>% as.data.frame()
@@ -96,8 +97,25 @@ markers_epi_1 <- c("TP63", "COL17A1", "ITGB4","LAMB3","CD44","KRAS","CD36","CTTN
 p <- DotPlot(srat, features=markers_epi_1, group.by="Epithelial.1.subtype", idents = "Epithelial") + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
   scale_color_gradientn(colors = config_list$scale_7)
-ggsave(glue("{fig_dir}/xenium_dotplot_markers_epi_1.pdf"), p, width = 16, height = 8)
-ggsave(glue("{fig_dir}/xenium_dotplot_markers_epi_1.png"), p, width = 16, height = 8)
+ggsave(glue("{fig_dir}/xenium_dotplot_markers_epi_1.pdf"), p, width = 16, height = 9)
+ggsave(glue("{fig_dir}/xenium_dotplot_markers_epi_1.png"), p, width = 16, height = 9)
+
+
+srat_sub <- subset(srat, subset = Macrophage.1.subtype %in% c("TAM_MMP9", "TAM_MMP12", "MGC/TAM"))
+srat_sub$Macrophage.1.subtype <- factor(srat_sub$Macrophage.1.subtype, levels = c("TAM_MMP9", "TAM_MMP12", "MGC/TAM"))
+list_markers <- list("Phagocytosis" = c("CTSA","CTSL","GLA", "HEXA", "LGMN", "LIPA", "FCGR2A", "FCGR3A", "FCGR3B", "MSR1"), 
+                     "Inflammation" = c("CCL18", "CXCL9", "CTSK", "MMP9", "MMP12"))
+p <- DotPlot(srat, features=list_markers, group.by="Macrophage.1.subtype", idents = "Macrophage") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  scale_color_gradientn(colors = config_list$scale_7)
+ggsave(glue("{fig_dir}/xenium_dotplot_markers_macro_function_all.pdf"), p, width = 10, height = 5)
+ggsave(glue("{fig_dir}/xenium_dotplot_markers_macro_function_all.png"), p, width = 10, height = 5)
+
+p <- DotPlot(srat_sub, features=list_markers, group.by="Macrophage.1.subtype", idents = "Macrophage") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  scale_color_gradientn(colors = config_list$scale_7)
+ggsave(glue("{fig_dir}/xenium_dotplot_markers_macro_function_sub.pdf"), p, width = 7, height = 3)
+ggsave(glue("{fig_dir}/xenium_dotplot_markers_macro_function_sub.png"), p, width = 7, height = 3)
 
 
 p <- ggplot(meta_srat_tumor, aes(x = .data[["Diff. level"]], fill = .data[["cell_type"]])) +
@@ -307,19 +325,19 @@ results <- bplapply(sample_select, function(subsample){
 
 ```
 
-![](images/xenium_image_insitu_F6_celltype.png){.align-center .lightbox width="900px" 
+![](images/xenium_image_insitu_R14_celltype.png){.align-center .lightbox width="900px" 
 										fig_alt="in situ image plot of celltype" 
                     fig-cap="Figure: in situ image plot of celltype"}
-![](images/xenium_image_insitu_F6_macro.png){.align-center .lightbox width="900px" 
+![](images/xenium_image_insitu_R14_macro.png){.align-center .lightbox width="900px" 
 										fig_alt="in situ image plot of macrophage subtype" 
                     fig-cap="Figure: in situ image plot of macrophage subtype"}
-![](images/xenium_image_insitu_F6_epi.png){.align-center .lightbox width="900px" 
+![](images/xenium_image_insitu_R14_epi.png){.align-center .lightbox width="900px" 
 										fig_alt="in situ image plot of epithelial subtype" 
                     fig-cap="Figure: in situ image plot of epithelial subtype"}
-![](images/xenium_image_insitu_F6_macro_supply.png){.align-center .lightbox width="900px" 
+![](images/xenium_image_insitu_R14_macro_supply.png){.align-center .lightbox width="900px" 
 										fig_alt="in situ image plot of macrophage subtype with other celltype" 
                     fig-cap="Figure: in situ image plot of macrophage subtype with other celltype"}
-![](images/xenium_image_insitu_F6_epi_supply.png){.align-center .lightbox width="900px" 
+![](images/xenium_image_insitu_R14_epi_supply.png){.align-center .lightbox width="900px" 
 										fig_alt="in situ image plot of epithelial subtype with other celltype" 
                     fig-cap="Figure: in situ image plot of epithelial subtype with other celltype"}
 
@@ -472,7 +490,7 @@ dev.off()
 
 ```
 
-![](images/xenium_colocal_heatmap_col_matrix_total.png){.align-center .lightbox width="900px" 
+![](images/xenium_colocal_heatmap_cor_matrix_total.png){.align-center .lightbox width="900px" 
 										fig_alt="heatmap of celltype colocalation" 
                     fig-cap="Figure: heatmap of celltype colocalation"}
 
@@ -505,16 +523,17 @@ p1 <- ggplot(pt_mpg, aes(x = .data[["sample_id"]], fill = .data[["subtype"]])) +
   labs(y = "Proportion", x = "samples", fill = "Macrophage.subtype") +
   scale_y_continuous(labels = scales::label_number(accuracy = 0.01)) + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
-ggsave(glue("{fig_dir}/xenium_in_out_zone_macrophage_subtype_stack_bar_sampleid.pdf"), p1, width = 8, height = 4)
-ggsave(glue("{fig_dir}/xenium_in_out_zone_macrophage_subtype_stack_bar_sampleid.png"), p1, width = 8, height = 4)
+ggsave(glue("{fig_dir}/xenium_in_out_zone_macrophage_subtype_stack_bar_sampleid.pdf"), p1, width = 9, height = 4)
+ggsave(glue("{fig_dir}/xenium_in_out_zone_macrophage_subtype_stack_bar_sampleid.png"), p1, width = 9, height = 4)
 p2 <- ggplot(pt_mpg, aes(Region, fill = subtype)) +
   geom_bar(position = "fill", width = 0.7) + 
   scale_fill_manual(values = config_list$cell_type) + 
   theme_classic() +
+  labs(y = "Proportion") +
   scale_y_continuous(labels = scales::label_number(accuracy = 0.01)) + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
-ggsave(glue("{fig_dir}/xenium_in_out_zone_macrophage_subtype_stack_bar_region.pdf"), p2, width = 10, height = 8)
-ggsave(glue("{fig_dir}/xenium_in_out_zone_macrophage_subtype_stack_bar_region.png"), p2, width = 10, height = 8)
+ggsave(glue("{fig_dir}/xenium_in_out_zone_macrophage_subtype_stack_bar_region.pdf"), p2, width = 6, height = 8)
+ggsave(glue("{fig_dir}/xenium_in_out_zone_macrophage_subtype_stack_bar_region.png"), p2, width = 6, height = 8)
 p3 <- ggplot(pt_celltype, aes(x = .data[["sample_id"]], fill = .data[["cell_type"]])) +
   geom_bar(position = "fill", width = 0.7) +
   facet_grid(~ .data[["Region"]], scales = "free_x", space = "free_x") +
@@ -523,22 +542,26 @@ p3 <- ggplot(pt_celltype, aes(x = .data[["sample_id"]], fill = .data[["cell_type
   labs(y = "Proportion", x = "samples", fill = "cell_type") +
   scale_y_continuous(labels = scales::label_number(accuracy = 0.01)) + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
-ggsave(glue("{fig_dir}/xenium_in_out_zone_celltype_stack_bar_sampleid.pdf"), p3, width = 7, height = 4)
-ggsave(glue("{fig_dir}/xenium_in_out_zone_celltype_stack_bar_sampleid.png"), p3, width = 7, height = 4)
+ggsave(glue("{fig_dir}/xenium_in_out_zone_celltype_stack_bar_sampleid.pdf"), p3, width = 8, height = 4)
+ggsave(glue("{fig_dir}/xenium_in_out_zone_celltype_stack_bar_sampleid.png"), p3, width = 8, height = 4)
 p4 <- ggplot(pt_celltype, aes(Region, fill = cell_type)) +
   geom_bar(position = "fill", width = 0.7) +
   scale_fill_manual(values = config_list$cell_type) +
   theme_classic() +
-  scale_y_continuous(labels = scales::label_number(accuracy = 0.01))
-ggsave(glue("{fig_dir}/xenium_in_out_zone_celltype_stack_bar_region.pdf"), p4, width = 5, height = 5)
-ggsave(glue("{fig_dir}/xenium_in_out_zone_celltype_stack_bar_region.png"), p4, width = 5, height = 5)
+  scale_y_continuous(labels = scales::label_number(accuracy = 0.01)) +
+  labs(y = "Proportion") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+ggsave(glue("{fig_dir}/xenium_in_out_zone_celltype_stack_bar_region.pdf"), p4, width = 5, height = 6)
+ggsave(glue("{fig_dir}/xenium_in_out_zone_celltype_stack_bar_region.png"), p4, width = 5, height = 6)
 p5 <- ggplot(pt_epi, aes(Region, fill = subtype)) +
   geom_bar(position = "fill", width = 0.7) +
   scale_fill_manual(values = config_list$cell_type) +
   theme_classic() +
-  scale_y_continuous(labels = scales::label_number(accuracy = 0.01))
-ggsave(glue("{fig_dir}/xenium_in_out_zone_epithelial_subtype_stack_bar_region.pdf"), p5, width = 5, height = 5)
-ggsave(glue("{fig_dir}/xenium_in_out_zone_epithelial_subtype_stack_bar_region.png"), p5, width = 5, height = 5)
+  labs(y = "Proportion") +
+  scale_y_continuous(labels = scales::label_number(accuracy = 0.01)) + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+ggsave(glue("{fig_dir}/xenium_in_out_zone_epithelial_subtype_stack_bar_region.pdf"), p5, width = 5, height = 6)
+ggsave(glue("{fig_dir}/xenium_in_out_zone_epithelial_subtype_stack_bar_region.png"), p5, width = 5, height = 6)
 p6 <- ggplot(pt_epi, aes(x = .data[["sample_id"]], fill = .data[["cell_type"]])) +
   geom_bar(position = "fill", width = 0.7) +
   facet_grid(~ .data[["Region"]], scales = "free_x", space = "free_x") +
@@ -547,21 +570,22 @@ p6 <- ggplot(pt_epi, aes(x = .data[["sample_id"]], fill = .data[["cell_type"]]))
   labs(y = "Proportion", x = "samples", fill = "cell_type") +
   scale_y_continuous(labels = scales::label_number(accuracy = 0.01)) + 
   theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
-ggsave(glue("{fig_dir}/xenium_in_out_zone_Epithelial_subtype_stack_bar_sampleid.pdf"), p3, width = 7, height = 4)
-ggsave(glue("{fig_dir}/xenium_in_out_zone_Epithelial_subtype_stack_bar_sampleid.png"), p3, width = 7, height = 4)
+ggsave(glue("{fig_dir}/xenium_in_out_zone_Epithelial_subtype_stack_bar_sampleid.pdf"), p3, width = 8, height = 4)
+ggsave(glue("{fig_dir}/xenium_in_out_zone_Epithelial_subtype_stack_bar_sampleid.png"), p3, width = 8, height = 4)
 
 
 select_pathway <- c("hsa04145","hsa04979","hsa04142","hsa04066","hsa00010","hsa04610","hsa03320","hsa04810")
-results_kegg <- readRDS(glue("{rds_dir}/kegg_result.rds"))
-res <- results_kegg$region_mpg_up_plot
+#results_kegg <- readRDS(glue("{rds_dir}/kegg_result.rds"))
+results_kegg <- readRDS(glue("{rds_dir}/kegg_erosion_result_region_macrophage_up.rds"))
+res <- results_kegg$region_Macrophage_res_up
 result_filter <- res@result %>% filter(ID %in% select_pathway)
 res_filter <- new("enrichResult", result = result_filter)
 p1 <- barplot(res_filter, color = "p.adjust") + 
         scale_fill_gradientn(colors = rev(config_list$scale_7[c(1,3,4,5,6)]),
                              guide = guide_colorbar(reverse = TRUE)) +
         theme_classic()
-ggsave(glue("{fig_dir}/xenium_in_out_zone_macrophage_kegg.pdf"), plot = p1,width = 9,height = 6)
-ggsave(glue("{fig_dir}/xenium_in_out_zone_macrophage_kegg.png"), plot = p1,width = 9,height = 6)
+ggsave(glue("{fig_dir}/xenium_in_out_zone_macrophage_kegg.pdf"), plot = p1,width = 6,height = 6)
+ggsave(glue("{fig_dir}/xenium_in_out_zone_macrophage_kegg.png"), plot = p1,width = 6,height = 6)
 
 ```
 
@@ -645,15 +669,22 @@ p6 <- ggplot(pt_mpg, aes(x = .data[["sample_id"]], fill = .data[["subtype"]])) +
 ggsave(glue("{fig_dir}/xenium_with_wout_granuloma_macrophage_subtype_stack_bar_sampleid.pdf"), p6, width = 8, height = 4)
 ggsave(glue("{fig_dir}/xenium_with_wout_granuloma_macrophage_subtype_stack_bar_sampleid.png"), p6, width = 8, height = 4)
 
+
+
+
 ```
 
-![](images/xenium_with_wout_granuloma_celltype_stack_bar_sample.png){.align-center .lightbox width="900px" 
-										fig_alt="Percentage of celltype in granuloma sample versus non-granuloma sample" 
-                    fig-cap="Figure: Percentage of celltype in granuloma sample versus non-granuloma sample"}
-![](images/xenium_with_wout_granuloma_macrophage_subtype_stack_bar_sample.png){.align-center .lightbox width="900px" 
+
+![](images/xenium_with_wout_granuloma_sample_macrophage_enrich_kegg.png){.align-center .lightbox width="900px" 
+										fig_alt="kegg of macrophages in granuloma sample versus non-granuloma sample" 
+                    fig-cap="Figure: kegg of macrophages in granuloma sample versus non-granuloma sample"}
+![](images/xenium_with_wout_granuloma_sample_epithelial_enrich_kegg.png){.align-center .lightbox width="900px" 
+										fig_alt="kegg of epithelial in granuloma sample versus non-granuloma sample" 
+										fig-cap="Figure: kegg of epithelial in granuloma sample versus non-granuloma sample"}
+![](images/xxenium_with_wout_granuloma_sample_macrophage_subtype_stack_bar.png){.align-center .lightbox width="900px" 
 										fig_alt="Percentage of macrophages subtype in granuloma sample versus non-granuloma sample" 
                     fig-cap="Figure: Percentage of macrophages subtype in granuloma sample versus non-granuloma sample"}
-![](images/xenium_with_wout_granuloma_epithelial_subtype_stack_bar_sample.png){.align-center .lightbox width="900px" 
+![](images/xenium_with_wout_granuloma_sample_epithelial_subtype_stack_bar.png){.align-center .lightbox width="900px" 
 										fig_alt="Percentage of epithelial subtype in granuloma sample versus non-granuloma sample" 
 										fig-cap="Figure: Percentage of epithelial subtype in granuloma sample versus non-granuloma sample"}
 
@@ -663,6 +694,9 @@ ggsave(glue("{fig_dir}/xenium_with_wout_granuloma_macrophage_subtype_stack_bar_s
 
 ```{r echo=TRUE, eval=FALSE}
 umap_message <- readRDS(glue("{rds_dir}/umap_message.rds"))
+umap_message[["umap_macro"]] <- umap_message[["umap_macro"]] %>%
+  filter(!(UMAP_1 > 2 & Macrophage.1.subtype %notin% c("TAM_H19", "macrophage_inflam", "IL1b_macrophage", "mo_macrophage")), 
+         !(UMAP_2 < -4 & Macrophage.1.subtype %notin% c("TAM_THBS1", "TAM_H19"))) %>% as.data.frame()
 subumaps <- names(umap_message)
 for (subumap in subumaps){
   df <- umap_message[[subumap]]
@@ -674,7 +708,7 @@ for (subumap in subumaps){
   label_data <- df %>% group_by(cell_type) %>% summarise(x = median(UMAP1), y = median(UMAP2))
 
   p <- ggplot(df, aes(x=UMAP1, y=UMAP2, color=cell_type)) +
-          geom_point_rast(size = 0.8, alpha = 0.7) +
+          geom_point(size = 0.8, alpha = 0.7) +
           scale_color_manual(values = config_list$cell_type, name = "Cell Type") +
           #geom_text_repel(data = label_data, aes(x=x, y=y, label=cell_type), color = "black", size = 8, fontface = "bold", show.legend = FALSE) +
           theme_classic() +
@@ -802,6 +836,98 @@ dev.off()
 										fig-cap="Figure: heatmap of cell-cell communication of stemness or differentiation as target with other cell types"}
 
 
+## xenium CCC of MMP and MGC/TAM Macrophage
+```{r echo=TRUE, eval=FALSE}
+df_heat_cp_wide <- readRDS(glue("{rds_dir}/xenium_CCC_erosion_macrophage_plot.rds"))
+#df_heat_cp_wide <- readRDS(glue("{rds_dir}/xenium_CCC_erosion_macrophage_onlyMMP9_plot.rds"))
+
+sender <- df_heat_cp_wide$s
+receiver <- df_heat_cp_wide$r
+
+p1 <- pheatmap(sender, scale = "row", 
+  color = config_list$scale_7, border_color = "white",
+  cluster_rows = TRUE, cluster_cols = FALSE, treeheight_row = 15, treeheight_col = 0,
+  show_rownames = TRUE, show_colnames = TRUE,
+  fontsize_row = 10, fontsize_col = 10, angle_col = "90", main = "CCC")
+
+pdf(glue("{fig_dir}/xenium_ccc_heatmaps_cc_mean_source_erosion_macrophage.pdf"), width = 12, height = 6)
+#pdf(glue("{fig_dir}/xenium_ccc_heatmaps_cc_mean_source_erosion_macrophage_onlyMMP9.pdf"), width = 12, height = 6)
+print(p1)
+dev.off()
+png(glue("{fig_dir}/xenium_ccc_heatmaps_cc_mean_source_erosion_macrophage.png"), width = 12, height = 6, units = "in", res = 300)
+#png(glue("{fig_dir}/xenium_ccc_heatmaps_cc_mean_source_erosion_macrophage_onlyMMP9.png"), width = 12, height = 6, units = "in", res = 300)
+print(p1)
+dev.off()
+
+p2 <- pheatmap(receiver, scale = "row", 
+  color = config_list$scale_7, border_color = "white",
+  cluster_rows = TRUE, cluster_cols = FALSE, cutree_rows = NA,, treeheight_row = 15, treeheight_col = 0,
+  show_rownames = TRUE, show_colnames = TRUE,
+  fontsize_row = 10, fontsize_col = 10, angle_col = "90", main = "CCC")
+
+pdf(glue("{fig_dir}/xenium_ccc_heatmaps_cc_mean_target_erosion_macrophage.pdf"), width = 12, height = 5)
+#pdf(glue("{fig_dir}/xenium_ccc_heatmaps_cc_mean_target_erosion_macrophage_onlyMMP9.pdf"), width = 12, height = 5)
+print(p2)
+dev.off()
+png(glue("{fig_dir}/xenium_ccc_heatmaps_cc_mean_target_erosion_macrophage.png"), width = 12, height = 5, units = "in", res = 300)
+#png(glue("{fig_dir}/xenium_ccc_heatmaps_cc_mean_target_erosion_macrophage_onlyMMP9.png"), width = 12, height = 5, units = "in", res = 300)
+print(p2)
+dev.off()
+
+```
+![](images/xenium_ccc_heatmaps_cc_mean_source_erosion_macrophage.png){.align-center .lightbox width="900px" 
+										fig_alt="heatmap of cell-cell communication of erosion macrophage as source with other cell types" 
+										fig-cap="Figure: heatmap of cell-cell communication of stemness or differentiation as source with other cell types"}
+![](images/xenium_ccc_heatmaps_cc_mean_target_erosion_macrophage.png){.align-center .lightbox width="900px" 
+										fig_alt="heatmap of cell-cell communication of erosion macrophage as target with other cell types" 
+										fig-cap="Figure: heatmap of cell-cell communication of stemness or differentiation as target with other cell types"}
+
+
+
+## xenium CCC of basal Epithelial
+```{r echo=TRUE, eval=FALSE}
+df_heat_cp_wide <- readRDS(glue("{rds_dir}/xenium_CCC_Epithelial_basal_plot.rds"))
+
+sender <- df_heat_cp_wide$s
+receiver <- df_heat_cp_wide$r
+
+p1 <- pheatmap(sender, scale = "row", 
+  color = config_list$scale_7, border_color = "white",
+  cluster_rows = TRUE, cluster_cols = FALSE, treeheight_row = 15, treeheight_col = 0,
+  show_rownames = TRUE, show_colnames = TRUE,
+  fontsize_row = 10, fontsize_col = 10, angle_col = "90", main = "CCC")
+
+pdf(glue("{fig_dir}/xenium_ccc_heatmaps_cc_mean_source_Epithelial_basal.pdf"), width = 12, height = 8)
+print(p1)
+dev.off()
+png(glue("{fig_dir}/xenium_ccc_heatmaps_cc_mean_source_Epithelial_basal.png"), width = 12, height = 8, units = "in", res = 300)
+print(p1)
+dev.off()
+
+p2 <- pheatmap(receiver, scale = "row", 
+  color = config_list$scale_7, border_color = "white",
+  cluster_rows = TRUE, cluster_cols = FALSE, cutree_rows = NA,, treeheight_row = 15, treeheight_col = 0,
+  show_rownames = TRUE, show_colnames = TRUE,
+  fontsize_row = 10, fontsize_col = 10, angle_col = "90", main = "CCC")
+
+pdf(glue("{fig_dir}/xenium_ccc_heatmaps_cc_mean_target_Epithelial_basal.pdf"), width = 12, height = 8)
+print(p2)
+dev.off()
+png(glue("{fig_dir}/xenium_ccc_heatmaps_cc_mean_target_Epithelial_basal.png"), width = 12, height = 8, units = "in", res = 300)
+print(p2)
+dev.off()
+
+```
+![](images/xenium_ccc_heatmaps_cc_mean_source_Epithelial_basal.png){.align-center .lightbox width="900px" 
+										fig_alt="heatmap of cell-cell communication of epithelial basal as source with other cell types" 
+										fig-cap="Figure: heatmap of cell-cell communication of epithelial basal as source with other cell types"}
+![](images/xenium_ccc_heatmaps_cc_mean_target_Epithelial_basal.png){.align-center .lightbox width="900px" 
+										fig_alt="heatmap of cell-cell communication of epithelial basal as target with other cell types" 
+										fig-cap="Figure: heatmap of cell-cell communication of epithelial basal as target with other cell types"}
+
+
+
+
 
 
 
@@ -896,4 +1022,58 @@ for (case in cases){
 ![](images/xenium_kegg_Epithelial_subtype_vs_basal_call_basal_EPCAM+.png){.align-center .lightbox width="900px" 
 										fig_alt="kegg of Epithelial subtype basal_EPCAM+ versus basal_cell" 
                     fig-cap="Figure: kegg of Epithelial subtype basal_EPCAM+ versus basal_cell"}
-                
+
+
+
+# xenium KEGG Macrophage vs others 
+```{r echo=TRUE, eval=FALSE}
+ls_macrophage_select <- readRDS(glue("{rds_dir}/kegg_macrophage_cluster_marker_gene_total_select.rds"))
+results <- ls_macrophage_select$res
+cases <- names(results)
+for (case in cases){
+  res <- results[[case]]
+  res@result <- res@result %>% mutate(Description = str_replace(Description, " signaling pathway$", ""))
+  p1 <- barplot(res, color = "p.adjust") + 
+        scale_fill_gradientn(colors = rev(config_list$scale_7),
+                             guide = guide_colorbar(reverse = TRUE)) +
+        theme_classic()
+  hight_set = nrow(res@result) * 0.5
+  weight_set = max(4, hight_set * 1.2)
+  case <- ifelse(case == "MGC/TAM", "MGC_TAM", case)
+  ggsave(glue("{fig_dir}/xenium_kegg_Macrophage_{case}.pdf"), plot = p1,width = weight_set,height = hight_set)
+  ggsave(glue("{fig_dir}/xenium_kegg_Macrophage_{case}.png"), plot = p1,width = weight_set,height = hight_set)
+}
+
+```
+
+
+
+# scretion 
+```{r cache=FALSE}
+dt <- readRDS(glue("{rds_dir}/erosion_in_out_zone_Macrophage_secretion.rds"))
+
+p <- ggplot(dt,aes(avg_log2FC, -log10(p_val_adj))) +
+  geom_hline(yintercept = -log10(0.05), linetype = "dashed", color = "black")+
+  geom_vline(xintercept = c(-0.5,0.5), linetype = "dashed", color = "black")+
+  geom_point(aes(size = pct.1, fill = type, shape = secretion), alpha = 1, stroke = 0)+
+  geom_point(data = dplyr::filter(dt, secretion == "secretion"), aes(avg_log2FC, -log10(p_val_adj), size = pct.1), 
+            shape = 23, alpha = 0.8, show.legend = FALSE) +
+  scale_fill_manual(values = config_list$volcano_type)+
+  scale_shape_manual(values = c("secretion" = 23, "non-secretion" = 21))+
+  scale_size_continuous(range = c(0,5))+
+  theme_classic(base_size = 12)+
+  theme(panel.grid = element_blank(),legend.position = 'right',legend.justification = c(0,1))+
+  geom_text_repel(data = dplyr::filter(dt, !is.na(label)), aes(label = label), size = 6, color = 'black',
+                  segment.color = "black", segment.size = 0.5, min.segment.length = 0, vjust = 1, nudge_y = 2) +
+  guides(fill = guide_legend(order = 1, override.aes = list(shape = 21)),
+         size = guide_legend(order = 2, override.aes = list(shape = 21, fill = NA, color = "black", stroke = 0.5)),
+         shape = guide_legend(order = 3, override.aes = list(fill = NA, color = "black", stroke = 0.5))) +
+  xlab("log2FC")+
+  ylab("-log10(p adjust)") 
+
+ggsave(glue("{fig_dir}/xenium_volcano_erosion_region_macrophage.pdf"), p, width = 9, height = 9)
+ggsave(glue("{fig_dir}/xenium_volcano_erosion_region_macrophage.png"), p, width = 9, height = 9)
+```
+![](images/xenium_kegg_Epithelial_subtype_vs_basal_call_basal_EPCAM+.png){.align-center .lightbox width="900px" 
+										fig_alt="kegg of Epithelial subtype basal_EPCAM+ versus basal_cell" 
+                    fig-cap="Figure: kegg of Epithelial subtype basal_EPCAM+ versus basal_cell"}

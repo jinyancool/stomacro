@@ -95,7 +95,7 @@ levels(srt) <- intersect(cell_type_order, unique(srt$celltype))
 
 # subtype
 list_markers <- list("CD4 T" = c("CD45RO", "FOXP3", "CD44", "Granzyme B", "HLA-DR", "Ki67", "PD-1"), 
-                     "CD8 T" = c("CD45RO", "CD44", "Granzyme B", "HLA-DR", "Ki67", "PD-1") 
+                     "CD8 T" = c("CD45RO", "CD44", "Granzyme B", "HLA-DR", "Ki67", "PD-1"),
                      "Macrophage" = c("CD14", "CD44", "HLA-DR", "IDO1", "Ki67", "Vimentin", "PD-L1"), 
                      "Tumor cell" = c("CD44", "E-cadherin", "IDO1", "HLA-DR", "Vimentin", "Ki67", "PD-L1"), 
                      "Fibroblast" = c("CD44", "SMA", "IDO1", "HLA-DR", "Collagen-IV", "Ki67", "PD-L1"))
@@ -278,6 +278,7 @@ lst_pci_message <- list(df_pci = df_pci2,
 saveRDS(lst_pci_message, glue("{rds_dir}/pci_message.rds"))
 
 
+
 ## make subtype heatmap of cor and pci
 srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
 sp_tumor <- sampleinfo$codex %>% filter(Type == "Tumor") %>% pull(sample_id) %>% unique
@@ -311,20 +312,23 @@ df_pci <- df_pci[, .(
 df_pci <- df_pci %>% na.omit()
 
 
-dist_mat <- dist(df_cor, method = "euclidean")
+
+df_pci_long <- df_pci %>% rbind(df_pci %>% 
+          rename(cluster1 = cluster2, cluster2 = cluster1) %>%
+          select(cluster1, cluster2, mean_log2_lr)) %>% 
+          distinct(cluster1, cluster2, .keep_all = TRUE)
+dt_pci_wide <- as.data.table(df_pci_long) %>% dcast(., cluster1 ~ cluster2, value.var = "mean_log2_lr") %>% column_to_rownames("cluster1") %>% as.matrix()
+
+dist_mat <- dist(dt_pci_wide, method = "euclidean")
 hc <- hclust(dist_mat, method = "ward.D2")
-order <- colnames(df_cor)[hc$order]
+order <- colnames(dt_pci_wide)[hc$order]
 
 df_cor <- df_cor[order, order]
 df_cor_long <- df_cor %>% as.data.frame() %>% rownames_to_column("cluster1") %>% 
     pivot_longer(cols = -cluster1,names_to = "cluster2",values_to = "correlation")
 
-df_pci_long <- df_pci %>% rbind(df_pci %>% rename(cluster1 = cluster2, cluster2 = cluster1) %>% select(cluster1, cluster2, mean_log2_lr)) %>%
-    distinct(cluster1, cluster2, .keep_all = TRUE)
-dt_pci <- as.data.table(df_pci_long) %>% dcast(., cluster1 ~ cluster2, value.var = "mean_log2_lr") %>% as.data.frame()
-rownames(dt_pci) <- dt_pci$cluster1
-dt_pci <- dt_pci %>% select(-cluster1)
-dt_pci <- dt_pci[order, order]
+df_pci_wide <- as.data.table(df_pci_long) %>% dcast(., cluster1 ~ cluster2, value.var = "mean_log2_lr") %>% column_to_rownames("cluster1") %>% as.data.frame()
+df_pci_wide <- df_pci_wide[order, order]
 
 
 df_cor_long <- df_cor_long %>% mutate(cluster1 = factor(.$cluster1, levels = order),
@@ -335,10 +339,12 @@ df_pci_long <- df_pci_long %>% mutate(cluster1 = factor(.$cluster1, levels = ord
 
 subtype_cor_pci <- list(df_cor = df_cor, 
                         df_cor_long = df_cor_long, 
-                        df_pci = dt_pci,
+                        df_pci = df_pci_wide,
                         df_pci_long = df_pci_long)
 
 saveRDS(subtype_cor_pci, glue("{rds_dir}/subtype_cor_pci_result.rds"))
+
+
 
 
 
@@ -509,5 +515,10 @@ for(img in imgs){
   }
 
 saveRDS(lst_sf_invert, glue("{rds_dir}/sf_invert_insitu_subtype_message.rds"))
+
+
+
+
+
 
 

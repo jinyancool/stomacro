@@ -12,16 +12,7 @@ for (pkg in pkgs){
 
 set.seed(12387)
 rds_dir = "/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/xenium"
-fig_dir <- "/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/figs/fig4"
-
-
-# colors setting
-config_fn = "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml"
-config_list <- show_me_the_colors(config_fn, "all")
-colors_celltype <- config_list$cell_type
-
-config <- read.config(config_fn)
-cell_type_order <- config$cell_type_order
+fig_dir <- "/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/figs/fig5"
 
 sampleinfo <- readRDS("/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo/sampleinfo.rds")
 
@@ -36,7 +27,7 @@ gene_entrez <- bitr(unique(rownames(srt)), fromType = "SYMBOL", toType = "ENTREZ
 select_celltypes <- c("Macrophage", "Epithelial", "T cell")
 names_celltypes <- c("Macrophage", "Epithelial", "T")
 results <- bplapply(select_celltypes, function(celltype){
-    markers <- FindMarkers(srt, ident.1 = "erosion", group.by = "region", subset.ident = celltype)
+    markers <- FindMarkers(srt, ident.1 = "erosion", group.by = "Region", subset.ident = celltype)
     dt <- markers %>% filter(abs(avg_log2FC) > 0.5 & p_val_adj < 0.05) %>%
         mutate(type = ifelse(avg_log2FC > 0, "up", "down")) %>%
         as.data.table(keep.rownames = "gene") %>%
@@ -56,7 +47,7 @@ gene_entrez <- bitr(unique(rownames(srt)), fromType = "SYMBOL", toType = "ENTREZ
 select_celltypes <- c("Macrophage", "Epithelial", "T cell")
 names_celltypes <- c("Macrophage", "Epithelial", "T")
 results <- bplapply(select_celltypes, function(celltype){
-    markers <- FindMarkers(srt, ident.1 = "granuloma", group.by = "group", subset.ident = celltype)
+    markers <- FindMarkers(srt, ident.1 = "granuloma", group.by = "Group", subset.ident = celltype)
     dt <- markers %>% filter(abs(avg_log2FC) > 0.5 & p_val_adj < 0.05) %>%
         mutate(type = ifelse(avg_log2FC > 0, "up", "down")) %>%
         as.data.table(keep.rownames = "gene") %>%
@@ -105,6 +96,67 @@ saveRDS(ls_vs_spinous, glue("{rds_dir}/epithelial_cluster_marker_gene_vs_spinous
 saveRDS(ls_vs_basal_cell, glue("{rds_dir}/epithelial_cluster_marker_gene_vs_basal_cell.rds"))
 list2excel(ls_vs_spinous, glue("{rds_dir}/epithelial_cluster_marker_gene_vs_spinous.xlsx"), showRow = T)
 list2excel(ls_vs_basal_cell, glue("{rds_dir}/epithelial_cluster_marker_gene_vs_basal_cell.xlsx"), showRow = T)
+
+
+#macrophage total subtype
+srt <- readRDS(glue("{rds_dir}/xenium_sketch_celltyped.rds"))
+DefaultAssay(srt) <- "Xenium"
+srt_macro <- subset(srt, subset = cell_type == "Macrophage")
+srt_macro$subtype <- srt_macro$Macrophage.1.subtype
+DefaultAssay(srt_macro) <- "Xenium"
+srt_s <- JoinLayers(srt_macro)
+Idents(srt_s) <- "subtype"
+gene_entrez <- bitr(unique(rownames(srt_s)), fromType = "SYMBOL", toType = "ENTREZID", OrgDb = "org.Hs.eg.db")
+
+markers <- FindAllMarkers(srt_s, assay = "Xenium", group_by = "subtype", 
+                          only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.5)
+markers <- markers %>% merge(gene_entrez, all.x = TRUE, by.x = "gene", by.y = "SYMBOL") %>% as.data.frame() %>% arrange(cluster)
+
+saveRDS(markers, glue("{rds_dir}/Macrophage_cluster_marker_gene_total.rds"))
+df2excel(markers, glue("{rds_dir}/Macrophage_cluster_marker_gene_total.xlsx"), showRow = F)
+
+#saveRDS(markers, glue("{rds_dir}/Macrophage_cluster_marker_gene_total_without_pt.rds"))
+#df2excel(markers, glue("{rds_dir}/Macrophage_cluster_marker_gene_total_without_pt.xlsx"), showRow = F)
+
+#macrophage subtype
+srt <- readRDS(glue("{rds_dir}/xenium_sketch_celltyped.rds"))
+DefaultAssay(srt) <- "Xenium"
+srt_sub <- subset(srt, subset = cell_type == "Macrophage")
+srt_sub$subtype <- srt_sub$Macrophage.1.subtype
+DefaultAssay(srt_sub) <- "Xenium"
+srt_s <- JoinLayers(srt_sub)
+Idents(srt_s) <- "subtype"
+
+srt_erosion <- readRDS(glue("{rds_dir}/srt_erosion_region.rds"))
+srt_erosion_sub <- subset(srt_erosion, subset = cell_type == "Macrophage")
+srt_erosion_sub$subtype <- srt_erosion_sub$Macrophage.1.subtype
+Idents(srt_erosion_sub) <- "subtype"
+
+gene_entrez <- bitr(unique(rownames(srt_s)), fromType = "SYMBOL", toType = "ENTREZID", OrgDb = "org.Hs.eg.db")
+case_groups <- c("TAM_MMP9", "TAM_MMP12")
+control_group <- "MGC/TAM"
+results <- bplapply(case_groups, function(case){
+  markers1 <- FindMarkers(srt_s, ident.1 = case, ident.2 = control_group, group.by = "subtype", 
+                         only.pos = FALSE, min.pct = 0.25, logfc.threshold = 0.5)
+  markers2 <- FindMarkers(srt_erosion_sub, ident.1 = case, ident.2 = control_group, group.by = "subtype", 
+                         only.pos = FALSE, min.pct = 0.25, logfc.threshold = 0.5)                
+  markers1 <- markers1 %>% mutate(case = case, control = control_group, region = "total", gene = rownames(.)) %>%
+      mutate(type = ifelse(avg_log2FC > 0, "up", "down")) %>%
+      merge(gene_entrez, all.x = TRUE, by.x = "gene", by.y = "SYMBOL") %>% as.data.frame()
+  markers2 <- markers2 %>% mutate(case = case, control = control_group, region = "erosion", gene = rownames(.)) %>%
+      mutate(type = ifelse(avg_log2FC > 0, "up", "down")) %>%
+      merge(gene_entrez, all.x = TRUE, by.x = "gene", by.y = "SYMBOL") %>% as.data.frame()
+  return(list(total = markers1, erosion = markers2))
+}, BPPARAM = param)
+names(results) <- case_groups
+
+
+ls_total <- lapply(results, function(x) x$total)
+ls_erosion <- lapply(results, function(x) x$erosion)
+saveRDS(ls_total, glue("{rds_dir}/Macrophage_cluster_marker_gene_vs_MGC_total.rds"))
+saveRDS(ls_erosion, glue("{rds_dir}/Macrophage_cluster_marker_gene_vs_MGC_erosion.rds"))
+list2excel(ls_total, glue("{rds_dir}/Macrophage_cluster_marker_gene_vs_MGC_total.xlsx"), showRow = T)
+list2excel(ls_erosion, glue("{rds_dir}/Macrophage_cluster_marker_gene_vs_MGC_erosion.xlsx"), showRow = T)
 
 
 
@@ -223,4 +275,133 @@ results <- list(df = ls_results_df, res = ls_results_res)
 
 saveRDS(results, glue("{rds_dir}/kegg_epithelial_cluster_marker_gene_vs_basal_cell_select.rds"))
 
+
+
+# macrophage total subtype
+markers <- readRDS(glue("{rds_dir}/Macrophage_cluster_marker_gene_total.rds"))
+#markers <- readRDS(glue("{rds_dir}/Macrophage_cluster_marker_gene_total_without_pt.rds"))
+
+subtypes <- as.character(unique(markers$cluster))
+results <- BiocParallel::bplapply(subtypes, function(subtype){
+    sub_markers <- markers %>% filter(cluster == subtype) %>% pull(ENTREZID) %>% unique()
+    res <- enrichKEGG(sub_markers, organism = "hsa", keyType = "kegg", 
+                       pAdjustMethod = "BH", 
+                       pvalueCutoff = 0.05, qvalueCutoff = 0.2, 
+                       minGSSize = 10,
+                       use_internal_data = TRUE)
+    readable <- setReadable(res, OrgDb = "org.Hs.eg.db", keyType="ENTREZID") %>% mutate(cluster = subtype) %>% as.data.frame()
+    return(list(res = res, readable = readable))
+}, BPPARAM = param)
+names(results) <- subtypes
+
+ls_results_res <- lapply(results, function(x) x$res)
+ls_results_readable <- lapply(results, function(x) x$readable)
+results <- list(readable = ls_results_readable, res = ls_results_res)
+saveRDS(results, glue("{rds_dir}/kegg_macrophage_cluster_marker_gene_total.rds"))
+#saveRDS(results, glue("{rds_dir}/kegg_macrophage_cluster_marker_gene_total_without_pt.rds"))
+
+results <- readRDS(glue("{rds_dir}/kegg_macrophage_cluster_marker_gene_total.rds"))
+ls_results_readable <- results$readable
+list2excel(ls_results_readable, glue("{rds_dir}/kegg_macrophage_cluster_marker_gene_total.xlsx"))
+
+#results <- readRDS(glue("{rds_dir}/kegg_macrophage_cluster_marker_gene_total_without_pt.rds"))
+#ls_results_readable <- results$readable
+#list2excel(ls_results_readable, glue("{rds_dir}/kegg_macrophage_cluster_marker_gene_total_without_pt.xlsx"))
+
+
+results <- readRDS(glue("{rds_dir}/kegg_macrophage_cluster_marker_gene_total.rds"))
+ls_results_res <- results$res
+select_pathway <- list(
+    "MGC/TAM" = c("hsa04142", "hsa00531", "hsa00603", "hsa04145", "hsa00600", "hsa04614", "hsa04610", "hsa00511"),
+    "macrophage_inflam" = c("hsa04621", "hsa04620", "hsa04060", "hsa04062", "hsa04612", "hsa04625", "hsa04668"),
+    "mo_macrophage" = c("hsa04062", "hsa04630", "hsa04060", "hsa05235", "hsa04015"),
+    "IL1b_macrophage" = c("hsa04668", "hsa04064", "hsa04625","hsa05205")
+)
+
+cases <- names(select_pathway)
+control <- "others"
+results <- bplapply(cases, function(case){
+    res <- ls_results_res[[case]]
+    path_case <- select_pathway[[case]]
+    result_filter <- res@result %>% filter(ID %in% path_case) %>% mutate(case = case, control = control)
+    res_filter <- new("enrichResult", result = result_filter)
+    return(list(df = result_filter, res = res_filter))
+}, BPPARAM = param)
+names(results) <- cases
+ls_results_df <- lapply(results, function(x) x$df)
+ls_results_res <- lapply(results, function(x) x$res)
+
+results <- list(df = ls_results_df, res = ls_results_res)
+saveRDS(results, glue("{rds_dir}/kegg_macrophage_cluster_marker_gene_total_select.rds"))
+
+
+
+
+
+
+
+# macrophage
+ls_total <- readRDS(glue("{rds_dir}/Macrophage_cluster_marker_gene_vs_MGC_total.rds"))
+ls_erosion <- readRDS(glue("{rds_dir}/Macrophage_cluster_marker_gene_vs_MGC_erosion.rds"))
+groups <- names(ls_total)
+results <- BiocParallel::bplapply(groups, function(group){
+  dt1 <- ls_total[[group]]
+  dt2 <- ls_erosion[[group]]
+  res_1 <- enrichKEGG((dt1 %>% filter(type == "up") %>% pull(ENTREZID) %>% unique()), organism = "hsa", keyType = "kegg", 
+                       pAdjustMethod = "BH", 
+                       pvalueCutoff = 0.05, qvalueCutoff = 0.2, 
+                       minGSSize = 5,
+                       use_internal_data = TRUE)
+  res_2 <- enrichKEGG((dt1 %>% filter(type == "down") %>% pull(ENTREZID) %>% unique()), organism = "hsa", keyType = "kegg", 
+                       pAdjustMethod = "BH", 
+                       pvalueCutoff = 0.05, qvalueCutoff = 0.2, 
+                       minGSSize = 5,
+                       use_internal_data = TRUE)
+  res_3 <- enrichKEGG((dt2 %>% filter(type == "up") %>% pull(ENTREZID) %>% unique()), organism = "hsa", keyType = "kegg", 
+                      pAdjustMethod = "BH", 
+                      pvalueCutoff = 0.05, qvalueCutoff = 0.2, 
+                      minGSSize = 5,
+                      use_internal_data = TRUE)
+  res_4 <- enrichKEGG((dt2 %>% filter(type == "down") %>% pull(ENTREZID) %>% unique()), organism = "hsa", keyType = "kegg", 
+                      pAdjustMethod = "BH", 
+                      pvalueCutoff = 0.05, qvalueCutoff = 0.2, 
+                      minGSSize = 5,
+                      use_internal_data = TRUE)
+  readable1 <- setReadable(res_1, OrgDb = "org.Hs.eg.db", keyType="ENTREZID") %>% as.data.frame()
+  readable2 <- setReadable(res_2, OrgDb = "org.Hs.eg.db", keyType="ENTREZID") %>% as.data.frame()
+  readable3 <- setReadable(res_3, OrgDb = "org.Hs.eg.db", keyType="ENTREZID") %>% as.data.frame()
+  readable4 <- setReadable(res_4, OrgDb = "org.Hs.eg.db", keyType="ENTREZID") %>% as.data.frame()
+  return(list(res_total_up = res_1, res_total_down = res_2, res_erosion_up = res_3, res_erosion_down = res_4,
+              readable_total_up = readable1, readable_total_down = readable2, readable_erosion_up = readable3, readable_erosion_down = readable4))
+}, BPPARAM = param)
+names(results) <- groups
+saveRDS(results, glue("{rds_dir}/kegg_macrophage_cluster_marker_gene_pathway.rds"))
+
+results <- readRDS(glue("{rds_dir}/kegg_macrophage_cluster_marker_gene_pathway.rds"))
+results_flat <- setNames(flatten(results), unlist(lapply(names(results), function(x) paste(x, names(results[[x]]), sep = "_"))))
+results_readable <- results_flat[grepl("readable", names(results_flat))]
+list2excel(results_readable, glue("{rds_dir}/kegg_Macrophage_cluster_marker_gene.xlsx"), showRow = T)
+
+
+## Macrophage erosion vocanoplot
+uniprot_list <- readRDS(glue("{rds_dir}/UniProt_scretion.rds"))
+secretion <- unique(c(uniprot_list$ECM$Gene, uniprot_list$GF$Gene, uniprot_list$cytokine$Gene))
+
+erosion_region_diff <- readRDS("/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/xenium/erosion_region_diff_gene.rds")
+df <- erosion_region_diff$Macrophage_diff_gene_sig
+secretion_protein <- intersect(unique(df$gene), secretion)
+
+dt <- erosion_region_diff$Macrophage_diff_gene %>% mutate(gene = rownames(.)) %>%
+    mutate(label = case_when(gene %in% c("MMP9", "MMP12") ~ gene, TRUE ~ NA_character_), 
+           secretion = case_when(gene %in% secretion_protein ~ "secretion", TRUE ~ "non-secretion"),
+           type = case_when(avg_log2FC >= 0.5 & p_val_adj <= 0.05 ~ "Up",
+                            avg_log2FC <= -0.5 & p_val_adj <= 0.05 ~ "Down",
+                            TRUE ~ "Others")) %>%
+    mutate(color_set = case_when(secretion == "secretion" ~ secretion, TRUE ~ type)) %>%
+    mutate(p_val_adj = ifelse(p_val_adj == 0, min(p_val_adj[p_val_adj > 0], na.rm = TRUE) / 100, p_val_adj),
+           type = factor(type, levels = c("Up", "Down", "Others")), 
+           secretion = factor(secretion, levels = c("secretion", "non-secretion")),
+           color_set = factor(color_set, levels = c("Up", "Down", "secretion", "Others")))
+
+saveRDS(dt, glue("{rds_dir}/erosion_in_out_zone_Macrophage_secretion.rds"))
 
