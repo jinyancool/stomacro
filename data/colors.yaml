@@ -1,235 +1,289 @@
 default:
-  project_name: "mm"
-  dataset: "jilin"
+  project_name: "stomatology"
+  dataset: "lvjiong"
 colors:
-  gender:
-    female: "#C92928"
-    male: "#2172A8"
-  tumor_descriptor:
-    Primary: "#BF1633"
-    Recurrence: "#129a71"
-    first_relapse: "#09e409"
-    after_relapse:  "#035e03"
-    treat_naive: "#0F8FBF"
-    initial_treating: "#EBAEA9"
-  ethnicity:
-    African: "#2172A8"
-    Asian: "#C92928"
-    Caucasian: "#EE7B20"
-  subtypes:
-    CD1: "#129a71"
-    CD1a1: "#09e409"
-    CD1a2: "#89e409"
-    CD1b: "#7DBFA7"
-    CD2: "#035e03"
-    Low_purity: "#333333"
-    IgD: "#EE934E"
-    MAF: "#D1352B"
-    MS: "#F5D2A8"
-    PR: "#9B5B33"
-    HRD15: "#173565"
-    HRD_MYC_lowNFkB: "#2e26ee"
-    HRD_lowTP53: "#5653a5"
-    HRD_chr1qgain: "#1E90FF"
-    chr1q_gain_HDR: "#1E90FF"
-    chr1qgain: "#0F8FBF"
-  RNA_Subtype_Name:
-    CD1: "#129a71"
-    CD2a: "#035e03"
-    CD2b: "#09e409"
-    "Low purity": "#333333"
-    "HRD, low TP53": "#1E90FF"
-    "HRD, MYC, low NFkB": "#0e06ee"
-    "HRD, ++15, MYC": "#7713a0"
-    "HRD, ++15": "#5653a5"
-    MS: "#ebb415"
-    PR: "#8d0a4f"
-    MAF: "#EBAEA9"
-    "1q gain": "#DC143C"
-  batch:
-    commpass: "#C71585"
-    jilin: "#00BFFF"
-    HRA006164: "#C92928"
-    bmc: "#EE934E"
-    EGAD00001007813: "#09e409"
-    GSE116324: "#98FB98"
-    GSE164652: "#FFA500"
-    GSE220144: "#F08080"
-    GSE230526: "#20B2AA"
-    GSE263767: "#1E90FF"
-    PRJNA474747: "#9370DB"
-  PrimaryCluster:
-    CD1: "#129a71"
-    CD2: "#035e03"
-    chr1q_gain: "#7713a0"
-    HRD: "#0e06ee"
-    IgD: "#FF00FF"
-    new_cluster1: "#DC143C"
-    new_cluster2: "#FF00FF"
-    MAF: "#EBAEA9"
-    MS: "#ebb415"
-    PR: "#8d0a4f"
-    HDR: "#0e06ee"
-    CD2_HDR: "#09e409"
-    chr1q_gain_HDR: "#1E90FF"
-  IRF4_mut:
-    TRUE: "#C92928"
-    FALSE: "gray"
-  Clinical_IgH:
-    Bi-Clonal: "#0e06ee"
-    IgA: "#DC143C"
-    IgD: "#FF00FF"
-    IgG: "#ebb415"
-    IgM: "#8d0a4f"
-    Negative: "#09e409"
-  Clinical_IgL:
-    Bi-Clonal: "#0e06ee"
-    Kappa: "#DC143C"
-    Lambda: "#FF00FF"
-    Negative: "#ebb415"
-  wgs_seq:
-    FALSE: "#1E90FF"
-    TRUE: "#DC143C"
-  rna_seq:
-    FALSE: "#1E90FF"
-    TRUE: "#DC143C"
-  Tx_MAF:
-    FALSE: "#1E90FF"
-    TRUE: "#DC143C"
-  Tx_MAFA:
-    FALSE: "#1E90FF"
-    TRUE: "#DC143C"
-  Tx_MAFB:
-    FALSE: "#1E90FF"
-    TRUE: "#DC143C"
-  Tx_CCND1:
-    FALSE: "#1E90FF"
-    TRUE: "#DC143C"
-  Tx_CCND2:
-    FALSE: "#1E90FF"
-    TRUE: "#DC143C"
-  Tx_CCND3:
-    FALSE: "#1E90FF"
-    TRUE: "#DC143C"
-  Tx_NSD2:
-    FALSE: "#1E90FF"
-    TRUE: "#DC143C"
-  Tx_MYC:
-    FALSE: "#1E90FF"
-    TRUE: "#DC143C"
-  Tx_FGFR3:
-    FALSE: "#1E90FF"
-    TRUE: "#DC143C"
-  NSD2_fusion:
-     FALSE: "#1E90FF"
-     TRUE: "#DC143C"
-  FGFR3_fusion:
-     FALSE: "#1E90FF"
-     TRUE: "#DC143C"
-  "t(4;14)":
-     FALSE: "grey60"
-     TRUE: "#DC143C"
-  "t(11;14)":
-    FALSE: "grey60"
-    TRUE: "#DC143C"
-  "t(14;16)":
-    FALSE: "grey60"
-    TRUE: "#DC143C"
-  "t(8;14)":
-    FALSE: "grey60"
-    TRUE: "#DC143C"
-  "t(14;20)":
-    FALSE: "grey60"
-    TRUE: "#DC143C"
-  aMUC3A:
-    sig_up: "#DC143C"
-    sig_noup: "#1E90FF"
-    nosig: "grey60"
-  aMAF:
-    sig_up: "#DC143C"
-    sig_noup: "#1E90FF"
-    nosig: "grey60"
-  aCCND1:
-    sig_up: "#DC143C"
-    sig_noup: "#1E90FF"
-    nosig: "grey60"
-  aSPP1:
-    sig_up: "#DC143C"
-    sig_noup: "#1E90FF"
-    nosig: "grey60"
-  iss_stage:
-    1: "#ebb415"
-    2: "#8d0a4f"
-    3: "#0e06ee"
-  imwg_risk:
-    HR: "#AA3538"
-    SR: "#5891BF"
-  age:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "#EDCE98", "#DC143C"]
-  OS_to_death:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "#EDCE98", "#DC143C"]
-  chr1q_fish:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "#EDCE98", "#DC143C"]
-  chr3_fish:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "#EDCE98", "#DC143C"]
-  chr1p:
-    breaks: [-0.5, 0, 0.7]
-    colors: ["#1E90FF", "#EDCE98", "#DC143C"]
-  chr1q:
-    breaks: [-0.5, 0, 0.7]
-    colors: ["#1E90FF", "#EDCE98", "#DC143C"]
-  chr11:
-    breaks: [-0.5, 0, 0.7]
-    colors: ["#1E90FF", "#EDCE98", "#DC143C"]
-  chr15:
-    breaks: [-0.5, 0, 0.7]
-    colors: ["#1E90FF", "#EDCE98", "#DC143C"]
-  chr19:
-    breaks: [-0.5, 0, 0.7]
-    colors: ["#1E90FF", "#EDCE98", "#DC143C"]
-  chr3:
-    breaks: [-0.5, 0, 0.7]
-    colors: ["#1E90FF", "#EDCE98", "#DC143C"]
-  chr5:
-    breaks: [-0.5, 0, 0.7]
-    colors: ["#1E90FF", "#EDCE98", "#DC143C"]
-  chr7:
-    breaks: [-0.5, 0, 0.7]
-    colors: ["#1E90FF", "#EDCE98", "#DC143C"]
-  chr9:
-    breaks: [-0.5, 0, 0.7]
-    colors: ["#1E90FF", "#EDCE98", "#DC143C"]
-  CCND1:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "white", "#DC143C"]
-  CCND2:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "white", "#DC143C"]
-  CCND3:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "white", "#DC143C"]
-  MAF:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "white", "#DC143C"]
-  MAFA:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "white", "#DC143C"]
-  MAFB:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "white", "#DC143C"]
-  SPP1:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "white", "#DC143C"]
-  NSD2:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "white", "#DC143C"]
-  HOXA10:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "white", "#DC143C"]
-  CEBPE:
-    breaks: [0.1, 0.5, 0.9]
-    colors: ["#1E90FF", "white", "#DC143C"]
+  Gender:
+    female: "#d80700"
+    male: "#00599F"
+  Age_level: 
+    30-50: "deepskyblue4"
+    50-70: "darkorange"
+    70-90: "red"
+  Differentiation:
+    G1: "#D1352B"
+    G2: "#1E90FF"
+    G3: "#129a71"
+    G4: "#FFA500"
+  diff_level:
+    high: "red"
+    median: "darkorange"
+    low: "deepskyblue4"
+  tissue_site:
+    Adjacent: "#2f4a99ff"
+    Tumor: "#b92923ff"
+  tumor_site:
+    Buccal mucosa: "#A6CEE3"
+    Tongue: "#FFFF99"
+    Gingiva: "#FB9A99"
+    Maxillary sinus: "#FDBF6F"
+    Floor of mouth: "#B2DF8A"
+    Palate: "#CAB2D6"
+  T_stage:
+    T1: "#FFDAD1FF"
+    T2: "#FFB6A4FF"
+    T3: "#F99179FF"
+    T4: "#EE6A50FF"
+  clinical_stage:
+    ST1: "#C5D7BEFF"
+    ST2: "#8BB07FFF"
+    ST3: "#528A44FF"
+    ST4: "#006400FF"
+  erosion_site:
+    erosion: "red"
+    non-erosion: "deepskyblue4"
+  Metastasis:
+    M0: "darkolivegreen1"
+    M1: "darkorange3"
+  bar_metastasis:
+    M0: "red"
+    M1: "deepskyblue4"
+  bar_differentiation:
+    G1: "#D1352B"
+    G2: "#1E90FF"
+    G3: "#129a71"
+    G4: "#FFE774"
+  bar_tumor_site:
+    Buccal mucosa: "#D1352B"
+    Tongue: "#1E90FF"
+    Gingiva: "#129a71"
+    Maxillary sinus: "#FFE774"
+    Floor of mouth: "#BE96BE"
+    Palate: "#FF930A"
+  bar_clinical_stage:
+    ST1: "#1E90FF"
+    ST2: "#FFE774"
+    ST3: "#FF930A"
+    ST4: "#D1352B"
+  cell_type: 
+    CD4 T: "#6EBEE6"
+    CD8 T: "deepskyblue4"
+    T cell: "deepskyblue4"
+    T/NK: "#1E90FF"
+    NKT: "#4696E6"
+    NK: "aquamarine3"
+    B cell: "#00802A"
+    Plasma: "darkgreen"
+    Macrophage: "#C88CFA"
+    DC: "#FF9BFF"
+    pDC: "#FF00FF"
+    Mast: "#6E5082"
+    Neutrophil: "#C4C4E4"
+    Immune cell: "#8ddfdbff"
+    Fibroblast: "#fccde5"
+    Endothelial: "#F2AD88"
+    Blood vessel: "#F2AD88"
+    Tumor cell: "#b92923ff"
+    Epithelial: "#b92923ff"
+    SmoothMC: "#edc9af"
+    SkeletalMC: "#D6BDA1"
+    Glial: "#E9D074"
+    CAFs: "#fccde5"
+    mix: "#bdd12bff"
+    other: "grey50"
+    Ignore: "white"
+
+    CD4T_CD44+: "#A7FFD6"
+    CD8T_CD44+: "#002CCF"
+    Macrophage_CD44+: "#D854AA"
+
+    Myofib: "#F08080"
+    Salivary: "#FA339A"
+
+    TAM: "#6E5082"
+    MGC: "#6E5082"
+    MGC/TAM: "#6E5082"
+    TAM_THBS1: "#F2ADBE"
+    TAM_H19: "#fccde5"
+    TAM_MMP9: "#BE96BE"
+    TAM_MMP12: "#a543f7"
+
+    TAM_CCL8: "#918cfa"
+    TAM_CCL18: "#9664AA"
+    TAM_CCL22: "#a665dcff"
+    TAM_CCL24: "#D4A4FF"
+    TAM_immusuppress: "#D854AA"
+    mo_macrophage: "#FF9BCF"
+    IL1b_macrophage: "#b3b3e3ff"
+    macrophage_inflam: "#fa8cf5"
+      
+    basal_like_epi: "#FFAE24"
+    Langerhans_cDC2: "#9664AA"
+    mo_DC: "#BE96BE"
+    TIL_mix: "#F2ADBE"
+    myCAF: "#8ddfdbff"
+    
+
+    basal_proliferating: "#FFE5C2"
+    basal_proliferating_invasive: "#FFF8DC"
+
+    spinous: "#FFF7A3"
+    spinous_CD8A+: "#FFE774"
+    spinous_inflam: "#FFCA00"
+    spinous_mix: "#D39A00"
+    spinous_1: "#C67F00"
+    spinous_2_cuticula: "#B6865A"
+
+    CCND2+SFRP1: "#E4BF31"
+    basal_cell: "#8B0000"
+    basal_CD36+: "#D1352B"
+    basal_EPCAM+: "#E63119"
+    basal_KRAS+: "#A3125A"
+    basal_inflam: "#E9967A"
+    basal_inflam_CD68+_CD4+: "#CD5C5C"
+
+    basal_invasive: "#FFD6E7"
+    basal_invasive_KRAS+: "#FF9BCF"
+
+
+    Non_CSC: "#FFF7A3"
+    CSC_BMI1+: "#FFE774"
+    CSC_ALDH1A1+: "#E0C4AE"
+    CSC_CD44+: "#FFD53C"
+    CSC_CD44+SOX2+: "#FFC000"
+    CSC_allpositive: "#E19A00"
+    CSC_allnegative: "#C67F00"
+    
+    CD4Tnaive: "lightblue"
+    CD4Tex: "#A7FFD6"
+    Treg: "#1E90FF"
+    CD8Tnaive: "#2E63FF"
+    CD8Teff: "#00B94A"
+    CD8Tprolif: "#002CCF"
+    CD8Tex: "#00B7CA"
+    
+    mix_epi_boundary: "#E92E0A"
+    mix_drop: "transplant"
+    mix_epi: "#8B4513"
+    mix_corneocyte: "#FF7F00"
+    mix_T: "#456684ff"
+    mix_fibro: "#b68da2ff"
+
+    Spinous: "#8358CF"
+    Spinous_2: "#D083FF"
+    Spinous_EMT: "#27A7FA"
+    EMT: "#62FFFF"
+    Basal: "#a6cee3"
+    Basal_KI67+: "#fdd0a2"
+    Basal_distant: "#fccde5"
+    Distant: "#b3de69"
+    Spatial_dense: "#74F882"
+    Kera_Dapi+: "#F6D026"
+    Kera_CK-: "#EE6600"
+    Microcluster: "#AE2519"
+    CD44++: "#FA339A"
+
+  cluster:
+    1: "brown2"
+    2: "#4696E6"
+    3: "#3CB371"
+    4: "#9575aa"
+    5: "#e8d056"
+    6: "#F2ADBE"
+    7: "darkorange4"
+    8: "chocolate1"
+    9: "darkkhaki"
+    10: "lightblue"
+    11: "darkgreen"
+    12: "darkslateblue"
+    13: "darkgray"
+    14: "darksalmon"
+    15: "aquamarine2"
+
+  CN_cluster:
+    CN1: "brown2"
+    CN2: "#4696E6"
+    CN3: "#3CB371"
+    CN4: "#9575aa"
+    CN5: "#e8d056"
+    CN6: "#F2ADBE"
+    CN7: "darkorange4"
+    CN8: "chocolate1"
+    CN9: "darkkhaki"
+    CN10: "lightblue"
+    CN11: "darkgreen"
+    CN12: "darkslateblue"
+    CN13: "darkgray"
+    CN14: "darksalmon"
+    CN15: "aquamarine2"
+  
+  CN_subtype:
+    CN2: "#FA339A"
+    CN7: "#8358CF"
+    CN8": "#3CB371"
+    CN16: "#b3de69"
+    CN22: "#27A7FA"
+    CN25: "darkorange"
+    CN30: "#F6D026"
+    CN32: "#fccde5"
+    CN33: "deepskyblue4"
+    CN34: "#AE2519"
+    other: "grey90"
+    
+  col_map:
+    0: "#94C6E5"
+    0.5: "white"
+    0.8: "#F4AB89"
+    0.9: "#BD2333"
+    1: "#6D001E"
+
+  pci_point_map:
+    Positive: "#6EBEE6"
+    Negative: "black"
+  
+  volcano_type:
+    Up: "red"
+    Down: "deepskyblue4"
+    Others: "grey50"
+
+  Age_color: ["white", "darkorchid4"]
+  dend_color: ["#bdd12bff", "#1E90FF", "#F2AD88", "#b92923ff"]
+  pci_color: ["#4696E6", "#e8d056"]
+
+  split_2: ["brown2", "#4696E6"]
+  split_4: ["#ff7f0e", "#1f77b4", "#2ca02c", "brown2"]
+  scale_3: ["#002CCF", "white", "red"]
+  scale_6: ["#2B6CA2", "#94C6E5", "white", "#F4AB89", "#BD2333", "#6D001E"]
+  scale_7: ["#2B6CA2", "#5AA1C9", "#94C6E5", "white", "#F4AB89", "#BD2333", "#6D001E"]
+
+cell_type_order : ["CD4 T", "CD8 T", "T cell", "T/NK", "NKT", "NK", "B cell", "Plasma", 
+                    "DC", "pDC", "Mast", "Neutrophil", "Macrophage", "Immune cell", "Fibroblast", "Endothelial", "Blood vessel", 
+                    "Tumor cell", "Epithelial", "SmoothMC", "SkeletalMC", "Glial", "CAFs", "mix", "other", "Ignore", 
+                    "CD4T_CD44+", "CD8T_CD44+", "Macrophage_CD44+", 
+                    "Myofib", "Salivary", "TAM", "MGC", "MGC/TAM", "TAM_THBS1", "TAM_H19", "TAM_MMP9", "TAM_MMP12", 
+                    "TAM_CCL8", "TAM_CCL18", "TAM_CCL22", "TAM_CCL24", "TAM_immusuppress", 
+                    "mo_macrophage", "IL1b_macrophage", "macrophage_inflam", 
+                    "basal_like_epi", "Langerhans_cDC2", "mo_DC", "TIL_mix", "myCAF", 
+                    "basal_cell", "basal_KRAS+", "basal_CD36+", "basal_EPCAM+", "basal_inflam", "basal_inflam_CD68+_CD4+", 
+                    "basal_invasive", "basal_invasive_KRAS+", "basal_proliferating_invasive", "basal_proliferating",
+                    "CCND2+SFRP1",
+                    "spinous", "spinous_CD8A+", "spinous_inflam", "spinous_mix", "spinous_1", "spinous_2_cuticula","mix_epi",
+                    "CD4T_CD45RO+_CD44+", "CD4T_CD45RO+_PD-1+", "CD4T_CD44+", "CD4T_GranzymeB+_PD-1+", "CD4T_HLA-DR+", "CD4T_Ki67+",
+                    "CD4T_PD-1+", "CD4T_FOXP3+", "CD4T_others", 
+                    "CD8T_CD45RO+_PD-1+", "CD8T_CD45RO+_GranzymeB+", "CD8T_CD45RO+_Ki67+", "CD8T_CD45RO+_CD44+", "CD8T_CD44+", 
+                    "CD8T_GranzymeB+","CD8T_GranzymeB+_PD-1+", "CD8T_HLA-DR+", "CD8T_Ki67+", "CD8T_others",
+                    "Macrophage_CD14+_Ki67+", "Macrophage_CD44+", "Macrophage_CD44+_Vimentin+", "Macrophage_HLA-DR+", 
+                    "Macrophage_IDO1+", "Macrophage_Ki67+", "Macrophage_PD-L1+", "Macrophage_others", 
+                    "Tumor_CD44+", "Tumor_CD44+_PD-L1+", "Tumor_CD44+_Vimentin+", "Tumor_IDO1+_HLA-DR+", "Tumor_IDO1+_Vimentin+", 
+                    "Tumor_E-cadherin+", "Tumor_Ki67+", "Tumor_HLA-DR+", "Tumor_Vimentin+", "Tumor_PD-L1+", "Tumor_others", 
+                    "Fibroblast_CD44+", "Fibroblast_SMA+", "Fibroblast_IDO1+", "Fibroblast_HLA-DR+_Collagen-IV+", "Fibroblast_Ki67+", "Fibroblast_others",
+                    "Non_CSC", "CSC_BMI1", "CSC_CD44+", "CSC_CD44+SOX2+", "CSC_allpositive", "CSC_allnegative", 
+                    "CD4Tnaive", "CD4Tex", "Treg", "CD8Tnaive", "CD8Teff", "CD8Tprolif", "CD8Tex", 
+                    "mix_epi_boundary", "mix_drop", "mix_epi", "mix_corneocyte", "mix_T", "mix_fibro", 
+                    "Spinous", "Spinous_2", "Spinous_EMT", "EMT", "Basal", "Basal_KI67+", "Basal_distant", "Distant", 
+                    "Spatial_dense", "Kera_Dapi+", "Kera_CK-", "Microcluster", "CD44++"]
+
+
+
+
+
+
