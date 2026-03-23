@@ -1,0 +1,328 @@
+# Singlecell
+
+Package load and plot settings.
+
+```{r warning=FALSE}
+pkgs <- c("jhtools", "glue", "readxl", "data.table", "magrittr", "rlang", "ggplot2", 
+          "Seurat", "dplyr", "patchwork", "janitor", "ggpubr", "ggridges", 
+          "clusterProfiler", "cowplot", "Nebulosa", "org.Hs.eg.db")
+for (pkg in pkgs){
+  suppressPackageStartupMessages(library(pkg, character.only = T))
+}
+
+dat_dir <- "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/tenx"
+fig_dir <- "/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/tenx/figures"
+img_dir <- "/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/tenx/images"
+
+cols_fn <- "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml"
+cols <- show_me_the_colors(cols_fn)
+color_celltype <- jhtools::show_me_the_colors(cols_fn, "cell_type")
+cols_cl <- cols$cluster[1:3]
+```
+
+# Datasets integrate
+
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+srt <- readRDS(glue("{dat_dir}/srt_integrated_anno.rds"))
+p <- DimPlot(srt, reduction = "umap", group.by = c("dataset", "seurat_clusters", "cell_type"), raster = TRUE)
+ggsave(glue("{fig_dir}/umap_dataset_cluster_integrated.pdf"), p, width = 18, height = 5)
+ggsave(glue("{img_dir}/umap_dataset_cluster_integrated.png"), p, width = 18, height = 5)
+
+srt <- RenameIdents(srt, 
+                    "B cells" = "B cell", 
+                    "Plasma cells" = "Plasma", 
+                    "TAMs" = "TAM", 
+                    "Mast cells" = "Mast")
+srt@meta.data$celltype <- Idents(srt)
+p <- DimPlot(srt, reduction = "umap", group.by = "celltype") +
+  scale_color_manual(values = color_celltype)
+ggsave(glue("{fig_dir}/umap_celltype.pdf"), p, width = 6, height = 5)
+ggsave(glue("{img_dir}/umap_celltype.png"), p, width = 6, height = 5)
+```
+
+![](images/umap_dataset_cluster_integrated.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="umap_dataset_cluster_integrated.png"}
+![](images/umap_celltype.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="umap_celltype.png"}
+
+## identify tumor cell cluster 
+
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+srt_epi <- readRDS(glue("{dat_dir}/srt_epi.rds"))
+# umap anno
+p <- DimPlot(srt_epi, reduction = "umap", group.by = "subtype", cols = color_celltype)
+ggsave(glue("{fig_dir}/umap_epi_subtype.pdf"), p, width = 7, height = 5)
+ggsave(glue("{img_dir}/umap_epi_subtype.png"), p, width = 7, height = 5)
+
+# subtype dotplot
+genes <- c("CD44", "SOX2", "BMI1", "ALDH1A1", "CytoTRACE2_Relative_Score")
+p <- DotPlot(srt_epi, features = genes, group.by = "subtype") +
+  scale_color_viridis_c() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+ggsave(glue("{fig_dir}/dotplot_stemness_markers_epi_subtype.pdf"), p, width = 8, height = 5)
+ggsave(glue("{img_dir}/dotplot_stemness_markers_epi_subtype.png"), p, width = 8, height = 5)
+```
+
+![](images/umap_epi_subtype.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="umap_epi_subtype.png"}
+![](images/dotplot_stemness_markers_epi_subtype.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="dotplot_stemness_markers_epi_subtype.png"}
+
+## Cytotrace score in tumor cells
+
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+p <- FeaturePlot(srt_epi, reduction = "umap", features = "CytoTRACE2_Relative_Score") +
+  scale_color_viridis_c()
+ggsave(glue("{fig_dir}/umap_cytotrace.pdf"), p, width = 6, height = 5)
+ggsave(glue("{img_dir}/umap_cytotrace.png"), p, width = 6, height = 5) ### color 0.75
+p <- FeaturePlot(srt_epi, reduction = "umap", features = "CD44")
+ggsave(glue("{fig_dir}/umap_CD44.pdf"), p, width = 6, height = 5)
+ggsave(glue("{img_dir}/umap_CD44.png"), p, width = 6, height = 5)
+# CD44 and other stemness markers in tumor
+marker_stem <- c("CD44", "PROM1", "SOX2", "NANOG", "POU5F1", "BMI1")
+p <- plot_density(srt_epi, marker_stem, reduction = "umap", raster = TRUE, size = 0.1) +
+  plot_layout(ncol = 3)
+ggsave(glue("{fig_dir}/umap_density_stemness_markers.pdf"), p, width = 9, height = 5)
+ggsave(glue("{img_dir}/umap_density_stemness_markers.png"), p, width = 9, height = 5)
+
+pt <- FetchData(srt_epi, vars = c("CytoTRACE2_Relative_Score", "CD44"), layer = "data")
+pt <- filter(pt, CD44 > 0)
+p <- ggplot(pt, aes(CytoTRACE2_Relative_Score, CD44)) +
+  geom_hex() +
+  scale_fill_gradient(low = "white", high = "red") +
+  geom_smooth(method = lm, color = "black") +
+  stat_cor(method = "pearson") +
+  theme_classic()
+ggsave(glue("{fig_dir}/correlation_CD44_cytotrace.pdf"), p, width = 6, height = 5)
+ggsave(glue("{img_dir}/correlation_CD44_cytotrace.png"), p, width = 6, height = 5)
+```
+
+![](images/correlation_CD44_cytotrace.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="correlation_CD44_cytotrace.png"}
+
+## Correlation Analysis of CD44 with Other Stemness Markers
+
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+marker_stem <- c("CD44", "PROM1", "SOX2", "NANOG", "POU5F1", "BMI1", "ALDH1A1")
+pt <- FetchData(srt_epi, vars = marker_stem, layer = "data") %>%
+  tidyr::pivot_longer(cols = PROM1:ALDH1A1, names_to = "gene", values_to = "expr")
+pt <- pt %>% filter(CD44 > 0 & expr > 0)
+p <- ggplot(pt, aes(CD44, expr)) +
+  geom_hex() +
+  scale_fill_gradient(low = "white", high = "red") +
+  facet_wrap(~ gene, scales = "free_y") +
+  geom_smooth(method = lm, color = "black", se = FALSE) +
+  stat_cor(method = "pearson") +
+  theme_classic()
+ggsave(glue("{fig_dir}/correlation_CD44_stemness_markers.pdf"), p, width = 8, height = 5)
+ggsave(glue("{img_dir}/correlation_CD44_stemness_markers.png"), p, width = 8, height = 5)
+```
+
+![](images/correlation_CD44_stemness_markers.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="correlation_CD44_stemness_markers.png"}
+
+## Enriched pathway in compared clusters
+
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# pathway of interest
+df1 <- read.csv(glue("{dat_dir}/CD44pos_vs_CD44neg_enrich_kegg_poi.csv"), row.names = 1)
+pt1 <- df1 %>%
+  mutate(log10p = ifelse(Cluster == "CD44+ up", -log10(p.adjust), log10(p.adjust)),
+         just = ifelse(Cluster == "CD44+ up", 1.01, -0.01)) %>%
+  arrange(log10p) %>%
+  mutate(Description = factor(Description, levels = Description),
+         Cluster = factor(Cluster, levels = c("CD44+ up", "CD44- up")))
+p1 <- ggplot(pt1, aes(Description, log10p, fill = Cluster)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = unname(cols_cl[1:2])) +
+  scale_y_continuous("-log10(p.adjust)", limits = c(-6, 11), 
+                     breaks = seq(-4, 10, 2),labels = c(4, 2, 0, 2, 4, 6, 8, 10)) +
+  scale_x_discrete("", labels = NULL) +
+  coord_flip() +
+  geom_text(aes(Description, 0, label = Description), hjust = pt1$just) +
+  theme_classic() +
+  theme(axis.line.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  labs(fill = "")
+ggsave(glue("{fig_dir}/CD44pos_vs_CD44neg_enrich_kegg_poi_barplot.pdf"), p1, width = 8, height = 8)
+ggsave(glue("{img_dir}/CD44pos_vs_CD44neg_enrich_kegg_poi_barplot.png"), p1, width = 8, height = 8)
+```
+
+![](images/CD44pos_vs_CD44neg_enrich_kegg_poi_barplot.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="CD44pos_vs_CD44neg_enrich_kegg_poi_barplot.png"}
+
+## CD44 expression patterns across samples analyzed by hierarchical clustering (k=3)
+
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+pt <- FetchData(srt_epi, vars = c("CD44", "sample_id"), layer = "data") %>% 
+  dplyr::filter(sample_id != "P05", sample_id != "P46") # filter sample CD44 no exp
+
+# ks test & hclust
+sps <- unique(pt$sample_id)
+n <- length(sps)
+ks_dist <- matrix(0, nrow = n, ncol = n)
+rownames(ks_dist) <- sps
+colnames(ks_dist) <- sps
+
+for (i in 1:(n - 1)) {
+  for (j in (i + 1):n) {
+    ks_test <- ks.test(pt[pt$sample_id == sps[i], "CD44"], pt[pt$sample_id == sps[j], "CD44"])
+    ks_dist[i, j] <- ks_test$statistic  
+    ks_dist[j, i] <- ks_dist[i, j]
+  }
+}
+
+dist_mat <- as.dist(ks_dist)
+hc <- hclust(dist_mat, method = "ward.D2")
+sp_order <- hc$labels[hc$order]
+
+clusters <- cutree(hc, k = 3)
+df_cl <- data.frame(sample_id = names(clusters),
+                    cluster = clusters) %>%
+  mutate(order = match(sample_id, sp_order))
+fwrite(df_cl, glue("{fig_dir}/density_CD44_sample_hclust_k3.csv"))
+
+# density ridges colored by cluster
+df_cl <- fread(glue("{fig_dir}/density_CD44_sample_hclust_k3.csv")) %>%
+  arrange(order)
+pt <- FetchData(srt_epi, vars = c("CD44", "sample_id"), layer = "data") %>% 
+  dplyr::filter(sample_id != "P05", sample_id != "P46") %>% 
+  left_join(df_cl, by = "sample_id") %>%
+  mutate(sample_id = factor(sample_id, levels = df_cl$sample_id))
+p <- ggplot(pt, aes(CD44, sample_id)) +
+  geom_density_ridges(aes(fill = as.factor(cluster))) +
+  scale_fill_manual(values = cols_cl) +
+  labs(fill = "cluster") +
+  theme_classic()
+ggsave(glue("{fig_dir}/density_CD44_sample_cluster_k3.pdf"), p, width = 6, height = 15)
+ggsave(glue("{img_dir}/density_CD44_sample_cluster_k3.png"), p, width = 6, height = 15)
+pdf(glue("{fig_dir}/density_CD44_sample_cluster_k3_dendrogram.pdf"), width = 12, height = 6)
+plot(rev(as.dendrogram(hc)))
+dev.off()
+```
+
+![](images/density_CD44_sample_cluster_k3.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="density_CD44_sample_cluster_k3.png"}
+
+## Gene Expression Patterns and Pathway Enrichment across Epi-Clusters
+
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# diff gene & enrich
+Idents(srt_epi) <- df_cl$cluster[match(srt_epi$sample_id, df_cl$sample_id)]
+markers <- FindAllMarkers(srt_epi)
+fwrite(markers, glue("{fig_dir}/CD44_cluster_markers_k3.csv"))
+
+df_sig <- markers %>%
+  filter(abs(avg_log2FC) > 1 & p_val_adj < 0.05) %>%
+  mutate(type = ifelse(avg_log2FC > 0, "up", "down"))
+fwrite(df_sig, glue("{fig_dir}/CD44_cluster_markers_sig_k3.csv"))
+
+gene_entrez <- bitr(unique(df_sig$gene), fromType = "SYMBOL", toType = "ENTREZID", OrgDb = "org.Hs.eg.db")
+df_sig <- merge(df_sig, gene_entrez, all.x = TRUE, by.x = "gene", by.y = "SYMBOL")
+
+res <- compareCluster(ENTREZID ~ cluster + type, 
+                      data = df_sig, 
+                      organism = "hsa",
+                      fun="enrichKEGG",
+                      use_internal_data = T)
+
+p <- dotplot(res) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ggsave(glue("{fig_dir}/CD44_cluster_markers_enrichment_KEGG_k3.pdf"), p, width = 8, height = 12)
+
+df_res <- setReadable(res, OrgDb = "org.Hs.eg.db", keyType="ENTREZID") %>%
+  as.data.frame()
+fwrite(df_res, glue("{fig_dir}/CD44_cluster_markers_enrichment_KEGG_k3.csv"))
+
+# barplot of selected pathway
+df <- readxl::read_xlsx(glue("{dat_dir}/CD44_cluster_markers_enrichment_KEGG_k3_selected.xlsx"))
+pt <- df %>%
+  arrange(cluster, p.adjust) %>%
+  mutate(p.adjust = as.numeric(p.adjust))
+pmax <- max(-log10(pt$p.adjust)) %>% ceiling
+p_lst <- lapply(unique(pt$cluster), function(x){
+  pt1 <- pt %>%
+    filter(cluster == x) %>%
+    mutate(Description = factor(Description, levels = Description))
+  ymax <- max(-log10(pt1$p.adjust)) %>% floor
+  p <- ggplot(pt1, aes(Description, -log10(p.adjust))) +
+    geom_bar(stat = "identity", fill = unname(cols_cl)[x], width = 0.6) +
+    ylim(0, pmax) +
+    coord_flip() +
+    geom_hline(yintercept = 1:ymax, color = "white") +
+    theme_classic() +
+    labs(x = paste0("Cluster ", x))
+  return(p)
+})
+hts <- pt %>% count(cluster) %>% pull(n)
+p <- wrap_plots(p_lst, ncol = 1, heights = hts)
+ggsave(glue("{fig_dir}/CD44_cluster_markers_enrichment_KEGG_k3_poi_barplot.pdf"), p, width = 8, height = 8)
+ggsave(glue("{img_dir}/CD44_cluster_markers_enrichment_KEGG_k3_poi_barplot.png"), p, width = 8, height = 8)
+```
+
+![](images/CD44_cluster_markers_enrichment_KEGG_k3_poi_barplot.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="CD44_cluster_markers_enrichment_KEGG_k3_poi_barplot.png"}
+
+## Cytotrace score in tumor cells vs stemness Markers
+
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+pt <- FetchData(srt_epi, vars = c("CytoTRACE2_Relative_Score", "CD44", "SOX2", "BMI1"), layer = "data")
+pt <- filter(pt, CD44 > 0, SOX2 > 0, BMI1 > 0)
+pt <- pt %>% tidyr::pivot_longer(cols = c(CD44, SOX2, BMI1), names_to = "gene", values_to = "exp") %>% 
+  mutate(CytoTRACE2_Relative_Score = if_else(CytoTRACE2_Relative_Score > 0.75, 0.75, CytoTRACE2_Relative_Score))
+
+x_range <- range(pt$CytoTRACE2_Relative_Score)
+x_seq <- seq(x_range[1], x_range[2], length.out = 100)
+
+predictions <- data.frame()
+for(g in unique(pt$gene)) {
+  subset_data <- pt[pt$gene == g, ]
+  loess_fit <- loess(exp ~ CytoTRACE2_Relative_Score, data = subset_data)
+  y_pred <- predict(loess_fit, newdata = data.frame(CytoTRACE2_Relative_Score = x_seq))
+  temp_df <- data.frame(
+    CytoTRACE2_Relative_Score = x_seq,
+    exp = y_pred,
+    gene = g
+  )
+  
+  predictions <- rbind(predictions, temp_df)
+}
+
+predictions <- predictions %>%
+  group_by(gene) %>%
+  mutate(
+    exp_min = exp - min(exp, na.rm = TRUE) # -min
+  ) %>%
+  ungroup()
+
+p_normalized <- ggplot(predictions, aes(x = CytoTRACE2_Relative_Score, y = exp_min, color = gene)) + 
+  geom_line(size = 1.2) + 
+  scale_color_discrete(name = "Gene") +
+  theme_classic() +
+  theme(axis.line.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.text.x = element_blank(),
+        panel.grid = element_blank()
+  )
+
+color_bar_data <- data.frame(
+  CytoTRACE2_Relative_Score = seq(x_range[1], x_range[2], length.out = 100),
+  y = 1
+)
+color_bar <- ggplot(color_bar_data, aes(x = CytoTRACE2_Relative_Score, y = y, fill = CytoTRACE2_Relative_Score)) +
+  geom_tile(height = 0.6) +
+  scale_fill_gradientn(
+    colors = c("#431954", "#6EC162")
+  ) + 
+  theme(
+    axis.title.y = element_blank(), 
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank(), 
+    legend.position="none"
+    )
+
+combined_plot <- plot_grid(
+  p_normalized,
+  color_bar,
+  ncol = 1,
+  rel_heights = c(6, 1), 
+  align = "v",
+  axis = "lr"
+)
+
+ggsave(glue("{fig_dir}/correlation_stemness_cytotrace_norm.pdf"), combined_plot, width = 6, height = 5)
+ggsave(glue("{img_dir}/correlation_stemness_cytotrace_norm.png"), combined_plot, width = 6, height = 5)
+```
+
+![](images/correlation_stemness_cytotrace_norm.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="correlation_stemness_cytotrace_norm.png"}
