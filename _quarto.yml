@@ -50,7 +50,9 @@ book:
           text: Clinical features
         - href: polaris.qmd
           text: Polaris
-        - href: codex.qmd
+        - href: xenium_show.qmd
+          text: Xenium
+        - href: codex_show.qmd
           text: CODEX
         - href: cd44.qmd
           text: CD44

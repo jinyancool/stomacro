@@ -5,7 +5,6 @@
 
 
 ```{r warning=FALSE}
-.libPaths(c(.libPaths(), "/cluster/home/yliang_jh/sbin/R/library/4.3.0"))
 pkgs <- c("fs", "configr", "stringr", 
           "jhtools", "glue", "patchwork", "tidyverse", "dplyr", "Seurat", "magrittr", 
           "readxl", "writexl", "ComplexHeatmap", 
