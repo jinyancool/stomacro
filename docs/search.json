@@ -967,18 +967,95 @@
     "href": "fig3.html",
     "title": "15  Figure 3",
     "section": "",
-    "text": "15.1 Figure 3",
+    "text": "15.1 scRNA package load and plot settings.\npkgs &lt;- c(\"jhtools\", \"glue\", \"readxl\", \"data.table\", \"magrittr\", \"rlang\", \"ggplot2\", \n          \"Seurat\", \"dplyr\", \"patchwork\", \"janitor\", \"ggpubr\", \"ggridges\", \n          \"clusterProfiler\", \"cowplot\", \"Nebulosa\", \"org.Hs.eg.db\")\nfor (pkg in pkgs){\n  suppressPackageStartupMessages(library(pkg, character.only = T))\n}\n\ndat_dir &lt;- \"/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/tenx\"\nfig_dir &lt;- \"/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/figures\"\nimg_dir &lt;- \"/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/images\"\n\ncols_fn &lt;- \"/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml\"\ncols &lt;- show_me_the_colors(cols_fn)\ncolor_celltype &lt;- jhtools::show_me_the_colors(cols_fn, \"cell_type\")\ncols_cl &lt;- cols$cluster[1:3]",
     "crumbs": [
       "Visualization",
       "<span class='chapter-number'>15</span>  <span class='chapter-title'>Figure 3</span>"
     ]
   },
   {
-    "objectID": "fig3.html#figure-3",
-    "href": "fig3.html#figure-3",
+    "objectID": "fig3.html#a-umap-cell-type",
+    "href": "fig3.html#a-umap-cell-type",
     "title": "15  Figure 3",
-    "section": "",
-    "text": "15.1.1 Functional relavances of samples in the IgD-enriched subtype\ncode:\n\npkgs &lt;- c(\"GSVA\", \"fs\", \"futile.logger\", \"configr\", \"stringr\", \"ggpubr\", \n          \"jhtools\", \"glue\", \"ggsci\", \"patchwork\", \"tidyverse\", \"dplyr\", \n          \"SummarizedExperiment\", \"jhuanglabRNAseq\", \"DESeq2\", \"maftools\", \n          \"matrixStats\", \"Matrix\", \"furrr\", \"ComplexHeatmap\", \"rstatix\",\n          \"clusterProfiler\", \"DOSE\", \"enrichplot\", \"org.Hs.eg.db\", \n          \"ggthemes\", \"EnhancedVolcano\", \"GseaVis\", \"glmnet\", \"tidyplots\")\nfor (pkg in pkgs){\n  suppressPackageStartupMessages(library(pkg, character.only = T))\n} \n\n# set workdir\nsetwd(\"/cluster/home/yjliu_jh/projects/mm/analysis/meta/human/figures/heatmap/check_new_cluster_addsamples/fixed_check\")\n\n# get samples\nclusterings &lt;- readxl::read_excel(\"/cluster/home/jhuang/projects/mm/analysis/meta/human/figures/heatmap/eda/check_new_cluster_addsamples/fixed_samples_3/sampleinfo_0.95.xlsx\")\ncolnames(clusterings)[1] &lt;- \"sample_id\"\n\n# get exp data\nmm1330 &lt;- read_rds(\"~/projects/mm/analysis/meta/human/rnaseq/exp/mm1330.rds\") %&gt;% convert_df_plot()\n\n# get rna sequencing type\npred_rna_lib &lt;- function (dat_mat) {\n  his_genes1 &lt;- c(\"H4C11\", \"H2BC3\", \"H4C4\", \"H3C12\", \"H2BC14\", \n                  \"H4C6\", \"H2AC16\", \"H2AC11\", \"H2AC12\", \"H1−5\", \"H3C2\", \n                  \"H3C3\", \"H3C11\", \"H2AC17\", \"H2AC13\", \"H2BC13\", \"H2AC4\", \n                  \"H2AC14\", \"H4C9\", \"H4C1\", \"H4C2\", \"H4C13\", \"H3C7\", \"H2BC9\", \n                  \"H2BC10\", \"H3C8\", \"H3C13\", \"H2BC7\", \"H2BC18\", \"H2BC15\", \n                  \"H4C14\", \"H4C8\", \"H2BC17\", \"H3C10\", \"H2BC11\", \"H4C12\", \n                  \"H3C15\", \"H2BC8\", \"H2AC8\", \"H2BC6\", \"H4C5\", \"H2AC15\", \n                  \"H1−3\", \"H3C4\", \"H4−16\", \"H2AC20\", \"H2AC21\", \"H3C1\", \n                  \"H2BC5\", \"H1−4\", \"H2AC7\", \"H2BC4\", \"H1−2\", \"H2AC6\")\n  inter_genes &lt;- intersect(his_genes1, rownames(dat_mat))\n  stopifnot(\"please make sure histone genes is contained in the data\" = length(inter_genes) &gt; 0)\n  dat_mat &lt;- dat_mat[rownames(dat_mat) %in% inter_genes, ]\n  clust &lt;- data.frame(cluster = cutree(hclust(dist(t(dat_mat))), k = 2))\n  diff &lt;- mean(unlist(dat_mat[, clust$cluster %in% 1])) - mean(unlist(dat_mat[, clust$cluster %in% 2]))\n  clust$rna_type &lt;- \"mRNA\"\n  clust$rna_type[clust$cluster == (2 - sum(diff &gt; 0))] &lt;- \"total_RNA\"\n  new_dat &lt;- data.frame(sample_id = rownames(clust), rna_type = clust$rna_type)\n  return(new_dat)\n}\nrna_lib_part &lt;- pred_rna_lib(mm1330)\n\n# get count\nmmdatasets &lt;- c(\"jilin\", \"commpass\", \"public\")\ncount_files &lt;- glue::glue(\"/cluster/home/jhuang/projects/mm/analysis/{mmdatasets}/human/rnaseq/exp/tables/{mmdatasets}_human_counts.csv\")\ntotal_counts_list &lt;- lapply(count_files[file.exists(count_files)], read_csv)\nnames &lt;- mmdatasets[file.exists(count_files)]\ncounts_all &lt;- total_counts_list[[1]]\nfor (i in 2:length(total_counts_list)) {\n  counts_all &lt;- bind_cols(counts_all, total_counts_list[[i]][, -(1:2)])\n}\n\n# load new gene symbol info \nhugo_anno &lt;- readr::read_delim(\"/cluster/home/yjliu_jh/projects/mm/data/hgnc_complete_set.txt\",\n                               col_types = cols(intermediate_filament_db = col_character()))\nhugo_anno &lt;- hugo_anno[, c(\"symbol\", \"ensembl_gene_id\", \"locus_group\")] %&gt;% as.data.frame() \ncolnames(hugo_anno)[2] &lt;- \"gene_id\"\n\n# prepare counts data\ncounts_all &lt;- counts_all[, -2] %&gt;% left_join(hugo_anno) %&gt;% na.omit() %&gt;% \n  dplyr::select(-c(gene_id, locus_group)) %&gt;% as.data.frame() %&gt;% remove_rownames() %&gt;% \n  column_to_rownames(var = \"symbol\") %&gt;% as.matrix() %&gt;% round()\ncounts_part &lt;- counts_all[, intersect(clusterings$sample_id, colnames(counts_all))]\n\n# prepare anno data\nsinfo_part &lt;- data.frame(sample_id = colnames(counts_part))\nsinfo_part &lt;- left_join(sinfo_part, clusterings[, c(\"sample_id\", \"sub_groups\")])\nsinfo_part &lt;- left_join(sinfo_part, rna_lib_part)\nmerged_sinfo &lt;- read_rds(\"~/projects/mm/docs/meta/sampleinfo/sampleinfo_jilin_commpass.rds\")\nsinfo_part &lt;- left_join(sinfo_part, merged_sinfo[, c(\"sample_id\", \"batch\")])\nrownames(sinfo_part) &lt;- sinfo_part$sample_id\nsinfo_part$group &lt;- ifelse(sinfo_part$sub_groups %in% \"G3\", \"igd_like\", \"others\")\n\n# construct DESeq2 object\ndds &lt;- DESeqDataSetFromMatrix(counts_part, sinfo_part, ~ batch + rna_type + group)\nkeep &lt;- rowSums(counts(dds) &gt;= 5) &gt; ceiling(0.2 * ncol(dds))  \ndds &lt;- dds[keep, ]\nkeep2 &lt;- rowSums(counts(dds) == 0) &lt; ceiling(0.5 * ncol(dds))\ndds &lt;- dds[keep2, ]\ndds &lt;- DESeq(dds)\nreadr::write_rds(dds, \"dds_corrected.rds\")\n\n# order and add columns to the results\nadd_col &lt;- function(data){\n  data$gene_name &lt;- rownames(data)\n  data$absFC &lt;- abs(data$log2FoldChange)\n  data &lt;- data[order(data$pvalue), ]\n  data2 &lt;- left_join(as.data.frame(data), hugo_anno[, c(\"symbol\", \"gene_id\")], by = c(\"gene_name\" = \"symbol\"))\n  data$ensembl_id &lt;- data2$gene_id\n  data\n}\n\n# get result for  comparison\nres_igd &lt;- add_col(results(dds, c(\"group\", \"igd_like\", \"others\")))\nGSEAInput_i &lt;- data.frame(rownames(res_igd), res_igd$log2FoldChange)\ncolnames(GSEAInput_i) &lt;- c(\"Symbol\", \"logFC\")\nGSEA2 &lt;- GSEAInput_i$logFC\nnames(GSEA2) &lt;- as.character(GSEAInput_i$Symbol)\nGSEA2 &lt;- sort(GSEA2, decreasing = TRUE)\ngseGO_res_i &lt;- gseGO(GSEA2, OrgDb = org.Hs.eg.db, keyType = \"SYMBOL\", ont = \"BP\",\n                     minGSSize = 5, maxGSSize = 1000, pvalueCutoff = 0.2)\n\n# volcano function\nquick_volcano &lt;- function (resA, title, col = \"gene_name\", fc_cutoff = 2, sel_lab = NULL) {\n  if (is.null(sel_lab)) {\n    sel_lab &lt;- unique(c(resA[order(resA$padj), ][1:10, col],\n                        resA[order(resA$absFC, decreasing = T), ][1:10, col]))\n  }\n  p &lt;- EnhancedVolcano(resA, lab = resA[[col]],\n                       title = title, subtitle = NULL, caption = NULL,\n                       legendPosition = \"none\", \n                       selectLab = sel_lab,\n                       drawConnectors = TRUE, widthConnectors = 0.3,\n                       x = 'log2FoldChange', y = 'pvalue',\n                       pCutoff = 0.05, FCcutoff = fc_cutoff,\n                       gridlines.major = FALSE,\n                       gridlines.minor = FALSE)\n  p\n} \nvolcano_p &lt;- quick_volcano(as.data.frame(res_igd), \"IgD group vs others\")\nggsave(\"volcano_igd_comparison_altered.pdf\", volcano_p, dpi = 300, width = 6, height = 6, units = \"in\")\n\nplot:\ncode:\n\n# gsea result\npdf(\"igd_comparison_gsea.pdf\", width = 12, height = 9)\nprint(dotplot(gseGO_res_i, showCategory = 9, split = \".sign\", orderBy = \"p.adjust\") + facet_grid(.~.sign))\ndev.off()\n\nplot:",
+    "section": "15.2 A: umap cell type",
+    "text": "15.2 A: umap cell type\n\nsrt &lt;- readRDS(glue(\"{dat_dir}/srt_integrated_anno.rds\"))\nsrt &lt;- RenameIdents(srt, \n                    \"B cells\" = \"B cell\", \n                    \"Plasma cells\" = \"Plasma\", \n                    \"TAMs\" = \"TAM\", \n                    \"Mast cells\" = \"Mast\")\nsrt@meta.data$celltype &lt;- Idents(srt)\np &lt;- DimPlot(srt, reduction = \"umap\", group.by = \"celltype\") +\n  scale_color_manual(values = color_celltype)\nggsave(glue(\"{fig_dir}/umap_celltype.pdf\"), p, width = 6, height = 5)\nggsave(glue(\"{img_dir}/umap_celltype.png\"), p, width = 6, height = 5)",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Figure 3</span>"
+    ]
+  },
+  {
+    "objectID": "fig3.html#bc-umap-cd44-cytotrace",
+    "href": "fig3.html#bc-umap-cd44-cytotrace",
+    "title": "15  Figure 3",
+    "section": "15.3 B,C: umap CD44 & cytotrace",
+    "text": "15.3 B,C: umap CD44 & cytotrace\n\nsrt_epi &lt;- readRDS(glue(\"{dat_dir}/srt_epi.rds\"))\np &lt;- FeaturePlot(srt_epi, reduction = \"umap\", features = \"CD44\")\nggsave(glue(\"{fig_dir}/umap_CD44.pdf\"), p, width = 6, height = 5)\nggsave(glue(\"{img_dir}/umap_CD44.png\"), p, width = 6, height = 5)\np &lt;- FeaturePlot(srt_epi, reduction = \"umap\", features = \"CytoTRACE2_Relative_Score\") +\n  scale_color_viridis_c()\nggsave(glue(\"{fig_dir}/umap_cytotrace.pdf\"), p, width = 6, height = 5)\nggsave(glue(\"{img_dir}/umap_cytotrace.png\"), p, width = 6, height = 5) ### color 0.75",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Figure 3</span>"
+    ]
+  },
+  {
+    "objectID": "fig3.html#d-umap-epi-subtype",
+    "href": "fig3.html#d-umap-epi-subtype",
+    "title": "15  Figure 3",
+    "section": "15.4 D: umap epi subtype",
+    "text": "15.4 D: umap epi subtype\n\np &lt;- DimPlot(srt_epi, reduction = \"umap\", group.by = \"subtype\", cols = color_celltype)\nggsave(glue(\"{fig_dir}/umap_epi_subtype.pdf\"), p, width = 7, height = 5)\nggsave(glue(\"{img_dir}/umap_epi_subtype.png\"), p, width = 7, height = 5)",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Figure 3</span>"
+    ]
+  },
+  {
+    "objectID": "fig3.html#e-kegg-enrichment-cd44pos-vs-cd44neg",
+    "href": "fig3.html#e-kegg-enrichment-cd44pos-vs-cd44neg",
+    "title": "15  Figure 3",
+    "section": "15.5 E: KEGG enrichment CD44pos vs CD44neg",
+    "text": "15.5 E: KEGG enrichment CD44pos vs CD44neg\n\n# pathway of interest\ndf1 &lt;- read.csv(glue(\"{dat_dir}/CD44pos_vs_CD44neg_enrich_kegg_poi.csv\"), row.names = 1)\npt1 &lt;- df1 %&gt;%\n  mutate(log10p = ifelse(Cluster == \"CD44+ up\", -log10(p.adjust), log10(p.adjust)),\n         just = ifelse(Cluster == \"CD44+ up\", 1.01, -0.01)) %&gt;%\n  arrange(log10p) %&gt;%\n  mutate(Description = factor(Description, levels = Description),\n         Cluster = factor(Cluster, levels = c(\"CD44+ up\", \"CD44- up\")))\np1 &lt;- ggplot(pt1, aes(Description, log10p, fill = Cluster)) +\n  geom_bar(stat = \"identity\") +\n  scale_fill_manual(values = unname(cols_cl[1:2])) +\n  scale_y_continuous(\"-log10(p.adjust)\", limits = c(-6, 11), \n                     breaks = seq(-4, 10, 2),labels = c(4, 2, 0, 2, 4, 6, 8, 10)) +\n  scale_x_discrete(\"\", labels = NULL) +\n  coord_flip() +\n  geom_text(aes(Description, 0, label = Description), hjust = pt1$just) +\n  theme_classic() +\n  theme(axis.line.y = element_blank(),\n        axis.ticks.y = element_blank()) +\n  labs(fill = \"\")\nggsave(glue(\"{fig_dir}/CD44pos_vs_CD44neg_enrich_kegg_poi_barplot.pdf\"), p1, width = 8, height = 8)\nggsave(glue(\"{img_dir}/CD44pos_vs_CD44neg_enrich_kegg_poi_barplot.png\"), p1, width = 8, height = 8)",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Figure 3</span>"
+    ]
+  },
+  {
+    "objectID": "fig3.html#f-k3-cd44-density",
+    "href": "fig3.html#f-k3-cd44-density",
+    "title": "15  Figure 3",
+    "section": "15.6 F: k3 CD44 density",
+    "text": "15.6 F: k3 CD44 density\n\npt &lt;- FetchData(srt_epi, vars = c(\"CD44\", \"sample_id\"), layer = \"data\") %&gt;% \n  dplyr::filter(sample_id != \"P05\", sample_id != \"P46\") # filter sample CD44 no exp\n\n# ks test & hclust\nsps &lt;- unique(pt$sample_id)\nn &lt;- length(sps)\nks_dist &lt;- matrix(0, nrow = n, ncol = n)\nrownames(ks_dist) &lt;- sps\ncolnames(ks_dist) &lt;- sps\n\nfor (i in 1:(n - 1)) {\n  for (j in (i + 1):n) {\n    ks_test &lt;- ks.test(pt[pt$sample_id == sps[i], \"CD44\"], pt[pt$sample_id == sps[j], \"CD44\"])\n    ks_dist[i, j] &lt;- ks_test$statistic  \n    ks_dist[j, i] &lt;- ks_dist[i, j]\n  }\n}\n\ndist_mat &lt;- as.dist(ks_dist)\nhc &lt;- hclust(dist_mat, method = \"ward.D2\")\nsp_order &lt;- hc$labels[hc$order]\n\nclusters &lt;- cutree(hc, k = 3)\ndf_cl &lt;- data.frame(sample_id = names(clusters),\n                    cluster = clusters) %&gt;%\n  mutate(order = match(sample_id, sp_order))\nfwrite(df_cl, glue(\"{fig_dir}/density_CD44_sample_hclust_k3.csv\"))\n\n# density ridges colored by cluster\ndf_cl &lt;- fread(glue(\"{fig_dir}/density_CD44_sample_hclust_k3.csv\")) %&gt;%\n  arrange(order)\npt &lt;- FetchData(srt_epi, vars = c(\"CD44\", \"sample_id\"), layer = \"data\") %&gt;% \n  dplyr::filter(sample_id != \"P05\", sample_id != \"P46\") %&gt;% \n  left_join(df_cl, by = \"sample_id\") %&gt;%\n  mutate(sample_id = factor(sample_id, levels = df_cl$sample_id))\np &lt;- ggplot(pt, aes(CD44, sample_id)) +\n  geom_density_ridges(aes(fill = as.factor(cluster))) +\n  scale_fill_manual(values = cols_cl) +\n  labs(fill = \"cluster\") +\n  theme_classic()\nggsave(glue(\"{fig_dir}/density_CD44_sample_cluster_k3.pdf\"), p, width = 6, height = 15)\nggsave(glue(\"{img_dir}/density_CD44_sample_cluster_k3.png\"), p, width = 6, height = 15)\n\n ## Polaris package load and plot settings.\n\npkgs &lt;- c(\"jhtools\", \"glue\", \"readxl\", \"Seurat\", \"data.table\", \"magrittr\", \"dplyr\", \n          \"ggplot2\", \"ComplexHeatmap\", \"cluster\", \"survival\", \"survminer\", \"RColorBrewer\", \n          \"sva\", \"ggridges\", \"transport\", \"philentropy\", \"ggpubr\", \"rstatix\", \"ggrepel\", \n          \"readr\", \"stringr\", \"sf\", \"Nebulosa\")\nfor (pkg in pkgs){\n  suppressPackageStartupMessages(library(pkg, character.only = T))\n}\n\ndat_dir &lt;- \"/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/polaris\"\ndoc_dir &lt;- \"/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo\"\nfig_dir &lt;- \"/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/figures\"\nimg_dir &lt;- \"/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/images\"\n\ncols_fn &lt;- \"/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml\"\ncols &lt;- show_me_the_colors(cols_fn)\ncol_fun1 &lt;- circlize::colorRamp2(c(-2.5, 0, 1, 2, 2.5), unname(cols$col_map))\ncol_fun2 &lt;- circlize::colorRamp2(c(0, 0.5, 0.8, 0.9, 1), unname(cols$col_map))\ncols_ct &lt;- cols$cell_type\ncols_grp &lt;- c(cols$cluster[2], cols$cluster[1], cols$cluster[3:5])\nnames(cols_grp) &lt;- paste0(\"G\", 1:5)\ncols_cl &lt;- cols_grp\nnames(cols_cl) &lt;- paste0(\"C\", 1:5)",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Figure 3</span>"
+    ]
+  },
+  {
+    "objectID": "fig3.html#i-shape-metrics-scatterplot-with-roi",
+    "href": "fig3.html#i-shape-metrics-scatterplot-with-roi",
+    "title": "15  Figure 3",
+    "section": "15.7 I: shape metrics scatterplot with roi",
+    "text": "15.7 I: shape metrics scatterplot with roi\n\n# cd44 cluster\n# data read\nsrt &lt;- readRDS(glue(\"{dat_dir}/srat_qt_fil.rds\"))\nspinfo &lt;- read_excel(glue(\"{doc_dir}/sampleinfo.xlsx\"), sheet = \"polaris_EMT\") %&gt;% \n  rename(\"EMT_mode\" = \"EMT mode\")\n\n# CD44 expression in tumor region\nidx &lt;- lapply(unique(srt$roi), function(s){\n  dt &lt;- fread(glue(\"{dat_dir}/shape_metric/data/louvain_community_{s}.csv\"), drop = 1)\n  return(dt$cell_id)\n}) %&gt;% unlist()\ndf &lt;- subset(srt, cells = idx) %&gt;%\n  FetchData(vars = c(\"CD44\", \"roi\"), layer = \"data\")\nsps &lt;- unique(df$roi)\nn &lt;- length(sps)\n\n# Jensen-Shannon divergence\njsd_dist &lt;- matrix(0, nrow = n, ncol = n)\nrownames(jsd_dist) &lt;- sps\ncolnames(jsd_dist) &lt;- sps\n\ncalculate_jsd &lt;- function(x, y){\n  breaks &lt;- seq(min(c(x, y)), max(c(x, y)), length.out = 50)\n  p &lt;- hist(x, breaks = breaks, plot = FALSE)$counts\n  q &lt;- hist(y, breaks = breaks, plot = FALSE)$counts\n  p &lt;- p / sum(p)\n  q &lt;- q / sum(q)\n  jsd &lt;- JSD(rbind(p, q), unit = \"log2\")\n  return(jsd)\n}\nfor (i in 1:(n - 1)) {\n  for (j in (i + 1):n) {\n    jsd_dist[i, j] &lt;- calculate_jsd(df[df$roi == sps[i], \"CD44\"], df[df$roi == sps[j], \"CD44\"])\n    jsd_dist[j, i] &lt;- jsd_dist[i, j]\n  }\n}\n##write.csv(jsd_dist, glue(\"{dat_dir}/spatial_CD44/jsd_dist_matrix_CD44.csv\"))\n# ========================== JSD & 95 Quantile ========================\nprob_lst &lt;- lapply(sps, function(s){\n  x &lt;- df[df$roi == s, \"CD44\"]\n  x95 &lt;- quantile(x, 0.95)\n  x &lt;- x[x &lt; x95]\n  \n  breaks &lt;- seq(min(x), max(x), length.out = 50)\n  p &lt;- hist(x, breaks = breaks, plot = FALSE)$counts\n  p &lt;- p / sum(p)\n  return(p)\n})\nprob &lt;- do.call(rbind, prob_lst)\njsd_dist &lt;- JSD(prob, unit = \"log2\")\nrownames(jsd_dist) &lt;- sps\ncolnames(jsd_dist) &lt;- sps\n##write.csv(jsd_dist, glue(\"{dat_dir}/spatial_CD44/jsd_dist_matrix_CD44_quantile95.csv\"))\n\n# core roi\nidx &lt;- which(rownames(jsd_dist) %in% spinfo$ROI[spinfo$Type == \"Core\"])\ndist_core &lt;- jsd_dist[idx, idx]\ndf_core &lt;- df %&gt;%\n  filter(roi %in% rownames(dist_core))\n\n# mds\nmds &lt;- cmdscale(dist_core, k = nrow(dist_core) - 1, eig = TRUE)\nidx_pos &lt;- which(mds$eig &gt; 0)\ndist_euc &lt;- dist(mds$points[, idx_pos])\n\n# hclust\nhc &lt;- hclust(dist_euc, method = \"ward.D2\")\n##saveRDS(hc, glue(\"{dat_dir}/spatial_CD44/hclust_jst_quantile95.rds\"))\n# cluster\nclusters &lt;- cutree(hc, k = 5)\ndf_cl &lt;- data.frame(roi = names(clusters),\n                    cluster = clusters) %&gt;%\n  arrange(cluster)\n\n# read data\ndt_score &lt;- fread(glue(\"{dat_dir}/all_shape_metrics.csv\"))\ndt &lt;- df_cl %&gt;%\n  left_join(dt_score) %&gt;%\n  mutate(cluster = paste0(\"C\", cluster))\n# cd44 group vs shape metrics scatterplot\nspecified_rois &lt;- c(\"S12P_ROI1\", \"R18R_ROI2\", \"R19R_ROI3\", \"S37P_ROI1\")\nmetric &lt;- \"solidity\"\nmetric_mean &lt;- \"solidity_mean\"\np &lt;- ggplot(dt, aes(!!sym(metric), !!sym(metric_mean))) +\n  geom_point(aes(color = cluster)) +\n  scale_color_manual(values = cols_cl) +\n  geom_text_repel(data = subset(dt, roi %in% specified_rois), aes(label = roi), size = 5, min.segment.length = 0) +\n  labs(x = \"Global solidity\", y = \"Average solidity\") + \n  theme_classic()\n\npdf(glue(\"{fig_dir}/CD44_group_jsd_quantile_vs_shape_metrics_scatterplot_with_roi.pdf\"), width = 6, height = 6)\nprint(p)\ndev.off()\nggsave(glue(\"{img_dir}/CD44_group_jsd_quantile_vs_shape_metrics_scatterplot_with_roi.png\"), p, width = 6, height = 6)",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Figure 3</span>"
+    ]
+  },
+  {
+    "objectID": "fig3.html#j-density-cd44-4-samples",
+    "href": "fig3.html#j-density-cd44-4-samples",
+    "title": "15  Figure 3",
+    "section": "15.8 J: density CD44 4 samples",
+    "text": "15.8 J: density CD44 4 samples\n\nsp_order &lt;- hc$labels[hc$order]\ndf_core_qt &lt;- df_core %&gt;%\n  mutate(roi = factor(roi, levels = sp_order)) %&gt;%\n  group_by(roi) %&gt;%\n  mutate(CD44 = CD44 / quantile(CD44, 0.95)) %&gt;%\n  ungroup() %&gt;%\n  filter(CD44 &lt;= 1)\n\n# plot\ncl_colors &lt;- cols_cl\nnames(cl_colors) &lt;- 1:5\nroi_colors &lt;- setNames(\n  cl_colors[as.character(df_cl$cluster)],\n  df_cl$roi\n)\n# 4 samples\ndf_core_qt_4 &lt;- df_core_qt %&gt;% dplyr::filter(grepl(\"S12P_ROI1|R18R_ROI2|R19R_ROI3|S37P_ROI1\", roi))\nroi_colors &lt;- c(\"S12P_ROI1\" = unname(cl_colors[2]), \"R18R_ROI2\" = unname(cl_colors[4]), \"R19R_ROI3\" = unname(cl_colors[5]), \"S37P_ROI1\" = unname(cl_colors[3]))\np &lt;- ggplot(df_core_qt_4, aes(CD44, roi)) +\n  geom_density_ridges(aes(fill = roi)) + \n  scale_fill_manual(values = roi_colors) + \n  theme_classic() +\n  guides(fill = \"none\")\nggsave(glue(\"{fig_dir}/density_CD44_sample_core_hclust_mds_jsd_quantile95_4s.pdf\"), p, width = 3, height = 2)\nggsave(glue(\"{img_dir}/density_CD44_sample_core_hclust_mds_jsd_quantile95_4s.png\"), p, width = 3, height = 2)",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>15</span>  <span class='chapter-title'>Figure 3</span>"
+    ]
+  },
+  {
+    "objectID": "fig3.html#l-cd44-curve-slow-vs-quick",
+    "href": "fig3.html#l-cd44-curve-slow-vs-quick",
+    "title": "15  Figure 3",
+    "section": "15.9 L: CD44 curve slow vs quick",
+    "text": "15.9 L: CD44 curve slow vs quick\n\ndf &lt;- fs::dir_ls(glue(\"{dat_dir}/spatial_CD44/data\"), regexp = \"(S01P_ROI1|S24P_ROI1|S67P_ROI1|S77P_ROI1|R23P_ROI2).*binned.csv\") %&gt;% \n  read_delim(id = \"roi\")\ndf$roi &lt;- df$roi %&gt;% str_replace_all(c(\".*/\" = \"\", \"_CD44_vs_distance_to_boundary_binned.csv\" = \"\"))\ndf_percent &lt;- df %&gt;%\n  group_by(roi) %&gt;%\n  mutate(\n    baseline = first(mean_expression),\n    mean_expression_pct = (mean_expression ) / baseline * 100,\n    lower_ci_pct = (lower_ci ) / baseline * 100,\n    upper_ci_pct = (upper_ci ) / baseline * 100\n  ) %&gt;%\n  ungroup()\np &lt;- ggplot(df_percent, aes(x = distance, y = mean_expression_pct, color = roi)) +\n  geom_line(linewidth = 0.5) +\n  geom_point(size = 1) +\n  geom_errorbar(aes(ymin = lower_ci_pct, ymax = upper_ci_pct), alpha = 0.8, width = 1) +\n  scale_color_manual(values = c(\"S01P_ROI1\" = unname(cols_grp[1]), \"S67P_ROI1\" = unname(cols_grp[1]), \"S77P_ROI1\" = unname(cols_grp[1]), \"R23P_ROI2\" = unname(cols_grp[2]), \"S24P_ROI1\" = unname(cols_grp[2]))) +\n  theme_classic()\nggsave(glue(\"{fig_dir}/CD44_curve_slow_vs_quick.pdf\"), p, width = 6, height = 4)\nggsave(glue(\"{img_dir}/CD44_curve_slow_vs_quick.png\"), p, width = 6, height = 4, dpi = 300)",
     "crumbs": [
       "Visualization",
       "<span class='chapter-number'>15</span>  <span class='chapter-title'>Figure 3</span>"
@@ -1180,6 +1257,105 @@
     "crumbs": [
       "Visualization",
       "<span class='chapter-number'>21</span>  <span class='chapter-title'>Sup figure 2</span>"
+    ]
+  },
+  {
+    "objectID": "sfig4.html",
+    "href": "sfig4.html",
+    "title": "23  Sup figure 4",
+    "section": "",
+    "text": "23.1 Package load and plot settings.\npkgs &lt;- c(\"jhtools\", \"glue\", \"readxl\", \"data.table\", \"magrittr\", \"rlang\", \"ggplot2\", \n          \"Seurat\", \"dplyr\", \"patchwork\", \"janitor\", \"ggpubr\", \"ggridges\", \n          \"clusterProfiler\", \"cowplot\", \"Nebulosa\", \"org.Hs.eg.db\")\nfor (pkg in pkgs){\n  suppressPackageStartupMessages(library(pkg, character.only = T))\n}\n\ndat_dir &lt;- \"/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/tenx\"\nfig_dir &lt;- \"/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/figures\"\nimg_dir &lt;- \"/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/images\"\n\ncols_fn &lt;- \"/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml\"\ncols &lt;- show_me_the_colors(cols_fn)\ncolor_celltype &lt;- jhtools::show_me_the_colors(cols_fn, \"cell_type\")\ncols_cl &lt;- cols$cluster[1:3]",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Sup figure 4</span>"
+    ]
+  },
+  {
+    "objectID": "sfig4.html#a-umap-integrated-datasets",
+    "href": "sfig4.html#a-umap-integrated-datasets",
+    "title": "23  Sup figure 4",
+    "section": "23.2 A: umap integrated datasets",
+    "text": "23.2 A: umap integrated datasets\n\nsrt &lt;- readRDS(glue(\"{dat_dir}/srt_integrated_anno.rds\"))\np &lt;- DimPlot(srt, reduction = \"umap\", group.by = c(\"dataset\"), raster = TRUE)\nggsave(glue(\"{fig_dir}/umap_dataset_cluster_integrated.pdf\"), p, width = 6, height = 5)\nggsave(glue(\"{img_dir}/umap_dataset_cluster_integrated.png\"), p, width = 6, height = 5)",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Sup figure 4</span>"
+    ]
+  },
+  {
+    "objectID": "sfig4.html#b-dotplot-stemness-markers",
+    "href": "sfig4.html#b-dotplot-stemness-markers",
+    "title": "23  Sup figure 4",
+    "section": "23.3 B: dotplot stemness markers",
+    "text": "23.3 B: dotplot stemness markers\n\nsrt_epi &lt;- readRDS(glue(\"{dat_dir}/srt_epi.rds\"))\n# subtype dotplot\ngenes &lt;- c(\"CD44\", \"SOX2\", \"BMI1\", \"ALDH1A1\", \"CytoTRACE2_Relative_Score\")\np &lt;- DotPlot(srt_epi, features = genes, group.by = \"subtype\") +\n  scale_color_viridis_c() +\n  theme(axis.text.x = element_text(angle = 60, hjust = 1))\nggsave(glue(\"{fig_dir}/dotplot_stemness_markers_epi_subtype.pdf\"), p, width = 8, height = 5)\nggsave(glue(\"{img_dir}/dotplot_stemness_markers_epi_subtype.png\"), p, width = 8, height = 5)",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Sup figure 4</span>"
+    ]
+  },
+  {
+    "objectID": "sfig4.html#c-umap-density-stemness-markers",
+    "href": "sfig4.html#c-umap-density-stemness-markers",
+    "title": "23  Sup figure 4",
+    "section": "23.4 C: umap density stemness markers",
+    "text": "23.4 C: umap density stemness markers\n\n# CD44 and other stemness markers in tumor\nmarker_stem &lt;- c(\"CD44\", \"PROM1\", \"SOX2\", \"NANOG\", \"POU5F1\", \"BMI1\")\np &lt;- plot_density(srt_epi, marker_stem, reduction = \"umap\", raster = TRUE, size = 0.1) +\n  plot_layout(ncol = 3)\nggsave(glue(\"{fig_dir}/umap_density_stemness_markers.pdf\"), p, width = 9, height = 5)\nggsave(glue(\"{img_dir}/umap_density_stemness_markers.png\"), p, width = 9, height = 5)",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Sup figure 4</span>"
+    ]
+  },
+  {
+    "objectID": "sfig4.html#d-correlation-cd44-cytotrace",
+    "href": "sfig4.html#d-correlation-cd44-cytotrace",
+    "title": "23  Sup figure 4",
+    "section": "23.5 D: correlation CD44 & cytotrace",
+    "text": "23.5 D: correlation CD44 & cytotrace\n\npt &lt;- FetchData(srt_epi, vars = c(\"CytoTRACE2_Relative_Score\", \"CD44\"), layer = \"data\")\npt &lt;- filter(pt, CD44 &gt; 0)\np &lt;- ggplot(pt, aes(CytoTRACE2_Relative_Score, CD44)) +\n  geom_hex() +\n  scale_fill_gradient(low = \"white\", high = \"red\") +\n  geom_smooth(method = lm, color = \"black\") +\n  stat_cor(method = \"pearson\") +\n  theme_classic()\nggsave(glue(\"{fig_dir}/correlation_CD44_cytotrace.pdf\"), p, width = 6, height = 5)\nggsave(glue(\"{img_dir}/correlation_CD44_cytotrace.png\"), p, width = 6, height = 5)",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Sup figure 4</span>"
+    ]
+  },
+  {
+    "objectID": "sfig4.html#e-correlation-stemness-cytotrace",
+    "href": "sfig4.html#e-correlation-stemness-cytotrace",
+    "title": "23  Sup figure 4",
+    "section": "23.6 E: correlation stemness & cytotrace",
+    "text": "23.6 E: correlation stemness & cytotrace\n\npt &lt;- FetchData(srt_epi, vars = c(\"CytoTRACE2_Relative_Score\", \"CD44\", \"SOX2\", \"BMI1\"), layer = \"data\")\npt &lt;- filter(pt, CD44 &gt; 0, SOX2 &gt; 0, BMI1 &gt; 0)\npt &lt;- pt %&gt;% tidyr::pivot_longer(cols = c(CD44, SOX2, BMI1), names_to = \"gene\", values_to = \"exp\") %&gt;% \n  mutate(CytoTRACE2_Relative_Score = if_else(CytoTRACE2_Relative_Score &gt; 0.75, 0.75, CytoTRACE2_Relative_Score))\n\nx_range &lt;- range(pt$CytoTRACE2_Relative_Score)\nx_seq &lt;- seq(x_range[1], x_range[2], length.out = 100)\n\npredictions &lt;- data.frame()\nfor(g in unique(pt$gene)) {\n  subset_data &lt;- pt[pt$gene == g, ]\n  loess_fit &lt;- loess(exp ~ CytoTRACE2_Relative_Score, data = subset_data)\n  y_pred &lt;- predict(loess_fit, newdata = data.frame(CytoTRACE2_Relative_Score = x_seq))\n  temp_df &lt;- data.frame(\n    CytoTRACE2_Relative_Score = x_seq,\n    exp = y_pred,\n    gene = g\n  )\n  \n  predictions &lt;- rbind(predictions, temp_df)\n}\n\np_normalized &lt;- ggplot(predictions, aes(x = CytoTRACE2_Relative_Score, y = exp, color = gene)) + \n  geom_line(size = 1.2) + \n  scale_color_discrete(name = \"Gene\") +\n  theme_classic() +\n  theme(axis.line.x = element_blank(),\n        axis.ticks.x = element_blank(),\n        axis.text.x = element_blank(),\n        panel.grid = element_blank()\n  )\n\ncolor_bar_data &lt;- data.frame(\n  CytoTRACE2_Relative_Score = seq(x_range[1], x_range[2], length.out = 100),\n  y = 1\n)\ncolor_bar &lt;- ggplot(color_bar_data, aes(x = CytoTRACE2_Relative_Score, y = y, fill = CytoTRACE2_Relative_Score)) +\n  geom_tile(height = 0.6) +\n  scale_fill_gradientn(\n    colors = c(\"#431954\", \"#6EC162\")\n  ) + \n  theme(\n    axis.title.y = element_blank(), \n    axis.text.y = element_blank(),\n    axis.ticks.y = element_blank(), \n    legend.position=\"none\"\n    )\n\ncombined_plot &lt;- plot_grid(\n  p_normalized,\n  color_bar,\n  ncol = 1,\n  rel_heights = c(6, 1), \n  align = \"v\",\n  axis = \"lr\"\n)\n\nggsave(glue(\"{fig_dir}/correlation_stemness_cytotrace_norm.pdf\"), combined_plot, width = 6, height = 5)\nggsave(glue(\"{img_dir}/correlation_stemness_cytotrace_norm.png\"), combined_plot, width = 6, height = 5)",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Sup figure 4</span>"
+    ]
+  },
+  {
+    "objectID": "sfig4.html#f-correlation-cd44-stemness-markers",
+    "href": "sfig4.html#f-correlation-cd44-stemness-markers",
+    "title": "23  Sup figure 4",
+    "section": "23.7 F: correlation CD44 & stemness markers",
+    "text": "23.7 F: correlation CD44 & stemness markers\n\nmarker_stem &lt;- c(\"CD44\", \"PROM1\", \"SOX2\", \"NANOG\", \"POU5F1\", \"BMI1\", \"ALDH1A1\")\npt &lt;- FetchData(srt_epi, vars = marker_stem, layer = \"data\") %&gt;%\n  tidyr::pivot_longer(cols = PROM1:ALDH1A1, names_to = \"gene\", values_to = \"expr\")\npt &lt;- pt %&gt;% filter(CD44 &gt; 0 & expr &gt; 0)\np &lt;- ggplot(pt, aes(CD44, expr)) +\n  geom_hex() +\n  scale_fill_gradient(low = \"white\", high = \"red\") +\n  facet_wrap(~ gene, scales = \"free_y\") +\n  geom_smooth(method = lm, color = \"black\", se = FALSE) +\n  stat_cor(method = \"pearson\") +\n  theme_classic()\nggsave(glue(\"{fig_dir}/correlation_CD44_stemness_markers.pdf\"), p, width = 8, height = 5)\nggsave(glue(\"{img_dir}/correlation_CD44_stemness_markers.png\"), p, width = 8, height = 5)",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Sup figure 4</span>"
+    ]
+  },
+  {
+    "objectID": "sfig4.html#g-k3-dendrogram",
+    "href": "sfig4.html#g-k3-dendrogram",
+    "title": "23  Sup figure 4",
+    "section": "23.8 G: k3 dendrogram",
+    "text": "23.8 G: k3 dendrogram\n\npt &lt;- FetchData(srt_epi, vars = c(\"CD44\", \"sample_id\"), layer = \"data\") %&gt;% \n  dplyr::filter(sample_id != \"P05\", sample_id != \"P46\") # filter sample CD44 no exp\n\n# ks test & hclust\nsps &lt;- unique(pt$sample_id)\nn &lt;- length(sps)\nks_dist &lt;- matrix(0, nrow = n, ncol = n)\nrownames(ks_dist) &lt;- sps\ncolnames(ks_dist) &lt;- sps\n\nfor (i in 1:(n - 1)) {\n  for (j in (i + 1):n) {\n    ks_test &lt;- ks.test(pt[pt$sample_id == sps[i], \"CD44\"], pt[pt$sample_id == sps[j], \"CD44\"])\n    ks_dist[i, j] &lt;- ks_test$statistic  \n    ks_dist[j, i] &lt;- ks_dist[i, j]\n  }\n}\n\ndist_mat &lt;- as.dist(ks_dist)\nhc &lt;- hclust(dist_mat, method = \"ward.D2\")\nsp_order &lt;- hc$labels[hc$order]\n\nclusters &lt;- cutree(hc, k = 3)\ndf_cl &lt;- data.frame(sample_id = names(clusters),\n                    cluster = clusters) %&gt;%\n  mutate(order = match(sample_id, sp_order))\nfwrite(df_cl, glue(\"{fig_dir}/density_CD44_sample_hclust_k3.csv\"))\n\n# density ridges colored by cluster\ndf_cl &lt;- fread(glue(\"{fig_dir}/density_CD44_sample_hclust_k3.csv\")) %&gt;%\n  arrange(order)\npt &lt;- FetchData(srt_epi, vars = c(\"CD44\", \"sample_id\"), layer = \"data\") %&gt;% \n  dplyr::filter(sample_id != \"P05\", sample_id != \"P46\") %&gt;% \n  left_join(df_cl, by = \"sample_id\") %&gt;%\n  mutate(sample_id = factor(sample_id, levels = df_cl$sample_id))\np &lt;- ggplot(pt, aes(CD44, sample_id)) +\n  geom_density_ridges(aes(fill = as.factor(cluster))) +\n  scale_fill_manual(values = cols_cl) +\n  labs(fill = \"cluster\") +\n  theme_classic()\nggsave(glue(\"{fig_dir}/density_CD44_sample_cluster_k3.pdf\"), p, width = 6, height = 15)\nggsave(glue(\"{img_dir}/density_CD44_sample_cluster_k3.png\"), p, width = 6, height = 15)\npdf(glue(\"{fig_dir}/density_CD44_sample_cluster_k3_dendrogram.pdf\"), width = 12, height = 6)\nplot(rev(as.dendrogram(hc)))\ndev.off()\npng(glue(\"{img_dir}/density_CD44_sample_cluster_k3_dendrogram.png\"), width = 12, height = 6, units = \"in\", res = 300)\nplot(rev(as.dendrogram(hc)))\ndev.off()",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Sup figure 4</span>"
+    ]
+  },
+  {
+    "objectID": "sfig4.html#h-kegg-enrichment-k3",
+    "href": "sfig4.html#h-kegg-enrichment-k3",
+    "title": "23  Sup figure 4",
+    "section": "23.9 H: KEGG enrichment k3",
+    "text": "23.9 H: KEGG enrichment k3\n\n# barplot of selected pathway\ndf &lt;- readxl::read_xlsx(glue(\"{dat_dir}/CD44_cluster_markers_enrichment_KEGG_k3_selected.xlsx\"))\npt &lt;- df %&gt;%\n  arrange(cluster, p.adjust) %&gt;%\n  mutate(p.adjust = as.numeric(p.adjust))\npmax &lt;- max(-log10(pt$p.adjust)) %&gt;% ceiling\np_lst &lt;- lapply(unique(pt$cluster), function(x){\n  pt1 &lt;- pt %&gt;%\n    filter(cluster == x) %&gt;%\n    mutate(Description = factor(Description, levels = Description))\n  ymax &lt;- max(-log10(pt1$p.adjust)) %&gt;% floor\n  p &lt;- ggplot(pt1, aes(Description, -log10(p.adjust))) +\n    geom_bar(stat = \"identity\", fill = unname(cols_cl)[x], width = 0.6) +\n    ylim(0, pmax) +\n    coord_flip() +\n    geom_hline(yintercept = 1:ymax, color = \"white\") +\n    theme_classic() +\n    labs(x = paste0(\"Cluster \", x))\n  return(p)\n})\nhts &lt;- pt %&gt;% count(cluster) %&gt;% pull(n)\np &lt;- wrap_plots(p_lst, ncol = 1, heights = hts)\nggsave(glue(\"{fig_dir}/CD44_cluster_markers_enrichment_KEGG_k3_poi_barplot.pdf\"), p, width = 8, height = 8)\nggsave(glue(\"{img_dir}/CD44_cluster_markers_enrichment_KEGG_k3_poi_barplot.png\"), p, width = 8, height = 8)",
+    "crumbs": [
+      "Visualization",
+      "<span class='chapter-number'>23</span>  <span class='chapter-title'>Sup figure 4</span>"
     ]
   },
   {

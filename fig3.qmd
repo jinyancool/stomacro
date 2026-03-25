@@ -1,159 +1,313 @@
----
-title: "Figure 3"
-format: html
----
-## Figure 3
+# Figure 3
 
+## scRNA package load and plot settings.
 
-### Functional relavances of samples in the IgD-enriched subtype
-
-code:
-
-```{r, eval = FALSE} 
-
-pkgs <- c("GSVA", "fs", "futile.logger", "configr", "stringr", "ggpubr", 
-          "jhtools", "glue", "ggsci", "patchwork", "tidyverse", "dplyr", 
-          "SummarizedExperiment", "jhuanglabRNAseq", "DESeq2", "maftools", 
-          "matrixStats", "Matrix", "furrr", "ComplexHeatmap", "rstatix",
-          "clusterProfiler", "DOSE", "enrichplot", "org.Hs.eg.db", 
-          "ggthemes", "EnhancedVolcano", "GseaVis", "glmnet", "tidyplots")
+```{r warning=FALSE}
+pkgs <- c("jhtools", "glue", "readxl", "data.table", "magrittr", "rlang", "ggplot2", 
+          "Seurat", "dplyr", "patchwork", "janitor", "ggpubr", "ggridges", 
+          "clusterProfiler", "cowplot", "Nebulosa", "org.Hs.eg.db")
 for (pkg in pkgs){
   suppressPackageStartupMessages(library(pkg, character.only = T))
-} 
-
-# set workdir
-setwd("/cluster/home/yjliu_jh/projects/mm/analysis/meta/human/figures/heatmap/check_new_cluster_addsamples/fixed_check")
-
-# get samples
-clusterings <- readxl::read_excel("/cluster/home/jhuang/projects/mm/analysis/meta/human/figures/heatmap/eda/check_new_cluster_addsamples/fixed_samples_3/sampleinfo_0.95.xlsx")
-colnames(clusterings)[1] <- "sample_id"
-
-# get exp data
-mm1330 <- read_rds("~/projects/mm/analysis/meta/human/rnaseq/exp/mm1330.rds") %>% convert_df_plot()
-
-# get rna sequencing type
-pred_rna_lib <- function (dat_mat) {
-  his_genes1 <- c("H4C11", "H2BC3", "H4C4", "H3C12", "H2BC14", 
-                  "H4C6", "H2AC16", "H2AC11", "H2AC12", "H1−5", "H3C2", 
-                  "H3C3", "H3C11", "H2AC17", "H2AC13", "H2BC13", "H2AC4", 
-                  "H2AC14", "H4C9", "H4C1", "H4C2", "H4C13", "H3C7", "H2BC9", 
-                  "H2BC10", "H3C8", "H3C13", "H2BC7", "H2BC18", "H2BC15", 
-                  "H4C14", "H4C8", "H2BC17", "H3C10", "H2BC11", "H4C12", 
-                  "H3C15", "H2BC8", "H2AC8", "H2BC6", "H4C5", "H2AC15", 
-                  "H1−3", "H3C4", "H4−16", "H2AC20", "H2AC21", "H3C1", 
-                  "H2BC5", "H1−4", "H2AC7", "H2BC4", "H1−2", "H2AC6")
-  inter_genes <- intersect(his_genes1, rownames(dat_mat))
-  stopifnot("please make sure histone genes is contained in the data" = length(inter_genes) > 0)
-  dat_mat <- dat_mat[rownames(dat_mat) %in% inter_genes, ]
-  clust <- data.frame(cluster = cutree(hclust(dist(t(dat_mat))), k = 2))
-  diff <- mean(unlist(dat_mat[, clust$cluster %in% 1])) - mean(unlist(dat_mat[, clust$cluster %in% 2]))
-  clust$rna_type <- "mRNA"
-  clust$rna_type[clust$cluster == (2 - sum(diff > 0))] <- "total_RNA"
-  new_dat <- data.frame(sample_id = rownames(clust), rna_type = clust$rna_type)
-  return(new_dat)
-}
-rna_lib_part <- pred_rna_lib(mm1330)
-
-# get count
-mmdatasets <- c("jilin", "commpass", "public")
-count_files <- glue::glue("/cluster/home/jhuang/projects/mm/analysis/{mmdatasets}/human/rnaseq/exp/tables/{mmdatasets}_human_counts.csv")
-total_counts_list <- lapply(count_files[file.exists(count_files)], read_csv)
-names <- mmdatasets[file.exists(count_files)]
-counts_all <- total_counts_list[[1]]
-for (i in 2:length(total_counts_list)) {
-  counts_all <- bind_cols(counts_all, total_counts_list[[i]][, -(1:2)])
 }
 
-# load new gene symbol info 
-hugo_anno <- readr::read_delim("/cluster/home/yjliu_jh/projects/mm/data/hgnc_complete_set.txt",
-                               col_types = cols(intermediate_filament_db = col_character()))
-hugo_anno <- hugo_anno[, c("symbol", "ensembl_gene_id", "locus_group")] %>% as.data.frame() 
-colnames(hugo_anno)[2] <- "gene_id"
+dat_dir <- "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/tenx"
+fig_dir <- "/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/figures"
+img_dir <- "/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/images"
 
-# prepare counts data
-counts_all <- counts_all[, -2] %>% left_join(hugo_anno) %>% na.omit() %>% 
-  dplyr::select(-c(gene_id, locus_group)) %>% as.data.frame() %>% remove_rownames() %>% 
-  column_to_rownames(var = "symbol") %>% as.matrix() %>% round()
-counts_part <- counts_all[, intersect(clusterings$sample_id, colnames(counts_all))]
+cols_fn <- "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml"
+cols <- show_me_the_colors(cols_fn)
+color_celltype <- jhtools::show_me_the_colors(cols_fn, "cell_type")
+cols_cl <- cols$cluster[1:3]
+```
 
-# prepare anno data
-sinfo_part <- data.frame(sample_id = colnames(counts_part))
-sinfo_part <- left_join(sinfo_part, clusterings[, c("sample_id", "sub_groups")])
-sinfo_part <- left_join(sinfo_part, rna_lib_part)
-merged_sinfo <- read_rds("~/projects/mm/docs/meta/sampleinfo/sampleinfo_jilin_commpass.rds")
-sinfo_part <- left_join(sinfo_part, merged_sinfo[, c("sample_id", "batch")])
-rownames(sinfo_part) <- sinfo_part$sample_id
-sinfo_part$group <- ifelse(sinfo_part$sub_groups %in% "G3", "igd_like", "others")
+## A: umap cell type
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+srt <- readRDS(glue("{dat_dir}/srt_integrated_anno.rds"))
+srt <- RenameIdents(srt, 
+                    "B cells" = "B cell", 
+                    "Plasma cells" = "Plasma", 
+                    "TAMs" = "TAM", 
+                    "Mast cells" = "Mast")
+srt@meta.data$celltype <- Idents(srt)
+p <- DimPlot(srt, reduction = "umap", group.by = "celltype") +
+  scale_color_manual(values = color_celltype)
+ggsave(glue("{fig_dir}/umap_celltype.pdf"), p, width = 6, height = 5)
+ggsave(glue("{img_dir}/umap_celltype.png"), p, width = 6, height = 5)
+```
+![](images/umap_celltype.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="umap_celltype.png"}
 
-# construct DESeq2 object
-dds <- DESeqDataSetFromMatrix(counts_part, sinfo_part, ~ batch + rna_type + group)
-keep <- rowSums(counts(dds) >= 5) > ceiling(0.2 * ncol(dds))  
-dds <- dds[keep, ]
-keep2 <- rowSums(counts(dds) == 0) < ceiling(0.5 * ncol(dds))
-dds <- dds[keep2, ]
-dds <- DESeq(dds)
-readr::write_rds(dds, "dds_corrected.rds")
+## B,C: umap CD44 & cytotrace
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+srt_epi <- readRDS(glue("{dat_dir}/srt_epi.rds"))
+p <- FeaturePlot(srt_epi, reduction = "umap", features = "CD44")
+ggsave(glue("{fig_dir}/umap_CD44.pdf"), p, width = 6, height = 5)
+ggsave(glue("{img_dir}/umap_CD44.png"), p, width = 6, height = 5)
+p <- FeaturePlot(srt_epi, reduction = "umap", features = "CytoTRACE2_Relative_Score") +
+  scale_color_viridis_c()
+ggsave(glue("{fig_dir}/umap_cytotrace.pdf"), p, width = 6, height = 5)
+ggsave(glue("{img_dir}/umap_cytotrace.png"), p, width = 6, height = 5) ### color 0.75
+```
+![](images/umap_CD44.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="correlation_CD44_cytotrace.png"}
+![](images/umap_cytotrace.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="correlation_CD44_cytotrace.png"}
 
-# order and add columns to the results
-add_col <- function(data){
-  data$gene_name <- rownames(data)
-  data$absFC <- abs(data$log2FoldChange)
-  data <- data[order(data$pvalue), ]
-  data2 <- left_join(as.data.frame(data), hugo_anno[, c("symbol", "gene_id")], by = c("gene_name" = "symbol"))
-  data$ensembl_id <- data2$gene_id
-  data
-}
+## D: umap epi subtype
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+p <- DimPlot(srt_epi, reduction = "umap", group.by = "subtype", cols = color_celltype)
+ggsave(glue("{fig_dir}/umap_epi_subtype.pdf"), p, width = 7, height = 5)
+ggsave(glue("{img_dir}/umap_epi_subtype.png"), p, width = 7, height = 5)
+```
+![](images/umap_epi_subtype.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="umap_epi_subtype.png"}
 
-# get result for  comparison
-res_igd <- add_col(results(dds, c("group", "igd_like", "others")))
-GSEAInput_i <- data.frame(rownames(res_igd), res_igd$log2FoldChange)
-colnames(GSEAInput_i) <- c("Symbol", "logFC")
-GSEA2 <- GSEAInput_i$logFC
-names(GSEA2) <- as.character(GSEAInput_i$Symbol)
-GSEA2 <- sort(GSEA2, decreasing = TRUE)
-gseGO_res_i <- gseGO(GSEA2, OrgDb = org.Hs.eg.db, keyType = "SYMBOL", ont = "BP",
-                     minGSSize = 5, maxGSSize = 1000, pvalueCutoff = 0.2)
+## E: KEGG enrichment CD44pos vs CD44neg
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# pathway of interest
+df1 <- read.csv(glue("{dat_dir}/CD44pos_vs_CD44neg_enrich_kegg_poi.csv"), row.names = 1)
+pt1 <- df1 %>%
+  mutate(log10p = ifelse(Cluster == "CD44+ up", -log10(p.adjust), log10(p.adjust)),
+         just = ifelse(Cluster == "CD44+ up", 1.01, -0.01)) %>%
+  arrange(log10p) %>%
+  mutate(Description = factor(Description, levels = Description),
+         Cluster = factor(Cluster, levels = c("CD44+ up", "CD44- up")))
+p1 <- ggplot(pt1, aes(Description, log10p, fill = Cluster)) +
+  geom_bar(stat = "identity") +
+  scale_fill_manual(values = unname(cols_cl[1:2])) +
+  scale_y_continuous("-log10(p.adjust)", limits = c(-6, 11), 
+                     breaks = seq(-4, 10, 2),labels = c(4, 2, 0, 2, 4, 6, 8, 10)) +
+  scale_x_discrete("", labels = NULL) +
+  coord_flip() +
+  geom_text(aes(Description, 0, label = Description), hjust = pt1$just) +
+  theme_classic() +
+  theme(axis.line.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  labs(fill = "")
+ggsave(glue("{fig_dir}/CD44pos_vs_CD44neg_enrich_kegg_poi_barplot.pdf"), p1, width = 8, height = 8)
+ggsave(glue("{img_dir}/CD44pos_vs_CD44neg_enrich_kegg_poi_barplot.png"), p1, width = 8, height = 8)
+```
+![](images/CD44pos_vs_CD44neg_enrich_kegg_poi_barplot.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="CD44pos_vs_CD44neg_enrich_kegg_poi_barplot.png"}
 
-# volcano function
-quick_volcano <- function (resA, title, col = "gene_name", fc_cutoff = 2, sel_lab = NULL) {
-  if (is.null(sel_lab)) {
-    sel_lab <- unique(c(resA[order(resA$padj), ][1:10, col],
-                        resA[order(resA$absFC, decreasing = T), ][1:10, col]))
+## F: k3 CD44 density
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+pt <- FetchData(srt_epi, vars = c("CD44", "sample_id"), layer = "data") %>% 
+  dplyr::filter(sample_id != "P05", sample_id != "P46") # filter sample CD44 no exp
+
+# ks test & hclust
+sps <- unique(pt$sample_id)
+n <- length(sps)
+ks_dist <- matrix(0, nrow = n, ncol = n)
+rownames(ks_dist) <- sps
+colnames(ks_dist) <- sps
+
+for (i in 1:(n - 1)) {
+  for (j in (i + 1):n) {
+    ks_test <- ks.test(pt[pt$sample_id == sps[i], "CD44"], pt[pt$sample_id == sps[j], "CD44"])
+    ks_dist[i, j] <- ks_test$statistic  
+    ks_dist[j, i] <- ks_dist[i, j]
   }
-  p <- EnhancedVolcano(resA, lab = resA[[col]],
-                       title = title, subtitle = NULL, caption = NULL,
-                       legendPosition = "none", 
-                       selectLab = sel_lab,
-                       drawConnectors = TRUE, widthConnectors = 0.3,
-                       x = 'log2FoldChange', y = 'pvalue',
-                       pCutoff = 0.05, FCcutoff = fc_cutoff,
-                       gridlines.major = FALSE,
-                       gridlines.minor = FALSE)
-  p
-} 
-volcano_p <- quick_volcano(as.data.frame(res_igd), "IgD group vs others")
-ggsave("volcano_igd_comparison_altered.pdf", volcano_p, dpi = 300, width = 6, height = 6, units = "in")
+}
 
+dist_mat <- as.dist(ks_dist)
+hc <- hclust(dist_mat, method = "ward.D2")
+sp_order <- hc$labels[hc$order]
 
+clusters <- cutree(hc, k = 3)
+df_cl <- data.frame(sample_id = names(clusters),
+                    cluster = clusters) %>%
+  mutate(order = match(sample_id, sp_order))
+fwrite(df_cl, glue("{fig_dir}/density_CD44_sample_hclust_k3.csv"))
+
+# density ridges colored by cluster
+df_cl <- fread(glue("{fig_dir}/density_CD44_sample_hclust_k3.csv")) %>%
+  arrange(order)
+pt <- FetchData(srt_epi, vars = c("CD44", "sample_id"), layer = "data") %>% 
+  dplyr::filter(sample_id != "P05", sample_id != "P46") %>% 
+  left_join(df_cl, by = "sample_id") %>%
+  mutate(sample_id = factor(sample_id, levels = df_cl$sample_id))
+p <- ggplot(pt, aes(CD44, sample_id)) +
+  geom_density_ridges(aes(fill = as.factor(cluster))) +
+  scale_fill_manual(values = cols_cl) +
+  labs(fill = "cluster") +
+  theme_classic()
+ggsave(glue("{fig_dir}/density_CD44_sample_cluster_k3.pdf"), p, width = 6, height = 15)
+ggsave(glue("{img_dir}/density_CD44_sample_cluster_k3.png"), p, width = 6, height = 15)
+```
+![](images/density_CD44_sample_cluster_k3.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="density_CD44_sample_cluster_k3.png"}
+## Polaris package load and plot settings.
+
+```{r warning=FALSE}
+pkgs <- c("jhtools", "glue", "readxl", "Seurat", "data.table", "magrittr", "dplyr", 
+          "ggplot2", "ComplexHeatmap", "cluster", "survival", "survminer", "RColorBrewer", 
+          "sva", "ggridges", "transport", "philentropy", "ggpubr", "rstatix", "ggrepel", 
+          "readr", "stringr", "sf", "Nebulosa")
+for (pkg in pkgs){
+  suppressPackageStartupMessages(library(pkg, character.only = T))
+}
+
+dat_dir <- "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/polaris"
+doc_dir <- "/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo"
+fig_dir <- "/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/figures"
+img_dir <- "/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/images"
+
+cols_fn <- "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml"
+cols <- show_me_the_colors(cols_fn)
+col_fun1 <- circlize::colorRamp2(c(-2.5, 0, 1, 2, 2.5), unname(cols$col_map))
+col_fun2 <- circlize::colorRamp2(c(0, 0.5, 0.8, 0.9, 1), unname(cols$col_map))
+cols_ct <- cols$cell_type
+cols_grp <- c(cols$cluster[2], cols$cluster[1], cols$cluster[3:5])
+names(cols_grp) <- paste0("G", 1:5)
+cols_cl <- cols_grp
+names(cols_cl) <- paste0("C", 1:5)
 ```
 
-plot:
+## I: shape metrics scatterplot with roi
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# cd44 cluster
+# data read
+srt <- readRDS(glue("{dat_dir}/srat_qt_fil.rds"))
+spinfo <- read_excel(glue("{doc_dir}/sampleinfo.xlsx"), sheet = "polaris_EMT") %>% 
+  rename("EMT_mode" = "EMT mode")
 
-```{r, echo = FALSE, fig.cap = "figure temp 3a", fig.align = "center", out.width = "100%"}
-knitr::include_graphics("images/volcano_igd_comparison_label_altered.png")
-```
+# CD44 expression in tumor region
+idx <- lapply(unique(srt$roi), function(s){
+  dt <- fread(glue("{dat_dir}/shape_metric/data/louvain_community_{s}.csv"), drop = 1)
+  return(dt$cell_id)
+}) %>% unlist()
+df <- subset(srt, cells = idx) %>%
+  FetchData(vars = c("CD44", "roi"), layer = "data")
+sps <- unique(df$roi)
+n <- length(sps)
 
-code:
+# Jensen-Shannon divergence
+jsd_dist <- matrix(0, nrow = n, ncol = n)
+rownames(jsd_dist) <- sps
+colnames(jsd_dist) <- sps
 
-```{r, eval = FALSE} 
-# gsea result
-pdf("igd_comparison_gsea.pdf", width = 12, height = 9)
-print(dotplot(gseGO_res_i, showCategory = 9, split = ".sign", orderBy = "p.adjust") + facet_grid(.~.sign))
+calculate_jsd <- function(x, y){
+  breaks <- seq(min(c(x, y)), max(c(x, y)), length.out = 50)
+  p <- hist(x, breaks = breaks, plot = FALSE)$counts
+  q <- hist(y, breaks = breaks, plot = FALSE)$counts
+  p <- p / sum(p)
+  q <- q / sum(q)
+  jsd <- JSD(rbind(p, q), unit = "log2")
+  return(jsd)
+}
+for (i in 1:(n - 1)) {
+  for (j in (i + 1):n) {
+    jsd_dist[i, j] <- calculate_jsd(df[df$roi == sps[i], "CD44"], df[df$roi == sps[j], "CD44"])
+    jsd_dist[j, i] <- jsd_dist[i, j]
+  }
+}
+##write.csv(jsd_dist, glue("{dat_dir}/spatial_CD44/jsd_dist_matrix_CD44.csv"))
+# ========================== JSD & 95 Quantile ========================
+prob_lst <- lapply(sps, function(s){
+  x <- df[df$roi == s, "CD44"]
+  x95 <- quantile(x, 0.95)
+  x <- x[x < x95]
+  
+  breaks <- seq(min(x), max(x), length.out = 50)
+  p <- hist(x, breaks = breaks, plot = FALSE)$counts
+  p <- p / sum(p)
+  return(p)
+})
+prob <- do.call(rbind, prob_lst)
+jsd_dist <- JSD(prob, unit = "log2")
+rownames(jsd_dist) <- sps
+colnames(jsd_dist) <- sps
+##write.csv(jsd_dist, glue("{dat_dir}/spatial_CD44/jsd_dist_matrix_CD44_quantile95.csv"))
+
+# core roi
+idx <- which(rownames(jsd_dist) %in% spinfo$ROI[spinfo$Type == "Core"])
+dist_core <- jsd_dist[idx, idx]
+df_core <- df %>%
+  filter(roi %in% rownames(dist_core))
+
+# mds
+mds <- cmdscale(dist_core, k = nrow(dist_core) - 1, eig = TRUE)
+idx_pos <- which(mds$eig > 0)
+dist_euc <- dist(mds$points[, idx_pos])
+
+# hclust
+hc <- hclust(dist_euc, method = "ward.D2")
+##saveRDS(hc, glue("{dat_dir}/spatial_CD44/hclust_jst_quantile95.rds"))
+# cluster
+clusters <- cutree(hc, k = 5)
+df_cl <- data.frame(roi = names(clusters),
+                    cluster = clusters) %>%
+  arrange(cluster)
+
+# read data
+dt_score <- fread(glue("{dat_dir}/all_shape_metrics.csv"))
+dt <- df_cl %>%
+  left_join(dt_score) %>%
+  mutate(cluster = paste0("C", cluster))
+# cd44 group vs shape metrics scatterplot
+specified_rois <- c("S12P_ROI1", "R18R_ROI2", "R19R_ROI3", "S37P_ROI1")
+metric <- "solidity"
+metric_mean <- "solidity_mean"
+p <- ggplot(dt, aes(!!sym(metric), !!sym(metric_mean))) +
+  geom_point(aes(color = cluster)) +
+  scale_color_manual(values = cols_cl) +
+  geom_text_repel(data = subset(dt, roi %in% specified_rois), aes(label = roi), size = 5, min.segment.length = 0) +
+  labs(x = "Global solidity", y = "Average solidity") + 
+  theme_classic()
+
+pdf(glue("{fig_dir}/CD44_group_jsd_quantile_vs_shape_metrics_scatterplot_with_roi.pdf"), width = 6, height = 6)
+print(p)
 dev.off()
+ggsave(glue("{img_dir}/CD44_group_jsd_quantile_vs_shape_metrics_scatterplot_with_roi.png"), p, width = 6, height = 6)
 ```
+![](images/CD44_group_jsd_quantile_vs_shape_metrics_scatterplot_with_roi.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="CD44_group_jsd_quantile_vs_shape_metrics_scatterplot_with_roi.png"}
 
-plot:
+## J: density CD44 4 samples
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+sp_order <- hc$labels[hc$order]
+df_core_qt <- df_core %>%
+  mutate(roi = factor(roi, levels = sp_order)) %>%
+  group_by(roi) %>%
+  mutate(CD44 = CD44 / quantile(CD44, 0.95)) %>%
+  ungroup() %>%
+  filter(CD44 <= 1)
 
-```{r, echo = FALSE, fig.cap = "figure temp 3b", fig.align = "center", out.width = "100%"}
-knitr::include_graphics("images/igd_comparison_gsea.png")
+# plot
+cl_colors <- cols_cl
+names(cl_colors) <- 1:5
+roi_colors <- setNames(
+  cl_colors[as.character(df_cl$cluster)],
+  df_cl$roi
+)
+# 4 samples
+df_core_qt_4 <- df_core_qt %>% dplyr::filter(grepl("S12P_ROI1|R18R_ROI2|R19R_ROI3|S37P_ROI1", roi))
+roi_colors <- c("S12P_ROI1" = unname(cl_colors[2]), "R18R_ROI2" = unname(cl_colors[4]), "R19R_ROI3" = unname(cl_colors[5]), "S37P_ROI1" = unname(cl_colors[3]))
+p <- ggplot(df_core_qt_4, aes(CD44, roi)) +
+  geom_density_ridges(aes(fill = roi)) + 
+  scale_fill_manual(values = roi_colors) + 
+  theme_classic() +
+  guides(fill = "none")
+ggsave(glue("{fig_dir}/density_CD44_sample_core_hclust_mds_jsd_quantile95_4s.pdf"), p, width = 3, height = 2)
+ggsave(glue("{img_dir}/density_CD44_sample_core_hclust_mds_jsd_quantile95_4s.png"), p, width = 3, height = 2)
 ```
+![](images/density_CD44_sample_core_hclust_mds_jsd_quantile95_4s.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="density_CD44_sample_core_hclust_mds_jsd_quantile95_4s.png"}
+
+## L: CD44 curve slow vs quick
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+df <- fs::dir_ls(glue("{dat_dir}/spatial_CD44/data"), regexp = "(S01P_ROI1|S24P_ROI1|S67P_ROI1|S77P_ROI1|R23P_ROI2).*binned.csv") %>% 
+  read_delim(id = "roi")
+df$roi <- df$roi %>% str_replace_all(c(".*/" = "", "_CD44_vs_distance_to_boundary_binned.csv" = ""))
+df_percent <- df %>%
+  group_by(roi) %>%
+  mutate(
+    baseline = first(mean_expression),
+    mean_expression_pct = (mean_expression ) / baseline * 100,
+    lower_ci_pct = (lower_ci ) / baseline * 100,
+    upper_ci_pct = (upper_ci ) / baseline * 100
+  ) %>%
+  ungroup()
+p <- ggplot(df_percent, aes(x = distance, y = mean_expression_pct, color = roi)) +
+  geom_line(linewidth = 0.5) +
+  geom_point(size = 1) +
+  geom_errorbar(aes(ymin = lower_ci_pct, ymax = upper_ci_pct), alpha = 0.8, width = 1) +
+  scale_color_manual(values = c("S01P_ROI1" = unname(cols_grp[1]), "S67P_ROI1" = unname(cols_grp[1]), "S77P_ROI1" = unname(cols_grp[1]), "R23P_ROI2" = unname(cols_grp[2]), "S24P_ROI1" = unname(cols_grp[2]))) +
+  theme_classic()
+ggsave(glue("{fig_dir}/CD44_curve_slow_vs_quick.pdf"), p, width = 6, height = 4)
+ggsave(glue("{img_dir}/CD44_curve_slow_vs_quick.png"), p, width = 6, height = 4, dpi = 300)
+```
+![](images/CD44_curve_slow_vs_quick.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="CD44_curve_slow_vs_quick.png"}
