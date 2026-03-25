@@ -3,6 +3,7 @@
 ## Package load and plot settings.
 
 
+
 ```{r warning=FALSE}
 .libPaths(c(.libPaths(), "/cluster/home/yliang_jh/sbin/R/library/4.3.0"))
 pkgs <- c("fs", "configr", "stringr", 
@@ -13,12 +14,9 @@ pkgs <- c("fs", "configr", "stringr",
 for (pkg in pkgs){
   suppressPackageStartupMessages(library(pkg, character.only = T))
 }
-source("./R/func_utils.R")
-
-knitr::opts_chunk$set(message = FALSE)
 
 rds_dir <- "/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/codex"
-fig_dir <- "/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/figs/fig2"
+fig_dir <- "/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/figs/fig2_new"
 
 
 # colors setting
@@ -31,12 +29,12 @@ config <- read.config(config_fn)
 cell_type_order <- config$cell_type_order
 
 sampleinfo <- readRDS("/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo/sampleinfo.rds")
-sampleinfo <- readRDS("/cluster/home/lixiyue_jh/projects/quarto/stomatology_lvjiong/quarto_book/doc/sampleinfo.rds")
 
 sampleinfo$codex <- sampleinfo$codex %>% mutate(
     Time = case_when(Time > 60 ~ 60, TRUE ~ Time),
     Status = case_when(Time > 60 ~ 0,TRUE ~ Status)
   ) %>% as.data.frame()
+
 ```
 
 ## srt, celltype define heatmap
@@ -47,11 +45,11 @@ srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
 Idents(srt) <- factor(srt$celltype, levels=intersect(config$cell_type_order, unique(srt$celltype)))
 markers_10 <- c("CD45", "CD20", "CD3e", "Granzyme B", "CD4", "CD8", "CD68", "SMA", "CD31", "Pan-Cytokeratin")
 srt_sub <- subset(srt, downsample = 200, features = markers_10)
-p <- DoHeatmap(srt_sub, slot = "scale.data", assay = "CODEX", features = markers_10, raster = TRUE,
+p <- DoHeatmap(srt_sub, slot = "scale.data", assay = "CODEX", features = markers_10,
               group.colors = config_list$cell_type, angle = 90, size = 4, disp.min = -2.5, disp.max = 2.5) +
               NoLegend()
-ggsave(glue("{fig_dir}/heatmap_celltype_markers_10_200cell.pdf"), p, dpi=800, width = 8, height = 6)
-ggsave(glue("{fig_dir}/heatmap_celltype_markers_10_200cell.png"), p, dpi=800, width = 8, height = 6)
+ggsave(glue("{fig_dir}/heatmap_celltype_markers_10_200cell.pdf"), p, width = 8, height = 6)
+ggsave(glue("{fig_dir}/heatmap_celltype_markers_10_200cell.png"), p, width = 8, height = 6)
 
 list_markers <- list("CD4 T" = c("CD45RO", "CD44", "Granzyme B", "HLA-DR", "Ki67", "PD-1", "FOXP3"), 
                      "CD8 T" = c("CD45RO", "CD44", "Granzyme B", "HLA-DR", "Ki67", "PD-1"),
@@ -75,108 +73,56 @@ for (cell_type in names(list_markers)){
   ggsave(glue("{fig_dir}/heatmap_subtype_{name}_markers_200cell.png"), p, dpi = 800, width = 8, height = 6)
 }
 
+
 ```
+![](images/heatmap_celltype_markers_10_200cell.png){.align-center .lightbox width="900px" 
+					fig_alt="codex: celltype define" 
+                    fig-cap="Figure: codex: celltype define"}
+![](images/heatmap_subtype_Macrophage_markers_200cell.png){.align-center .lightbox width="900px" 
+					fig_alt="codex: Macrophage subtype define" 
+                    fig-cap="Figure: codex: Macrophage subtype define"}
 
 
-## (a) Barplot: stacked celltype frequency
+
+
+## Barplot: stacked celltype frequency
 
 ```{r echo=TRUE, eval=FALSE}
 
-srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
-spinfo <- sampleinfo$codex %>% filter(Type == "Tumor")
+codex_cluster <- readRDS(glue("{rds_dir}/codex_cluster_plot.rds"))
 
-df <- srt[[c("orig.ident", "celltype")]] %>% count(orig.ident, celltype, name = "n") %>% group_by(orig.ident) %>%
-  mutate(n_total = sum(n), freq = n / n_total) %>% ungroup() %>% mutate(sample_id = orig.ident) %>%
-  filter(sample_id %in% spinfo$sample_id)
+results <- codex_cluster$celltype_cluster
+mat <- results$mat
+df_anno <- results$df_anno
+df_cluster <- results$df_cluster
+dend <- results$dend
+hc <- results$hc
+cl <- results$cl
 
-mat <- df %>% mutate(celltype = factor(celltype, levels = intersect(config$cell_type_order, unique(celltype)))) %>%
-  select(sample_id, celltype, freq) %>%
-  tidyr::pivot_wider(names_from = celltype, values_from = freq, values_fill = 0) %>%
-  tibble::column_to_rownames("sample_id") %>%
-  as.matrix()
+color_use <- config_list$cluster[unique(cl[labels(dend)])]
 
-dist_mat <- dist(mat, method = "euclidean")
-hc <- hclust(dist_mat, method = "ward.D2")
-cl <- cutree(hc, k = 4)
-col_dend <- as.dendrogram(hc)
-color_use <- config_list$cluster[unique(cl[labels(col_dend)])]
-
-col_dend <- color_branches(col_dend, k = 4, col = color_use)
-
-
-df$cluster <- NA
-df$cluster <- cl[match(df$sample_id, names(cl))]
-df <- df %>% mutate(cluster = factor(cluster, levels = unique(cl)))
-
-df_clinical_cluster <- spinfo %>% filter(Type == "Tumor") %>% filter(sample_id %in% rownames(mat)) %>% 
-        mutate(`Age level` = case_when(Age>30 & Age<=50 ~ "30-50", 
-                               Age>50 & Age<=70 ~ "50-70",
-                               Age>70 & Age<=90 ~ "70-90")) %>%
-        select(sample_id, Gender, `Age level`, `Tumor site`, `Diff. level`, Metastasis,`Clinical stage`, `T stage`) %>%
-        mutate(across(c("Clinical stage", "Metastasis", "T stage"), as.character)) %>%
-        mutate(`Diff. level` = factor(.[["Diff. level"]], levels = c("high", "median", "low")))
-df_clinical_cluster$cluster <- cl[match(df_clinical_cluster$sample_id, names(cl))]
-df_clinical_cluster <- df_clinical_cluster %>% mutate(cluster = factor(cluster, levels = unique(cl)))
-
-
-colorM <- list("Gender"="Gender", "Age level"="Age_level", "Tumor site"="tumor_site",
-              "Diff. level"="diff_level", "Metastasis"="Metastasis", `Clinical stage`="clinical_stage", `T stage`="T_stage")
-for (barname in names(colorM)){
-  color_name = colorM[[barname]]
-  p <- ggplot(df_clinical_cluster, aes(x = .data[["cluster"]], fill = .data[[barname]])) +
-        geom_bar(position = "fill", width = 0.8) +
-        scale_fill_manual(values=config_list[[color_name]]) +
-        theme_classic() +
-        labs(y = "Proportion", x = "", fill = barname) +
-        scale_y_continuous(labels = scales::comma) +
-        theme(axis.text.x = element_text(angle = 0, hjust = 1))
-  ggsave(glue("{fig_dir}/stacked_bar_celltype_cluster_clinical_{color_name}.pdf"), p, width = 4, height = 4)
-  ggsave(glue("{fig_dir}/stacked_bar_celltype_cluster_clinical_{color_name}.png"), p, width = 4, height = 4)
-}
-
-
-df_anno <- spinfo %>%
-  select(-Time, -Status, -TNM, -Type, -CN, -K10, -celltype, -CD44_group, -Differentiation) %>%
-  tibble::column_to_rownames("sample_id") %>%
-  mutate(across(c(`Clinical stage`, `T stage`, Metastasis), as.character))
-df_anno <- df_anno[match(rownames(mat), rownames(df_anno)), ]
-df_anno <- df_anno %>% mutate(`Diff. level` = factor(`Diff. level`, levels = c("high", "median", "low")))
-ha <- HeatmapAnnotation(df = df_anno, 
-                        col = list(Age = circlize::colorRamp2(c(30, 90), config_list$Age_color), 
-                                   Gender = config_list$Gender,
-                                   `Tumor site` = config_list$tumor_site,
-                                   `Diff. level` = config_list$diff_level,
-                                   `Clinical stage` = config_list$clinical_stage,
-                                   `T stage` = config_list$T_stage,
-                                   Metastasis = config_list$Metastasis))
-
-
-
-ht <- Heatmap(t(mat), name = "Percentage",
-              cluster_columns = col_dend,
+ha <- HeatmapAnnotation(df = df_anno %>% dplyr::select(-`Age level`),
+                        col = list(
+                          Age = circlize::colorRamp2(c(30, 90), config_list$Age_color),
+                          Gender = config_list$Gender,
+                          `Tumor site` = config_list$tumor_site,
+                          `Diff. level` = config_list$diff_level,
+                          `Clinical stage` = config_list$clinical_stage,
+                          `T stage` = config_list$T_stage,
+                          Metastasis = config_list$Metastasis))
+ht <- Heatmap(t(mat), 
+              name = "Percentage",
+              cluster_columns = dend,
               cluster_rows = F,
               show_column_names = T,
               column_split = 4,
               column_title = unique(cl[hc$order]),
               column_gap = unit(0, "mm"),
               bottom_annotation = ha)
-pdf(glue("{fig_dir}/heatmap_celltype_freq.pdf"), width = 10, height = 8)
-ht <- draw(ht, heatmap_legend_side = "bottom", annotation_legend_side = "bottom")
-dev.off()
 
-png(glue("{fig_dir}/heatmap_celltype_freq.png"), width = 10, height = 8, units = "in", res = 300)
-ht <- draw(ht, heatmap_legend_side = "bottom", annotation_legend_side = "bottom")
-dev.off()
-
-
-
-#col_order <- column_order(ht)
-#dend_order <- rownames(mat)[col_order]
-dend_order <- labels(col_dend)
-
-df <- df %>% 
-  mutate(celltype = factor(celltype, levels = intersect(cell_type_order, unique(df$celltype))),
-         sample_id = factor(sample_id, levels = dend_order))
+df <- df_cluster %>% 
+  mutate(celltype = factor(celltype, levels = intersect(cell_type_order, unique(df_cluster$celltype))),
+         sample_id = factor(sample_id, levels = labels(dend)))
 p_bar <- ggplot(df, aes(sample_id, freq, fill = celltype)) +
   geom_col(width = 1, color = NA) +
   scale_fill_manual(values = config_list$cell_type) +
@@ -185,12 +131,40 @@ p_bar <- ggplot(df, aes(sample_id, freq, fill = celltype)) +
   theme(axis.text.x = element_blank(),
         panel.grid.major.x = element_blank(),
         plot.margin = margin(0,0,0,0))
+
+
+pdf(glue("{fig_dir}/heatmap_celltype_freq.pdf"), width = 10, height = 8)
+ht <- draw(ht, heatmap_legend_side = "bottom", annotation_legend_side = "bottom")
+dev.off()
+png(glue("{fig_dir}/heatmap_celltype_freq.png"), width = 10, height = 8, units = "in", res = 300)
+ht <- draw(ht, heatmap_legend_side = "bottom", annotation_legend_side = "bottom")
+dev.off()
+
+
 ggsave(glue("{fig_dir}/stacked_bar_celltype_freq.pdf"), p_bar, width = 10, height = 6)
 ggsave(glue("{fig_dir}/stacked_bar_celltype_freq.png"), p_bar, width = 10, height = 6)
 
 
+df <- df_anno %>% mutate(sample_id = rownames(.)) %>% left_join(df_cluster, by = "sample_id") %>%
+    mutate(cluster = factor(paste("G", cluster, sep = ""), levels = paste("G", 1:4, sep = "")))
+colorM <- list("Gender"="Gender", "Age level"="Age_level", "Tumor site"="tumor_site",
+              "Diff. level"="diff_level", "Metastasis"="Metastasis", `Clinical stage`="clinical_stage", `T stage`="T_stage")
+for (barname in names(colorM)){
+  color_name = colorM[[barname]]
+  p <- ggplot(df, aes(x = .data[["cluster"]], fill = .data[[barname]])) +
+        geom_bar(position = "fill", width = 0.8) +
+        scale_fill_manual(values=config_list[[color_name]]) +
+        theme_classic() +
+        labs(y = "Proportion", x = "", fill = barname) +
+        scale_y_continuous(labels = scales::comma) +
+        theme(axis.text.x = element_text(angle = 0, hjust = 0.5, vjust = 1))
+  ggsave(glue("{fig_dir}/stacked_bar_celltype_cluster_clinical_{color_name}.pdf"), p, width = 4, height = 4)
+  ggsave(glue("{fig_dir}/stacked_bar_celltype_cluster_clinical_{color_name}.png"), p, width = 4, height = 4)
+}
+
+spinfo <- sampleinfo$codex %>% filter(Type == "Tumor")
 df_out <- tidyr::pivot_wider(df, id_cols = c(sample_id, cluster), names_from = celltype, values_from = freq, values_fill = 0) %>% arrange(sample_id)
-df_surv <- df_out %>% select(sample_id, cluster) %>% left_join(spinfo) %>% na.omit()
+df_surv <- df_out %>% select(sample_id, cluster) %>% left_join(spinfo) %>% na.omit() %>% mutate(cluster = str_replace_all(cluster, "G", ""))
 
 fit <- survfit(Surv(Time, Status) ~ cluster, data = df_surv)
 names(color_use) <- paste0("cluster=",names(color_use))
@@ -207,7 +181,6 @@ ggsave(glue("{fig_dir}/survival_curve_celltype_freq_cluster.png"), p, width = 5,
 ``` 
 
 
-
 ![](images/heatmap_celltype_freq.png){.align-center .lightbox width="900px" 
 										fig_alt="codex: heatmap of celltype freq" 
                     fig-cap="Figure: heatmap of celltype freq"}
@@ -220,27 +193,19 @@ ggsave(glue("{fig_dir}/survival_curve_celltype_freq_cluster.png"), p, width = 5,
 
 
 
-
-
-## (b) celltype_cn, heatmap_celltype_cn_composition
+##celltype_cn, heatmap_celltype_cn_composition
 
 ```{r echo=TRUE, eval=FALSE}
 
-cluster_message <- readRDS(glue("{rds_dir}/codex_cluster_message.rds"))
-dt_fil <- cluster_message$celltype_cn %>% as.data.table()
-mat <- melt(dt_fil[, -"n"], id.vars = c("cell_id", "cluster"), variable.name = "celltype", value.name = "frequency") %>%
-  .[, .(freq = mean(frequency)), by = .(cluster, celltype)] %>%
-  .[, cluster := factor(paste0("CN", cluster), levels = paste0("CN", 1:10))] %>%
-  dcast(cluster ~ celltype) %>%
-  tibble::column_to_rownames("cluster") %>%
-  as.matrix()
-mat_scale <- scale(mat)
+codex_cluster <- readRDS(glue("{rds_dir}/codex_cluster_plot.rds"))
 
-celltype = c("CD4 T", "CD8 T", "NKT", "B cell", "Macrophage", "Fibroblast", "Blood vessel", "Tumor cell")
-mat_anno <- mat[, match(celltype, colnames(mat))]
-bar_colors <- config_list$cell_type[celltype]
+results <- codex_cluster$celltype_CN
+mat <- results$mat
+dt_anno <- results$dt_anno
 
-ha <- rowAnnotation(CN = anno_barplot(mat_anno, 
+bar_colors <- config_list$cell_type[colnames(mat)]
+
+ha <- rowAnnotation(CN = anno_barplot(mat, 
                                       bar_width = 1, 
                                       gp = gpar(fill = bar_colors), 
                                       border = FALSE,
@@ -248,18 +213,14 @@ ha <- rowAnnotation(CN = anno_barplot(mat_anno,
                                       axis_param = list(direction = "reverse"),
                                       width = unit(4, "cm")),
                     show_annotation_name = FALSE)
-lgd_list <- list(Legend(labels = celltype, title = "Cell type", 
-                        legend_gp = gpar(fill = bar_colors)))
-
-
-dt_anno <- sampleinfo$codex_cn_celltype
+lgd_list <- list(Legend(labels = colnames(mat), title = "Cell type",  legend_gp = gpar(fill = bar_colors)))
 row_labels <- structure(paste(dt_anno$cn, dt_anno$anno), names = dt_anno$cn)
-ht <- Heatmap(mat_scale, name = "Relative enrichment",
+ht <- Heatmap(scale(mat), name = "Relative enrichment",
               col = circlize::colorRamp2(c(-3, -2, -1, 0, 1, 2, 3), config_list$scale_7),
               right_annotation = ha,
               cluster_rows = TRUE,
               cluster_columns = TRUE,
-              row_labels = row_labels[rownames(mat_scale)])
+              row_labels = row_labels[rownames(mat)])
 pdf(glue("{fig_dir}/heatmap_celltype_cn_composition.pdf"), width = 10, height = 6)
 draw(ht, heatmap_legend_list = lgd_list)
 dev.off()
@@ -267,50 +228,34 @@ png(glue("{fig_dir}/heatmap_celltype_cn_composition.png"), width = 10, height = 
 draw(ht, heatmap_legend_list = lgd_list)
 dev.off()
 
+
 ```
-
-
 ![](images/heatmap_celltype_cn_composition.png){.align-center .lightbox width="900px" 
 										fig_alt="codex: heatmap of celltype CN composition" 
                     fig-cap="Figure: heatmap of celltype CN composition"}
 
 
 
-
-
-## (c) subtype_cn, heatmap_subtype_cn_composition
+##subtype_cn, heatmap_subtype_cn_composition
 
 ```{r echo=TRUE, eval=FALSE}
 
-cluster_message <- readRDS(glue("{rds_dir}/codex_cluster_message.rds"))
-dt_fil <- cluster_message$subtype_cn %>% as.data.table()
+codex_cluster <- readRDS(glue("{rds_dir}/codex_cluster_plot.rds"))
 
+results <- codex_cluster$subtype_CN
+mat <- results$mat
+df_anno <- results$df_anno
+dt_anno <- results$dt_anno
 
-mat <- melt(dt_fil[, -"n"], id.vars = c("cell_id", "cluster"), variable.name = "subtype", value.name = "frequency") %>%
-  .[, .(freq = mean(frequency)), by = .(cluster, subtype)] %>%
-  .[, cluster := factor(paste0("CN", cluster), levels = paste0("CN", 1:35))] %>%
-  dcast(cluster ~ subtype) %>%
-  tibble::column_to_rownames("cluster") %>%
-  as.matrix()
-mat_scale <- scale(mat)
+mat <- scale(mat)
 
-
-mat_anno <- mat %>% as.data.table(keep.rownames = "cn") %>%
-  melt(id.vars = "cn", variable.name = "subtype", value.name = "freq") %>%
-  .[, `:=`(subtype = tstrsplit(subtype, split = "_")[[1]],
-           cn = factor(cn, levels = paste0("CN", 1:35)))] %>%
-  .[, .(freq = sum(freq)), by = .(cn, subtype)] %>%
-  dcast(cn ~ subtype, value.var = "freq", fill = 0) %>%
-  tibble::column_to_rownames("cn") %>%
-  as.matrix()
 celltype = c("CD4T", "CD8T", "NKT", "B cell", "Macrophage", "Fibroblast", "Blood vessel", "Tumor")
-mat_anno <- mat_anno[, match(celltype, colnames(mat_anno))]
+df_anno <- df_anno[, match(celltype, colnames(df_anno))]
 celltype = c("CD4 T", "CD8 T", "NKT", "B cell", "Macrophage", "Fibroblast", "Blood vessel", "Tumor cell")
-names(mat_anno) <- celltype
+names(df_anno) <- celltype
+
 bar_colors <- config_list$cell_type[celltype]
-
-
-ha <- rowAnnotation(CN = anno_barplot(mat_anno, 
+ha <- rowAnnotation(CN = anno_barplot(df_anno, 
                                       bar_width = 1, 
                                       gp = gpar(fill = bar_colors), 
                                       border = FALSE,
@@ -318,18 +263,15 @@ ha <- rowAnnotation(CN = anno_barplot(mat_anno,
                                       axis_param = list(direction = "reverse"),
                                       width = unit(3, "cm")),
                     show_annotation_name = FALSE)
-lgd_list <- list(Legend(labels = celltype, title = "Cell type", 
-                        legend_gp = gpar(fill = bar_colors)))
 
-dt_anno <- sampleinfo$codex_cn_subtype
+lgd_list <- list(Legend(labels = celltype, title = "Cell type", legend_gp = gpar(fill = bar_colors)))
 row_labels <- structure(paste(dt_anno$cn, dt_anno$anno), names = dt_anno$cn)
-
-ht <- Heatmap(mat_scale, name = "Relative enrichment",
+ht <- Heatmap(mat, name = "Relative enrichment",
               col = circlize::colorRamp2(c(-2, -1, 0, 2, 4, 6), config_list$scale_6),
               right_annotation = ha,
               cluster_rows = TRUE,
               cluster_columns = TRUE,
-              row_labels = row_labels[rownames(mat_scale)])
+              row_labels = row_labels[rownames(mat)])
 pdf(glue("{fig_dir}/heatmap_subtype_cn_composition.pdf"), width = 15, height = 12)
 draw(ht, heatmap_legend_list = lgd_list, padding = unit(c(10, 2, 2, 30), "mm"), heatmap_legend_side = "bottom")
 dev.off()
@@ -337,8 +279,9 @@ png(glue("{fig_dir}/heatmap_subtype_cn_composition.png"), width = 15, height = 1
 draw(ht, heatmap_legend_list = lgd_list, padding = unit(c(10, 2, 2, 30), "mm"), heatmap_legend_side = "bottom")
 dev.off()
 
-```
 
+
+```
 
 ![](images/heatmap_subtype_cn_composition.png){.align-center .lightbox width="900px" 
 										fig_alt="codex: heatmap of subtype CN composition" 
@@ -347,46 +290,29 @@ dev.off()
 
 
 
-## (d) celltype_cn, sample_cluster_heatmap_celltype_cn, surv curve
+
+
+
+##celltype_cn, sample_cluster_heatmap_celltype_cn, surv curve
 
 ```{r echo=TRUE, eval=FALSE}
 
-srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
-spinfo <- sampleinfo$codex
-df <- srt[[c("orig.ident", "celltype_cn")]] %>%
-  na.omit() %>%
-  rename(sample_id = orig.ident) %>%
-  count(sample_id, celltype_cn, name = "n") %>%
-  tidyr::complete(sample_id, celltype_cn, fill = list(n = 0)) %>%
-  group_by(sample_id) %>%
-  mutate(freq = n / sum(n)) %>%
-  ungroup() %>%
-  left_join(spinfo)
+codex_cluster <- readRDS(glue("{rds_dir}/codex_cluster_plot.rds"))
 
-# cluster samples based on celltype-cn
-mat <- tidyr::pivot_wider(df, id_cols = sample_id, names_from = celltype_cn, values_from = freq) %>%
-  tibble::column_to_rownames("sample_id") %>%
-  as.matrix()
-mat <- mat * 100
+results <- codex_cluster$celltype_CN_cluster
+mat <- results$mat
+df_anno <- results$df_anno
+dt_anno <- results$dt_anno
+dend <- results$dend
+hc <- results$hc
+cl <- results$cl
 
-color_use <- config_list$cluster
-names(color_use) <- as.character(names(color_use)) 
-
-hc <- hclust(dist(mat))
-cl <- cutree(hc, k = 3)
-dend <- as.dendrogram(hc)
 color_use <- config_list$cluster[unique(cl[labels(dend)])]
-#dend <- color_branches(dend, k = 3, col = color_use)
 
-
-# plot heatmap
-df_anno <- data.frame(cluster = as.character(cl), row.names = as.character(names(cl))) %>%
-      mutate(cluster = factor(cluster, levels = unique(cl)))
-ha <- rowAnnotation(df = df_anno, col = list(cluster = color_use))
-
-dt_anno <- sampleinfo$codex_cn_celltype
 col_labels <- structure(paste(dt_anno$cn, dt_anno$anno), names = dt_anno$cn)
 
+ha <- rowAnnotation(df = df_anno %>% dplyr::select(sample_id, cluster) %>% column_to_rownames("sample_id"), 
+                    col = list(cluster = color_use))
 ht <- Heatmap(mat, name = "Percentage",
               col = circlize::colorRamp2(c(0, 25, 50, 65, 80, 100), config_list$scale_6),
               cluster_rows = dend,
@@ -401,9 +327,7 @@ png(glue("{fig_dir}/sample_cluster_heatmap_celltype_cn.png"), width = 6, height 
 ht <- draw(ht, padding = unit(c(2, 2, 2, 2), "mm"))
 dev.off()
 
-
-df_surv <- df_anno %>% tibble::rownames_to_column("sample_id") %>% 
-      left_join(spinfo, join_by(sample_id)) %>% filter(Type == "Tumor")
+df_surv <- df_anno %>% filter(Type == "Tumor")
 fit <- survfit(Surv(Time, Status) ~ cluster, data = df_surv)
 names(color_use) <- paste0("cluster=",names(color_use))
 p <- ggsurvplot(fit, data = df_surv, xlab = "Time (Months)", pval = TRUE, risk.table = TRUE,
@@ -415,6 +339,7 @@ p <- arrange_ggsurvplots(list(p), ncol = 1, print = FALSE)
 ggsave(glue("{fig_dir}/sample_cluster_surv_curve_celltype_cn.pdf"), p, width = 5, height = 6)
 ggsave(glue("{fig_dir}/sample_cluster_surv_curve_celltype_cn.png"), p, width = 5, height = 6)
 
+
 ```
 
 ![](images/sample_cluster_surv_curve_celltype_cn.png){.align-center .lightbox width="900px" 
@@ -424,77 +349,46 @@ ggsave(glue("{fig_dir}/sample_cluster_surv_curve_celltype_cn.png"), p, width = 5
 
 
 
-
-## (e) subtype_cn, sample_cluster_heatmap_subtype_cn, survival_curve (k=10, cl=5)
+##subtype_cn, sample_cluster_heatmap_subtype_cn, survival_curve (k=10, cl=5)
 
 ```{r echo=TRUE, eval=FALSE}
 
-k = 10
+codex_cluster <- readRDS(glue("{rds_dir}/codex_cluster_plot.rds"))
 
-srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
-spinfo <- sampleinfo$codex
-df <- srt[[c("orig.ident", "subtype_cn")]] %>%
-  na.omit() %>%
-  rename(sample_id = orig.ident) %>%
-  count(sample_id, subtype_cn, name = "n") %>%
-  tidyr::complete(sample_id, subtype_cn, fill = list(n = 0)) %>%
-  group_by(sample_id) %>%
-  mutate(freq = n / sum(n)) %>%
-  ungroup() %>%
-  left_join(spinfo)
+results <- codex_cluster$subtype_CN_cluster
+mat <- results$mat
+df_anno <- results$df_anno
+dt_anno <- results$dt_anno
+dend <- results$dend
+hc <- results$hc
+cl <- results$cl
 
-# cluster samples based on subtype-cn
-mat <- tidyr::pivot_wider(df, id_cols = sample_id, names_from = subtype_cn, values_from = freq) %>%
-  tibble::column_to_rownames("sample_id") %>%
-  as.matrix() %>% t()
-mat <- mat * 100
-mat_scale <- t(scale(t(mat)))
-
-color_cl <- config_list$cluster
-
-dt_anno <- sampleinfo$codex_cn_subtype
 row_labels <- structure(paste(dt_anno$cn, dt_anno$anno), names = dt_anno$cn)
 
+color_use <- config_list$cluster[unique(cl[labels(dend)])]
 
-hc <- hclust(dist(t(mat_scale)))
-
-k = 10
-cl <- cutree(hc, k = k)
-dend <- as.dendrogram(hc)
-  
-# plot heatmap
-df_anno <- data.frame(cluster = cl,row.names = names(cl)) %>% 
-  mutate(cluster = factor(cluster, levels = sort(as.numeric(unique(cl)))))
-ha <- HeatmapAnnotation(df = df_anno, col = list(cluster = color_cl[1:k]))
-  
-ht <- Heatmap(mat_scale, name = "z-score",
+ha <- HeatmapAnnotation(df = df_anno %>% dplyr::select(sample_id, cluster) %>% column_to_rownames("sample_id"), col = list(cluster = color_use[1:10]))
+ht <- Heatmap(mat, name = "z-score",
                 col = circlize::colorRamp2(c(0, 1, 2, 3, 4, 5), config_list$scale_6),
                 cluster_rows = TRUE,
                 cluster_columns = TRUE,
-                row_labels = row_labels[rownames(mat_scale)],
+                row_labels = row_labels[rownames(mat)],
                 show_column_names = FALSE,
-                column_split = k,
+                column_split = 10,
                 column_title = unique(cl[hc$order]),
                 top_annotation = ha
   )
 
-pdf(glue("{fig_dir}/sample_cluster_heatmap_subtype_cn_k{k}.pdf"), width = 12, height = 6)
-draw(ht, padding = unit(c(2, 2, 2, 20), "mm"))
+pdf(glue("{fig_dir}/sample_cluster_heatmap_subtype_cn.pdf"), width = 12, height = 6)
+ht <- draw(ht, padding = unit(c(2, 2, 2, 20), "mm"))
 dev.off()
-png(glue("{fig_dir}/sample_cluster_heatmap_subtype_cn_k{k}.png"), width = 12, height = 6, units = "in", res = 300)
-draw(ht, padding = unit(c(2, 2, 2, 20), "mm"))
+png(glue("{fig_dir}/sample_cluster_heatmap_subtype_cn.png"), width = 12, height = 6, units = "in", res = 300)
+ht <- draw(ht, padding = unit(c(2, 2, 2, 20), "mm"))
 dev.off()
-
-write.csv(df_anno, glue("{rds_dir}/sample_cluster_heatmap_subtype_cn_k10.csv"))
 
 i = 5
-df_surv <- df_anno %>%
-  mutate(cluster = as.character(cluster)) %>%
-  tibble::rownames_to_column("sample_id") %>%
-  left_join(spinfo, join_by(sample_id)) %>%
-  filter(Type == "Tumor")
-  df_surv$cluster[df_surv$cluster != i] <- "others"
-    
+df_surv <- df_anno %>% filter(Type == "Tumor") %>% mutate(cluster = as.character(cluster))
+df_surv$cluster[df_surv$cluster != i] <- "others"
 fit <- survfit(Surv(Time, Status) ~ cluster, data = df_surv)
 p <- ggsurvplot(fit, data = df_surv, xlab = "Time (Months)", pval = TRUE, risk.table = TRUE,
                     risk.table.height = 0.35, break.x.by = 12, xlim = c(0,60),
@@ -506,11 +400,8 @@ p <- arrange_ggsurvplots(list(p), ncol = 1, print = FALSE)
 ggsave(glue("{fig_dir}/sample_cluster_surv_curve_subtype_cn_cl{i}.pdf"), p, width = 5, height = 6)
 ggsave(glue("{fig_dir}/sample_cluster_surv_curve_subtype_cn_cl{i}.png"), p, width = 5, height = 6)
 
-
 ```
-
-
-![](images/sample_cluster_heatmap_subtype_cn_k10.png){.align-center .lightbox width="900px" 
+![](images/sample_cluster_heatmap_subtype_cn.png){.align-center .lightbox width="900px" 
 										fig_alt="codex: heatmap of subtype CN cluster" 
                     fig-cap="Figure: heatmap of subtype CN cluster"}
 ![](images/sample_cluster_surv_curve_subtype_cn_cl5.png){.align-center .lightbox width="900px" 
@@ -521,12 +412,9 @@ ggsave(glue("{fig_dir}/sample_cluster_surv_curve_subtype_cn_cl{i}.png"), p, widt
 
 
 
-## (f) pairwise cell interaction (subtype): Macrophage_CD44+ - Tumor_CD44+; CD4T_CD44+ - Tumor_CD44+;  CD8T_CD44+ - Tumor_CD44+;
-
-
+##pairwise cell interaction (subtype): Macrophage_CD44+ - Tumor_CD44+; CD4T_CD44+ - Tumor_CD44+;  CD8T_CD44+ - Tumor_CD44+;
 
 ```{r echo=TRUE, eval=FALSE}
-
 
 lst_pci_message <- readRDS(glue("{rds_dir}/pci_message.rds"))
 df_res2 <- lst_pci_message$df_res
@@ -558,11 +446,7 @@ for(pair in pair2){
   ggsave(glue("{fig_dir}/surv_curve_pci_subtype_{pair}.png"), p, width = 6, height = 7)
   pair_fig[pair] <- p
 }
-
-
 ```
-
-
 ![](images/surv_curve_pci_subtype_Macrophage_CD44+-Tumor_CD44+.png){.align-center .lightbox width="900px" 
 										fig_alt="codex: surv curve of pci Macrophage_CD44+-Tumor_CD44+" 
                     fig-cap="Figure: surv curve of pci Macrophage_CD44+-Tumor_CD44+"}
@@ -576,16 +460,11 @@ for(pair in pair2){
 
 
 
-
-
-
-## (g) voronoi plot in situ message: 3-2-4, 3-4-3, 3-5-4
+##voronoi plot in situ message: 3-2-4, 3-4-3, 3-5-4
 
 ```{r echo=TRUE, eval=FALSE}
 
-
 lst_sf_invert <- readRDS(glue("{rds_dir}/sf_invert_insitu_celltype_message.rds"))
-
 voronoi_fig <- list()
 Images <- c("3-2-4", "3-4-3", "3-5-4", "3-12-4")
 for(img in Images){
@@ -601,10 +480,7 @@ for(img in Images){
   ggsave(glue("{fig_dir}/voronoi_{img}_spatial_celltype_map.png"), p, width = 6, height = 6)
  voronoi_fig[[img]] <- p
 }
-
 ```
-
-
 ![](images/voronoi_3-2-4_spatial_celltype_map.png){.align-center .lightbox width="900px" 
 										fig_alt="codex: voronoi of celltype 3-2-4" 
                     fig-cap="Figure: voronoi of celltype 3-2-4"}
@@ -617,17 +493,13 @@ for(img in Images){
 
 
 
-
-
-## (h) voronoi plot in situ message: 3-2-4 subtype CN
+##voronoi plot in situ message: 3-2-4 subtype CN
 
 ```{r echo=TRUE, eval=FALSE}
-
 
 lst_sf_invert <- readRDS(glue("{rds_dir}/sf_invert_insitu_subtype_message.rds"))
 
 imgs = c("3-2-4")
-
 for(img in imgs){
 
   sf_invert <- lst_sf_invert[[img]]
@@ -639,21 +511,17 @@ for(img in imgs){
   ggsave(glue("{fig_dir}/voronoi_{img}_spatial_subtype_cn_top_map.pdf"), p, width = 6, height = 6)
   ggsave(glue("{fig_dir}/voronoi_{img}_spatial_subtype_cn_top_map.png"), p, width = 6, height = 6)
 }
-
-
 ```
-
 ![](images/voronoi_3-2-4_spatial_subtype_cn_top_map.png){.align-center .lightbox width="900px" 
 										fig_alt="codex: voronoi of subtype cn top 3-2-4" 
                     fig-cap="Figure: voronoi of subtype cn top 3-2-4"}
 
 
 
-
-
-## (i) barplot of immune_cell_proportion_in_erosion_zone
+##barplot of immune_cell_proportion_in_erosion_zone
 
 ```{r echo=TRUE, eval=FALSE}
+
 dt <- readRDS(glue("{rds_dir}/erosion_zone_immune_cell_count.rds"))
 p <- ggplot(dt, aes(sample_id, count, fill = celltype)) +
   geom_bar(position = "fill", stat = "identity", width = 0.7) +
@@ -662,8 +530,6 @@ p <- ggplot(dt, aes(sample_id, count, fill = celltype)) +
   theme_classic()
 ggsave(glue("{fig_dir}/immune_cell_proportion_in_erosion_zone.pdf"), p, width = 6, height = 6)
 ggsave(glue("{fig_dir}/immune_cell_proportion_in_erosion_zone.png"), p, width = 6, height = 6)
-
-
 ```
 ![](images/immune_cell_proportion_in_erosion_zone.png){.align-center .lightbox width="900px" 
 										fig_alt="codex: stacked bar of celltype composition in erosion zone" 
@@ -673,69 +539,14 @@ ggsave(glue("{fig_dir}/immune_cell_proportion_in_erosion_zone.png"), p, width = 
 
 
 
-## (j) Barplot: stacked celltype frequency of clinical message
+##pci & cor: heatmap of subtype pci and cor
 
 ```{r echo=TRUE, eval=FALSE}
 
-
-spinfo <- sampleinfo$codex
-df <- spinfo %>% filter(CD44_group %in% c("Heterogeneous", "Homogeneous"))
-df <- df %>% mutate(`Diff. level` = factor(`Diff. level`, levels = c("high","median", "low")))
-
-p1 <- ggplot(df, aes(CD44_group, fill = .data[["Tumor site"]])) +
-        geom_bar(position = "fill") +
-        theme_classic() +
-        labs(x = "", y = "Count (%)", fill = "", title = "Tumor Site")+
-        theme(axis.text.x = element_text(angle = 60, hjust = 1))+
-        scale_fill_manual(values = config_list$bar_tumor_site)
-ggsave(glue("{fig_dir}/CD44_group_vs_tumor_site_stack_bar.pdf"), p1, width = 3, height = 4)
-ggsave(glue("{fig_dir}/CD44_group_vs_tumor_site_stack_bar.png"), p1, width = 3, height = 4)
-
-p2 <- ggplot(df, aes(CD44_group, fill = .data[["Diff. level"]])) +
-  geom_bar(position = "fill") +
-  theme_classic() +
-  labs(x = "", y = "Count (%)", fill = "", title = "Differentiation Grade")+
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
-  scale_fill_manual(values = config_list$diff_level)
-ggsave(glue("{fig_dir}/CD44_group_vs_differentiation_stack_bar.pdf"), p2, width = 5, height = 8)
-ggsave(glue("{fig_dir}/CD44_group_vs_differentiation_stack_bar.png"), p2, width = 5, height = 8)
-
-
-
-p3 <- ggplot(df, aes(CD44_group, fill = `Clinical stage`)) +
-  geom_bar(position = "fill") +
-  theme_classic() +
-  labs(x = "", y = "Count (%)", fill = "", title = "Clinical Stage")+
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))+
-  scale_fill_manual(values = config_list$bar_clinical_stage)
-ggsave(glue("{fig_dir}/CD44_group_vs_clinical_stage_stack_bar.pdf"), p3, width = 5, height = 8)
-ggsave(glue("{fig_dir}/CD44_group_vs_clinical_stage_stack_bar.png"), p3, width = 5, height = 8)
-
-```
-
-![](images/CD44_group_vs_tumor_site_stack_bar.png){.align-center .lightbox width="900px" 
-										fig_alt="codex: stacked bar of tumor site in CD44 group" 
-                    fig-cap="Figure: stacked bar of tumor site in CD44 group"}
-![](images/CD44_group_vs_differentiation_stack_bar.png){.align-center .lightbox width="900px" 
-										fig_alt="codex: stacked bar of differentiation in CD44 group" 
-                    fig-cap="Figure: stacked bar of differentiation in CD44 group"}
-![](images/CD44_group_vs_clinical_stage_stack_bar.png){.align-center .lightbox width="900px" 
-										fig_alt="codex: stacked bar of clinical message in CD44 group" 
-                    fig-cap="Figure: stacked bar of clinical message in CD44 group"}
-
-
-
-
-
-
-## (j) pci & cor: heatmap of subtype pci and cor
-
-```{r echo=TRUE, eval=FALSE}
 subtype_cor_pci <- readRDS(glue("{rds_dir}/subtype_cor_pci_result.rds"))
 
 df_pci <- subtype_cor_pci$df_pci_long
 df_cor <- subtype_cor_pci$df_cor_long
-
 
 p <- ggplot() +
   geom_tile(data = df_pci, mapping = aes(x = cluster2, y = cluster1, fill = mean_log2_lr)) +
@@ -757,13 +568,10 @@ p <- ggplot() +
   guides(size = guide_legend(override.aes = list(shape = 21, fill = NA, color = "black", stroke = 0.5))) +
   xlab(NULL) +
   ylab(NULL)
+
 ggsave(glue("{fig_dir}/heatmap_subtype_pci_cor.pdf"), p, width = 18, height = 16)
 ggsave(glue("{fig_dir}/heatmap_subtype_pci_cor.png"), p, width = 18, height = 16)
 ```
-
 ![](images/heatmap_subtype_pci_cor.png){.align-center .lightbox width="900px" 
 										fig_alt="codex: heatmap of pci and cor" 
                     fig-cap="Figure: heatmap of pci and cor"}
-
-
-

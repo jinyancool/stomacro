@@ -1,0 +1,127 @@
+# FigureS2
+
+## Package load and plot settings.
+
+```{r warning=FALSE}
+.libPaths(c(.libPaths(), "/cluster/home/yliang_jh/sbin/R/library/4.3.0"))
+pkgs <- c("fs", "configr", "stringr", 
+          "jhtools", "glue", "patchwork", "tidyverse", "dplyr", "Seurat", "magrittr", 
+          "readxl", "writexl", "ComplexHeatmap", 
+          "data.table", "ggplot2", "ggbeeswarm", "ggdendro", "dendextend", "deldir",
+          "sf", "corrplot", "ggpubr", "survival", "survminer", "forestmodel", "BiocParallel", "BiocNeighbors")  
+for (pkg in pkgs){
+  suppressPackageStartupMessages(library(pkg, character.only = T))
+}
+
+rds_dir <- "/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/codex"
+fig_dir <- "/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/figs/fig2_new"
+
+
+# colors setting
+config_fn = "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml"
+config_list <- show_me_the_colors(config_fn, "all")
+colors_celltype <- config_list$cell_type
+
+config <- read.config(config_fn)
+cell_type_order <- config$cell_type_order
+
+sampleinfo <- readRDS("/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo/sampleinfo.rds")
+
+sampleinfo$codex <- sampleinfo$codex %>% mutate(
+    Time = case_when(Time > 60 ~ 60, TRUE ~ Time),
+    Status = case_when(Time > 60 ~ 0,TRUE ~ Status)
+  ) %>% as.data.frame()
+
+```
+
+
+## A: srt, subtype define heatmap
+
+```{r echo=TRUE, eval=FALSE}
+
+srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
+Idents(srt) <- factor(srt$celltype, levels=intersect(config$cell_type_order, unique(srt$celltype)))
+
+list_markers <- list("CD4 T" = c("CD45RO", "CD44", "Granzyme B", "HLA-DR", "Ki67", "PD-1", "FOXP3"), 
+                     "CD8 T" = c("CD45RO", "CD44", "Granzyme B", "HLA-DR", "Ki67", "PD-1"),
+                     "Macrophage" = c("CD14", "CD44", "HLA-DR", "IDO1", "Ki67", "Vimentin", "PD-L1"), 
+                     "Tumor cell" = c("CD44", "E-cadherin", "IDO1", "HLA-DR", "Vimentin", "Ki67", "PD-L1"), 
+                     "Fibroblast" = c("CD44", "SMA", "IDO1", "HLA-DR", "Collagen-IV", "Ki67", "PD-L1"))
+
+cell_type_order_sub <- config$cell_type_order[70:113]
+for (cell_type in names(list_markers)){
+  sub_markers <- list_markers[[cell_type]]
+  Idents(srt) <- "subtype"
+  srt_sub <- subset(srt, downsample = 200, features = sub_markers, subset = (celltype == cell_type & !is.na(subtype)))
+  srt_sub$subtype <- factor(srt_sub$subtype, levels = intersect(cell_type_order_sub, unique(srt_sub$subtype)))
+  Idents(srt_sub) <- "subtype"
+  colors <- config_list$cell_type[1:length(unique(srt_sub$subtype))]
+  p <- DoHeatmap(srt_sub, slot = "scale.data", assay = "CODEX", features = sub_markers, raster = TRUE,
+              group.colors = colors, angle = 90, size = 4, disp.min = -2.5, disp.max = 2.5)
+              NoLegend()
+  name = str_replace_all(cell_type, " ", "")
+  ggsave(glue("{fig_dir}/heatmap_subtype_{name}_markers_200cell.pdf"), p, dpi = 800, width = 8, height = 6)
+  ggsave(glue("{fig_dir}/heatmap_subtype_{name}_markers_200cell.png"), p, dpi = 800, width = 8, height = 6)
+}
+
+
+```
+
+![](images/heatmap_subtype_Macrophage_markers_200cell.png){.align-center .lightbox width="900px" 
+					fig_alt="codex: Macrophage subtype define" 
+                    fig-cap="Figure: codex: Macrophage subtype define"}
+
+
+## B: subtype_cn, heatmap_subtype_cn_composition
+
+```{r echo=TRUE, eval=FALSE}
+
+codex_cluster <- readRDS(glue("{rds_dir}/codex_cluster_plot.rds"))
+
+results <- codex_cluster$subtype_CN
+mat <- results$mat
+df_anno <- results$df_anno
+dt_anno <- results$dt_anno
+
+mat <- scale(mat)
+
+celltype = c("CD4T", "CD8T", "NKT", "B cell", "Macrophage", "Fibroblast", "Blood vessel", "Tumor")
+df_anno <- df_anno[, match(celltype, colnames(df_anno))]
+celltype = c("CD4 T", "CD8 T", "NKT", "B cell", "Macrophage", "Fibroblast", "Blood vessel", "Tumor cell")
+names(df_anno) <- celltype
+
+bar_colors <- config_list$cell_type[celltype]
+ha <- rowAnnotation(CN = anno_barplot(df_anno, 
+                                      bar_width = 1, 
+                                      gp = gpar(fill = bar_colors), 
+                                      border = FALSE,
+                                      axis = TRUE,
+                                      axis_param = list(direction = "reverse"),
+                                      width = unit(3, "cm")),
+                    show_annotation_name = FALSE)
+
+lgd_list <- list(Legend(labels = celltype, title = "Cell type", legend_gp = gpar(fill = bar_colors)))
+row_labels <- structure(paste(dt_anno$cn, dt_anno$anno), names = dt_anno$cn)
+ht <- Heatmap(mat, name = "Relative enrichment",
+              col = circlize::colorRamp2(c(-2, -1, 0, 2, 4, 6), config_list$scale_6),
+              right_annotation = ha,
+              cluster_rows = TRUE,
+              cluster_columns = TRUE,
+              row_labels = row_labels[rownames(mat)])
+pdf(glue("{fig_dir}/heatmap_subtype_cn_composition.pdf"), width = 15, height = 12)
+draw(ht, heatmap_legend_list = lgd_list, padding = unit(c(10, 2, 2, 30), "mm"), heatmap_legend_side = "bottom")
+dev.off()
+png(glue("{fig_dir}/heatmap_subtype_cn_composition.png"), width = 15, height = 12, units = "in", res = 300)
+draw(ht, heatmap_legend_list = lgd_list, padding = unit(c(10, 2, 2, 30), "mm"), heatmap_legend_side = "bottom")
+dev.off()
+
+```
+
+![](images/heatmap_subtype_cn_composition.png){.align-center .lightbox width="900px" 
+										fig_alt="codex: heatmap of subtype CN composition" 
+                    fig-cap="Figure: heatmap of subtype CN composition"}
+
+
+
+
+

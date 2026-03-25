@@ -66,50 +66,6 @@ neighborhood_list <- list("mat" = mat, "metadata" = dt_anno)
 saveRDS(neighborhood_list, glue("{rds_dir}/celltype_neiborhood.rds"))
 
 
-## celltype neighborhood: Epithelial
-
-df <- lapply(c("0066253", "0066266"), function(slide){
-  f <- glue("{rds_dir}/spe_{slide}.rds")
-  spe <- readRDS(f)
-  spe_s <- spe[, !is.na(spe$Epithelial.sub.supply) & !is.na(spe$`Diff. level`)]
-  spe_s <- buildSpatialGraph(spe_s, 
-                             coords = spatialCoordsNames(spe_s),
-                             img_id = "roi", type = "knn", k = 10)
-  spe_s <- aggregateNeighbors(spe_s, 
-                              colPairName = "knn_interaction_graph", 
-                              aggregate_by = "metadata", count_by = "Epithelial.sub.supply")
-  df_n <- spe_s$aggregatedNeighbors
-  df_n$cell_id <- paste0(colnames(spe_s), "_", spe_s$roi)
-  df_n <- df_n %>% as.data.frame()
-  return(df_n)
-}) %>% rbindlist() %>% as.data.frame()
-rownames(df) <- df$cell_id
-
-dt_anno <- readRDS(glue("{rds_dir}/celltyped_meta.rds"))
-epi_cell <- dt_anno %>% filter(!is.na(Epithelial.1.subtype) & !is.na(`Diff. level`)) %>% pull(cell_id)
-df <- df[df$cell_id %in% epi_cell, ]
-
-df <- df %>% dplyr::select(-cell_id)
-k_res <- kmeans(df, centers = 10)
-dt_cn <- data.table(cell_id = rownames(df),
-                    subtype_cn = paste0("CN", k_res$cluster) %>% 
-                    factor(levels = paste0("CN", 1:10)))
-dt_anno <- readRDS(glue("{rds_dir}/celltyped_meta.rds")) 
-dt_anno <- dt_anno %>% filter(!is.na(Epithelial.1.subtype) & !is.na(`Diff. level`)) %>% left_join(dt_cn, by = "cell_id")
-mat_count <- dt_anno %>%
-  dplyr::select(Epithelial.1.subtype, subtype_cn) %>%
-  as.data.table() %>%
-  dcast(subtype_cn ~ Epithelial.1.subtype, fun.aggregate = length) %>%
-  tibble::column_to_rownames("subtype_cn")
-mat <- mat_count/rowSums(mat_count)
-
-neighborhood_epi_list <- list("mat" = mat, "metadata" = dt_anno)
-saveRDS(neighborhood_epi_list, glue("{rds_dir}/celltype_neiborhood_epithelial.rds"))
-
-
-
-
-
 
 
 ## co-localization

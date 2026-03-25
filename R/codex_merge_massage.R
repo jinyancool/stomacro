@@ -55,8 +55,6 @@ saveRDS(data, glue("{rds_dir}/codex_cell_segmentation.rds"))
 
 
 
-
-
 img_cluster_anno <- list()
 Images <- list.files("/cluster/home/yliang_jh/projects/IMC/codex/oral_lvjiong/doc/anno_split3/") %>% sub(".tsv", "", .)
 for(img in Images){

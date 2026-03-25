@@ -147,6 +147,8 @@ srt$subtype[idx] <- srt$celltype[idx]
 saveRDS(srt, glue("{rds_dir}/srt_split_anno.rds"))
 
 
+
+
 ## calculate celltype CN 
 srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
 df <- srt[[]] %>% select(c("orig.ident", "Centroid.X.µm", "Centroid.Y.µm", "celltype"))
@@ -174,6 +176,8 @@ cols_out <- c("cell_id", "cluster", ct)
 srt$celltype_cn <- NA
 srt$celltype_cn <- paste0("CN", dt_fil$cluster)[match(colnames(srt), dt_fil$cell_id)] %>% factor(., levels = paste0("CN", 1:10))
 dt_celltype_cn <- dt_fil[, ..cols_out]
+
+
 
 ## calculate subtype CN
 srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
@@ -212,8 +216,6 @@ saveRDS(cluster_message, glue("{rds_dir}/codex_cluster_message.rds"))
 
 
 ## make pci rds
-
-
 srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
 df <- srt[[]] %>% select(c("orig.ident", "Centroid.X.µm", "Centroid.Y.µm")) %>% na.omit() %>% tibble::rownames_to_column("cell_id")
 sps <- unique(df$orig.ident)
@@ -390,60 +392,8 @@ saveRDS(lst_sf_invert, glue("{rds_dir}/sf_invert_insitu_celltype_message.rds"))
 
 
 
-## make voronoi subtype rds
-
-
-lst_srt <- readRDS(glue("{rds_dir}/srt_single_split_anno.rds"))
-srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
-dt_celltype <- srt@meta.data %>% select(cell_id, celltype, subtype)
-dt_CD44subtype <- dt_celltype %>% 
-    mutate(CD44_subtype = case_when(subtype %in% c("CD4T_CD44+", "CD8T_CD44+", "Macrophage_CD44+") ~ subtype,
-                                    TRUE ~ celltype)) %>%
-    select(cell_id, CD44_subtype)
-
-
-voronoi_fig <- list()
-Images <- c("3-4-3", "3-12-4")
-Images <- names(lst_srt)
-
-lst_sf_invert <- list()
-for(img in Images){
-
-  srt <- lst_srt[[img]]
-
-  # voronoi plot
-  df_ct <- srt[[]][, c("cell_id", "Image", "Centroid X µm", "Centroid Y µm")] %>% 
-    left_join(dt_CD44subtype, by = "cell_id") %>%
-    mutate(CD44_subtype = factor(CD44_subtype, levels = intersect(cell_type_order, unique(dt_CD44subtype$CD44_subtype))))
-  
-  sf_pt <- df_ct %>% na.omit() %>% st_as_sf(coords = c("Centroid X µm", "Centroid Y µm"), crs = NA)
-  bbox <- bb_circle(sf_pt)
-  
-  # voronoi 
-  sf_voronoi <- st_union(sf_pt) %>%
-    st_voronoi() %>%
-    st_collection_extract("POLYGON")%>%
-    st_as_sf() %>%
-    st_join(sf_pt) %>%
-    st_intersection(bbox)
-  
-  # reverse y-axis
-  scale_mat <- matrix(c(1, 0, 0, -1), nrow = 2)
-  sf_invert <- sf_voronoi
-  st_geometry(sf_invert) <- st_geometry(sf_invert) * scale_mat
-  
-  lst_sf_invert[[img]] <- sf_invert
-}
-
-saveRDS(lst_sf_invert, glue("{rds_dir}/sf_invert_insitu_CD44_subtype_message.rds"))
-
-
-
-
 
 ## make voronoi subtype rds
-
-
 srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
 
 lst_voronoi_subtype_cn_freq <- list()
@@ -517,6 +467,162 @@ for(img in imgs){
 saveRDS(lst_sf_invert, glue("{rds_dir}/sf_invert_insitu_subtype_message.rds"))
 
 
+
+
+
+#### cell_type cluster ####
+srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
+spinfo <- sampleinfo$codex %>% filter(Type == "Tumor")
+
+df <- srt[[c("orig.ident", "celltype")]] %>% count(orig.ident, celltype, name = "n") %>% group_by(orig.ident) %>%
+  mutate(n_total = sum(n), freq = n / n_total) %>% ungroup() %>% mutate(sample_id = orig.ident) %>%
+  filter(sample_id %in% spinfo$sample_id)
+
+mat <- df %>% mutate(celltype = factor(celltype, levels = intersect(config$cell_type_order, unique(celltype)))) %>%
+  select(sample_id, celltype, freq) %>%
+  tidyr::pivot_wider(names_from = celltype, values_from = freq, values_fill = 0) %>%
+  tibble::column_to_rownames("sample_id") %>%
+  as.matrix()
+
+dist_mat <- dist(mat, method = "euclidean")
+hc <- hclust(dist_mat, method = "ward.D2")
+cl <- cutree(hc, k = 4)
+col_dend <- as.dendrogram(hc)
+color_use <- config_list$cluster[unique(cl[labels(col_dend)])]
+col_dend <- color_branches(col_dend, k = 4, col = color_use)
+
+df_cluster <- as.data.frame(cl) %>% rename(cluster = cl) %>% 
+    mutate(sample_id = rownames(.), color = config_list$cluster[as.character(cluster)], order = hc$order) %>%
+    mutate(cluster = factor(cluster, levels = unique(cl)))
+df <- df %>% left_join(df_cluster, by = "sample_id")
+
+
+df_anno <- spinfo %>%
+  select(-Time, -Status, -TNM, -Type, -CN, -K10, -celltype, -CD44_group, -Differentiation) %>%
+  mutate(`Age level` = case_when(Age>30 & Age<=50 ~ "30-50", Age>50 & Age<=70 ~ "50-70", Age>70 & Age<=90 ~ "70-90")) %>%
+  tibble::column_to_rownames("sample_id") %>%
+  mutate(across(c(`Clinical stage`, `T stage`, Metastasis), as.character)) %>%
+  mutate(`Diff. level` = factor(.[["Diff. level"]], levels = c("high", "median", "low")))
+df_anno <- df_anno[match(rownames(mat), rownames(df_anno)),]
+
+celltype_cluster_list <- list(mat = mat, df_anno = df_anno, df_cluster = df, dend = col_dend, cl = cl, hc = hc)
+
+
+#### celltype CN and sample celltype-CN cluster ####
+
+cluster_message <- readRDS(glue("{rds_dir}/codex_cluster_message.rds"))
+dt_fil <- cluster_message$celltype_cn %>% as.data.table()
+mat <- melt(dt_fil, id.vars = c("cell_id", "cluster"), variable.name = "celltype", value.name = "frequency") %>%
+  .[, .(freq = mean(frequency)), by = .(cluster, celltype)] %>%
+  .[, cluster := factor(paste0("CN", cluster), levels = paste0("CN", 1:10))] %>%
+  dcast(cluster ~ celltype) %>%
+  tibble::column_to_rownames("cluster") %>%
+  as.matrix()
+mat_scale <- scale(mat)
+
+celltype = c("CD4 T", "CD8 T", "NKT", "B cell", "Macrophage", "Fibroblast", "Blood vessel", "Tumor cell")
+mat_anno <- mat[, match(celltype, colnames(mat))]
+
+dt_anno <- sampleinfo$codex_cn_celltype
+celltype_CN_list <- list(mat = mat_anno, dt_anno = dt_anno)
+
+
+srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
+spinfo <- sampleinfo$codex %>% dplyr::select(sample_id, Type, Time, Status, `Diff. level`)
+df <- srt[[c("orig.ident", "celltype_cn")]] %>% na.omit() %>%
+  rename(sample_id = orig.ident) %>%
+  count(sample_id, celltype_cn, name = "n") %>%
+  tidyr::complete(sample_id, celltype_cn, fill = list(n = 0)) %>%
+  group_by(sample_id) %>%
+  mutate(freq = n / sum(n)) %>%
+  ungroup() %>% left_join(spinfo, by = "sample_id")
+mat <- tidyr::pivot_wider(df, id_cols = sample_id, names_from = celltype_cn, values_from = freq) %>%
+  tibble::column_to_rownames("sample_id") %>%
+  as.matrix()
+mat <- mat * 100
+
+hc <- hclust(dist(mat))
+cl <- cutree(hc, k = 3)
+dend <- as.dendrogram(hc)
+color_use <- config_list$cluster[unique(cl[labels(col_dend)])]
+
+df_anno <- as.data.frame(cl) %>% rename(cluster = cl) %>% 
+    mutate(sample_id = rownames(.), color = config_list$cluster[as.character(cluster)], order = hc$order) %>%
+    mutate(cluster = factor(cluster, levels = unique(cl))) %>% 
+    left_join(spinfo, by = "sample_id")
+
+dt_anno <- sampleinfo$codex_cn_celltype
+col_labels <- structure(paste(dt_anno$cn, dt_anno$anno), names = dt_anno$cn)
+
+celltype_CN_cluster_list <- list(mat = mat, df_anno = df_anno, dt_anno = dt_anno, dend = dend, cl = cl, hc = hc)
+
+
+
+####  subtype CN cluster and sample subtype-CN cluster ####
+cluster_message <- readRDS(glue("{rds_dir}/codex_cluster_message.rds"))
+dt_fil <- cluster_message$subtype_cn %>% as.data.table()
+
+mat <- melt(dt_fil, id.vars = c("cell_id", "cluster"), variable.name = "subtype", value.name = "frequency") %>%
+  .[, .(freq = mean(frequency)), by = .(cluster, subtype)] %>%
+  .[, cluster := factor(paste0("CN", cluster), levels = paste0("CN", 1:35))] %>%
+  dcast(cluster ~ subtype) %>%
+  tibble::column_to_rownames("cluster") %>%
+  as.matrix()
+mat_scale <- scale(mat)
+
+
+df_anno <- mat %>% as.data.table(keep.rownames = "cn") %>%
+  melt(id.vars = "cn", variable.name = "subtype", value.name = "freq") %>%
+  .[, `:=`(subtype = tstrsplit(subtype, split = "_")[[1]],
+           cn = factor(cn, levels = paste0("CN", 1:35)))] %>%
+  .[, .(freq = sum(freq)), by = .(cn, subtype)] %>%
+  dcast(cn ~ subtype, value.var = "freq", fill = 0) %>%
+  tibble::column_to_rownames("cn") %>%
+  as.matrix()
+celltype = c("CD4T", "CD8T", "NKT", "B cell", "Macrophage", "Fibroblast", "Blood vessel", "Tumor")
+df_anno <- df_anno[, match(celltype, colnames(df_anno))]
+celltype = c("CD4 T", "CD8 T", "NKT", "B cell", "Macrophage", "Fibroblast", "Blood vessel", "Tumor cell")
+names(df_anno) <- celltype
+
+dt_anno <- sampleinfo$codex_cn_subtype
+subtype_CN_list <- list(mat = mat, df_anno = df_anno, dt_anno = dt_anno)
+
+srt <- readRDS(glue("{rds_dir}/srt_split_anno.rds"))
+spinfo <- sampleinfo$codex
+df <- srt[[c("orig.ident", "subtype_cn")]] %>% na.omit() %>%
+  rename(sample_id = orig.ident) %>%
+  count(sample_id, subtype_cn, name = "n") %>%
+  tidyr::complete(sample_id, subtype_cn, fill = list(n = 0)) %>%
+  group_by(sample_id) %>%
+  mutate(freq = n / sum(n)) %>%
+  ungroup() %>% left_join(spinfo, by = "sample_id")
+
+mat <- tidyr::pivot_wider(df, id_cols = sample_id, names_from = subtype_cn, values_from = freq) %>%
+  tibble::column_to_rownames("sample_id") %>%
+  as.matrix()
+mat <- mat * 100
+mat_scale <- scale(mat)
+
+
+hc <- hclust(dist(mat_scale))
+cl <- cutree(hc, k = 10)
+dend <- as.dendrogram(hc)
+color_use <- config_list$cluster[unique(cl[labels(col_dend)])]
+
+df_anno <- as.data.frame(cl) %>% rename(cluster = cl) %>% 
+    mutate(sample_id = rownames(.), color = config_list$cluster[as.character(cluster)], order = hc$order) %>%
+    mutate(cluster = factor(cluster, levels = unique(cl))) %>% 
+    left_join(spinfo, by = "sample_id")
+
+subtype_CN_cluster_list <- list(mat = mat_scale, df_anno = df_anno, dt_anno = dt_anno, dend = dend, cl = cl, hc = hc)
+
+
+codex_cluster_for_plot <- list(celltype_cluster = celltype_cluster_list, 
+                               celltype_CN = celltype_CN_list, 
+                               celltype_CN_cluster = celltype_CN_cluster_list, 
+                               subtype_CN = subtype_CN_list, 
+                               subtype_CN_cluster = subtype_CN_cluster_list)
+saveRDS(codex_cluster_for_plot, glue("{rds_dir}/codex_cluster_plot.rds"))
 
 
 

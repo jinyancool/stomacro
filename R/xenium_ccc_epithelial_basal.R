@@ -91,6 +91,35 @@ run_path_test <- function(df, colUse, groups, commu_groups){
 }
 
 
+run_path_test_other <- function(df, colUse, case_groups, ctrl_groups, commu_groups, case_name, ctrl_name){
+    cc_path <- data.frame(path = character(), cell_type = character(), 
+        case = character(), mean_case = character(), ctrl = character(), mean_ctrl = character(),
+        t_statistic = numeric(), df = numeric(), p_value = numeric(),stringsAsFactors = FALSE)
+    for (p in unique(df$path)){
+        path_data <- df[df$path == p, ]
+        colForce <- setdiff(c("source", "target"), c(colUse))[[1]]
+        celltypes <- unique(path_data[[colForce]]) %>% .[. %in% commu_groups]
+        for (celltype in celltypes){
+            case_data <- path_data[(path_data[[colUse]] %in% case_groups)&(path_data[[colForce]] %in% c(celltype)),][["score"]] %>% na.omit()
+            ctrl_data <- path_data[(path_data[[colUse]] %in% ctrl_groups)&(path_data[[colForce]] %in% c(celltype)),][["score"]] %>% na.omit()
+            test_result <- tryCatch({
+                t.test(case_data, ctrl_data, var.equal = FALSE)
+            }, error = function(e) {
+                return(NULL)
+            })
+            if (!is.null(test_result)){
+                mean1 <- mean(case_data, na.rm = TRUE)
+                mean2 <- mean(ctrl_data, na.rm = TRUE)
+                cc_path_add <- data.frame(
+                    path = p, cell_type = celltype, case = case_name, mean_case = mean1, ctrl = ctrl_name, mean_ctrl = mean2,
+                    t_statistic = test_result$statistic, df = test_result$parameter, p_value = test_result$p.value, stringsAsFactors = FALSE)
+                cc_path <- rbind(cc_path, cc_path_add)
+            }
+        }
+    }
+    return(cc_path)
+}
+
 
 
 
@@ -123,6 +152,7 @@ meta <- readRDS(glue("{rds_dir}/celltype_anno.rds"))
 epi_sub <- intersect(unique(df$source), unique(meta$Epithelial.1.subtype))
 epi_sub_exclu <- setdiff(epi_sub, c("basal_cell", "basal_inflam", "basal_invasive"))
 celltype_exclu_epi <- setdiff(unique(df$source), epi_sub) %>% .[!. %in% c("Glial", "smoothMC", "skeletalMC")]
+celltype_exclu_epi <- c("Macrophage", "T cell", "Fibroblast", "Endothelial")
 
 cc_path_s <- run_path_test(df, "source", c("basal_cell", "basal_inflam", "basal_invasive"), celltype_exclu_epi)
 cc_path_r <- run_path_test(df, "target", c("basal_cell", "basal_inflam", "basal_invasive"), celltype_exclu_epi)
@@ -133,6 +163,32 @@ cc_path_r_filter <- cc_path_r %>% filter(p_value <= 0.05) %>% arrange(desc(abs(s
 results_cc_path <- list("source_filter" = cc_path_s_filter, "target_filter" = cc_path_r_filter)
 saveRDS(results_cc_path, glue("{rds_dir}/xenium_CCC_Epithelial_basal_test.rds"))
 list2excel(results_cc_path, glue("{rds_dir}/xenium_CCC_Epithelial_basal_test.xlsx"))
+
+
+
+cc_path_s_basal_cell <- run_path_test_other(df, "source", c("basal_cell"), c("basal_inflam", "basal_invasive"), celltype_exclu_epi, "basal_cell", "other2")
+cc_path_r_basal_cell <- run_path_test_other(df, "target", c("basal_cell"), c("basal_inflam", "basal_invasive"), celltype_exclu_epi, "basal_cell", "other2")
+cc_path_s_basal_cell <- cc_path_s_basal_cell %>% filter(p_value <= 0.05) %>% arrange(desc((t_statistic)), p_value) %>% as.data.frame()
+cc_path_r_basal_cell <- cc_path_r_basal_cell %>% filter(p_value <= 0.05) %>% arrange(desc((t_statistic)), p_value) %>% as.data.frame()
+
+cc_path_s_basal_inflam <- run_path_test_other(df, "source", c("basal_inflam"), c("basal_cell", "basal_invasive"), celltype_exclu_epi, "basal_inflam", "other2")
+cc_path_r_basal_inflam <- run_path_test_other(df, "target", c("basal_inflam"), c("basal_cell", "basal_invasive"), celltype_exclu_epi, "basal_inflam", "other2")
+cc_path_s_basal_inflam <- cc_path_s_basal_inflam %>% filter(p_value <= 0.05) %>% arrange(desc((t_statistic)), p_value) %>% as.data.frame()
+cc_path_r_basal_inflam <- cc_path_r_basal_inflam %>% filter(p_value <= 0.05) %>% arrange(desc((t_statistic)), p_value) %>% as.data.frame()
+
+
+cc_path_s_basal_invasive <- run_path_test_other(df, "source", c("basal_invasive"), c("basal_inflam", "basal_cell"), celltype_exclu_epi, "basal_invasive", "other2")
+cc_path_r_basal_invasive <- run_path_test_other(df, "target", c("basal_invasive"), c("basal_inflam", "basal_cell"), celltype_exclu_epi, "basal_invasive", "other2")
+cc_path_s_basal_invasive <- cc_path_s_basal_invasive %>% filter(p_value <= 0.05) %>% arrange(desc((t_statistic)), p_value) %>% as.data.frame()
+cc_path_r_basal_invasive <- cc_path_r_basal_invasive %>% filter(p_value <= 0.05) %>% arrange(desc((t_statistic)), p_value) %>% as.data.frame()
+
+
+results_cc_path <- list("source_filter_basal_cell" = cc_path_s_basal_cell, "target_filter_basal_cell" = cc_path_r_basal_cell, 
+                        "source_filter_basal_inflam" = cc_path_s_basal_inflam, "target_filter_basal_inflam" = cc_path_r_basal_inflam,
+                        "source_filter_basal_invasive" = cc_path_s_basal_invasive, "target_filter_basal_invasive" = cc_path_r_basal_invasive)
+saveRDS(results_cc_path, glue("{rds_dir}/xenium_CCC_Epithelial_basal_test_vs_other2.rds"))
+list2excel(results_cc_path, glue("{rds_dir}/xenium_CCC_Epithelial_basal_test_vs_other2.xlsx"))
+
 
 
 
@@ -188,6 +244,86 @@ saveRDS(df_heat_cp_wide, glue("{rds_dir}/xenium_CCC_Epithelial_basal_plot.rds"))
 
 
 
+cc_path <- readRDS(glue("{rds_dir}/xenium_CCC_Epithelial_basal_test_vs_other2.rds"))
+cc_path_s_filter_basal_cell <- cc_path$source_filter_basal_cell %>% arrange(p_value, desc(t_statistic)) %>% as.data.frame()
+cc_path_r_filter_basal_cell <- cc_path$target_filter_basal_cell %>% arrange(p_value, desc(t_statistic)) %>% as.data.frame()
+cc_path_s_filter_basal_inflam <- cc_path$source_filter_basal_inflam %>% arrange(p_value, desc(t_statistic)) %>% as.data.frame()
+cc_path_r_filter_basal_inflam <- cc_path$target_filter_basal_inflam %>% arrange(p_value, desc(t_statistic)) %>% as.data.frame()
+cc_path_s_filter_basal_invasive <- cc_path$source_filter_basal_invasive %>% arrange(p_value, desc(t_statistic)) %>% as.data.frame()
+cc_path_r_filter_basal_invasive <- cc_path$target_filter_basal_invasive %>% arrange(p_value, desc(t_statistic)) %>% as.data.frame()
 
+path1 <- cc_path_s_filter_basal_cell %>% pull(path) %>% head(100) %>% unique() %>% head(30)
+path2 <- cc_path_s_filter_basal_inflam %>% pull(path) %>% head(100) %>% unique() %>% head(30)
+path3 <- cc_path_s_filter_basal_invasive %>% pull(path) %>% head(100) %>% unique() %>% head(10)
+select_path_s <- c(path1,path2,path3) %>% unique()
+select_path_s <- c("CDH5-CDH5","KITLG-KIT","JAG1-NOTCH4","NTF3-NTRK2","FGF1-FGFR3","DLL1-NOTCH4",
+                   "WNT5A-FZD10","FGF7-FGFR2","FGF2-FGFR2","THBS2-CD36","THBS1-CD47","CXCL11-ACKR3",
+                   "LAMA3-CD44","COL4A1-CD44","LAMC2-CD44","TNFSF10-TNFRSF10A","COL4A1-SDC4","COL4A2-SDC4",
+                   "THBS1-SDC4","EREG-EGFR","LAMB3-CD44","LAMC2-CD44","TNC-SDC4","LAMA3-CD44","THBS1-SDC4",
+                   "COL4A2-CD44","COL4A1-SDC4","TGFA-EGFR","THBS1-CD47","COL4A1-CD44")
+rm_path <- c("CDH5-CDH5", "DLL1-NOTCH4", "JAG1-NOTCH4")
+select_path_s <- setdiff(select_path_s, rm_path)
+
+path1 <- cc_path_r_filter_basal_cell %>% pull(path) %>% head(100) %>% unique() %>% head(30)
+path2 <- cc_path_r_filter_basal_inflam %>% pull(path) %>% head(100) %>% unique() %>% head(30)
+path3 <- cc_path_r_filter_basal_invasive %>% pull(path) %>% head(100) %>% unique() %>% head(10)
+select_path_r <- c(path1,path2,path3) %>% unique()
+select_path_r <- c(
+    "CDH5-CDH5","GAS6-TYRO3","FGF1-FGFR3","NTF3-NTRK2","WNT5A-FZD3",
+    "JAG1-NOTCH4","KITLG-KIT","PDGFC-PDGFRA","FGF7-FGFR2","DLL1-NOTCH4",
+    "THBS1-CD47","CXCL11-ACKR3","LAMA3-CD44","LAMC2-CD44","ITGB2-ICAM1",
+    "COL4A2-SDC4","COL4A1-SDC4","COL4A5-SDC4","THBS1-SDC4","TNFSF12-TNFRSF12A",
+    "LAMB3-CD44","TNC-SDC4","COL4A1-CD44","COL4A2-CD44","TGFA-EGFR","THBS2-SDC4","ITGB2-ICAM1")
+rm_path <- c("CDH5-CDH5", "DLL1-NOTCH4", "JAG1-NOTCH4", "KITLG-KIT", "COL4A1-CD44","COL4A2-CD44", "PDGFC-PDGFRA", "WNT5A-FZD3", "ITGB2-ICAM1", "TNFSF12-TNFRSF12A")
+select_path_r <- setdiff(select_path_r, rm_path)
+
+df <- readRDS(glue("{rds_dir}/xenium_CCC_Epithelial_basal_df_path.rds"))
+
+cell_cell_order <- c(
+  paste("basal_cell", intersect(config$cell_type_order, unique(df$target)), sep="-"),
+  paste("basal_inflam", intersect(config$cell_type_order, unique(df$target)), sep="-"),
+  paste("basal_invasive", intersect(config$cell_type_order, unique(df$target)), sep="-"),
+  paste(intersect(config$cell_type_order, unique(df$source)), "basal_cell", sep="-"),
+  paste(intersect(config$cell_type_order, unique(df$source)), "basal_inflam", sep="-"),
+  paste(intersect(config$cell_type_order, unique(df$source)), "basal_invasive", sep="-")
+)
+
+
+
+#cell_cell_order <- unlist(lapply(intersect(config$cell_type_order, unique(c(df$source, df$target))), function(ct) {
+#  c(
+#    paste("basal_cell", ct, sep="-"),
+#    paste("basal_inflam", ct, sep="-"),
+#    paste("basal_invasive", ct, sep="-"),
+#    paste(ct, "basal_cell", sep="-"),
+#    paste(ct, "basal_inflam", sep="-"),
+#    paste(ct, "basal_invasive", sep="-")
+#  )
+#}))
+
+df_heat_cp_wide_s <- df %>% 
+    filter(source %in% c("basal_cell", "basal_inflam", "basal_invasive"), target %in% celltype_exclu_epi, score > 0) %>%
+    group_by(source, target, ligand, receptor) %>%
+    summarise(score = mean(score, na.rm = TRUE), sd_score = sd(score, na.rm = TRUE), 
+              n_observations = n(), n_samples = n_distinct(sample_id), .groups = 'drop') %>%
+    mutate(path = paste(ligand, receptor, sep = "-"), cell_cell = paste(source, target, sep = "-")) %>%
+    filter(path %in% select_path_s) %>%
+    dplyr::select(cell_cell, path, score) %>%
+    pivot_wider(names_from = cell_cell, values_from = score, values_fill = NA) %>%
+    column_to_rownames("path") %>% as.matrix() %>% .[, intersect(cell_cell_order,  colnames(.)), drop = FALSE]
+df_heat_cp_wide_r <- df %>% 
+    filter(target %in% c("basal_cell", "basal_inflam", "basal_invasive"), source %in% celltype_exclu_epi, score > 0) %>%
+    group_by(source, target, ligand, receptor) %>%
+    summarise(score = mean(score, na.rm = TRUE), sd_score = sd(score, na.rm = TRUE), 
+              n_observations = n(), n_samples = n_distinct(sample_id), .groups = 'drop') %>%
+    mutate(path = paste(ligand, receptor, sep = "-"), cell_cell = paste(source, target, sep = "-")) %>%
+    filter(path %in% select_path_r) %>%
+    dplyr::select(cell_cell, path, score) %>%
+    pivot_wider(names_from = cell_cell, values_from = score, values_fill = NA) %>%
+    column_to_rownames("path") %>% as.matrix() %>% .[, intersect(cell_cell_order,  colnames(.)), drop = FALSE]
+
+df_heat_cp_wide <- list(s = df_heat_cp_wide_s, r = df_heat_cp_wide_r)
+saveRDS(df_heat_cp_wide, glue("{rds_dir}/xenium_CCC_Epithelial_basal_plot_2.rds"))
+list2excel(df_heat_cp_wide, glue("{rds_dir}/xenium_CCC_Epithelial_basal_plot_2.xlsx"), showRow=T)
 
 

@@ -66,6 +66,32 @@ book:
           text: "Figure 2"
         - href: fig3.qmd
           text: "Figure 3"
+        - href: fig4.qmd
+          text: "Figure 4"
+        - href: fig5.qmd
+          text: "Figure 5"
+        - href: fig6.qmd
+          text: "Figure 6"
+        - href: fig7.qmd
+          text: "Figure 7"
+        - href: sfig1.qmd
+          text: "Sup figure 1"
+        - href: sfig2.qmd
+          text: "Sup figure 2"
+        - href: sfig3.qmd
+          text: "Sup figure 3"
+        - href: sfig4.qmd
+          text: "Sup figure 4"
+        - href: sfig5.qmd
+          text: "Sup figure 5"
+        - href: sfig6.qmd
+          text: "Sup figure 6"
+        - href: sfig7.qmd
+          text: "Sup figure 7"
+        - href: sfig8.qmd
+          text: "Sup figure 8"
+        - href: sfig9.qmd
+          text: "Sup figure 9"
 
     - part: Communication
       chapters:
