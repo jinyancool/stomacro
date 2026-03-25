@@ -486,34 +486,33 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="package-load-and-plot-settings." class="level2" data-number="14.1">
 <h2 data-number="14.1" class="anchored" data-anchor-id="package-load-and-plot-settings."><span class="header-section-number">14.1</span> Package load and plot settings.</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.libPaths</span>(<span class="fu">c</span>(<span class="fu">.libPaths</span>(), <span class="st">"/cluster/home/yliang_jh/sbin/R/library/4.3.0"</span>))</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>pkgs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"fs"</span>, <span class="st">"configr"</span>, <span class="st">"stringr"</span>, </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">"jhtools"</span>, <span class="st">"glue"</span>, <span class="st">"patchwork"</span>, <span class="st">"tidyverse"</span>, <span class="st">"dplyr"</span>, <span class="st">"Seurat"</span>, <span class="st">"magrittr"</span>, </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>          <span class="st">"readxl"</span>, <span class="st">"writexl"</span>, <span class="st">"ComplexHeatmap"</span>, </span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>          <span class="st">"data.table"</span>, <span class="st">"ggplot2"</span>, <span class="st">"ggbeeswarm"</span>, <span class="st">"ggdendro"</span>, <span class="st">"dendextend"</span>, <span class="st">"deldir"</span>,</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>          <span class="st">"sf"</span>, <span class="st">"corrplot"</span>, <span class="st">"ggpubr"</span>, <span class="st">"survival"</span>, <span class="st">"survminer"</span>, <span class="st">"forestmodel"</span>, <span class="st">"BiocParallel"</span>, <span class="st">"BiocNeighbors"</span>)  </span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (pkg <span class="cf">in</span> pkgs){</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(pkg, <span class="at">character.only =</span> T))</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>rds_dir <span class="ot">&lt;-</span> <span class="st">"/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/codex"</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>fig_dir <span class="ot">&lt;-</span> <span class="st">"/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/figs/fig2_new"</span></span>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pkgs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"fs"</span>, <span class="st">"configr"</span>, <span class="st">"stringr"</span>, </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"jhtools"</span>, <span class="st">"glue"</span>, <span class="st">"patchwork"</span>, <span class="st">"tidyverse"</span>, <span class="st">"dplyr"</span>, <span class="st">"Seurat"</span>, <span class="st">"magrittr"</span>, </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">"readxl"</span>, <span class="st">"writexl"</span>, <span class="st">"ComplexHeatmap"</span>, </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>          <span class="st">"data.table"</span>, <span class="st">"ggplot2"</span>, <span class="st">"ggbeeswarm"</span>, <span class="st">"ggdendro"</span>, <span class="st">"dendextend"</span>, <span class="st">"deldir"</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>          <span class="st">"sf"</span>, <span class="st">"corrplot"</span>, <span class="st">"ggpubr"</span>, <span class="st">"survival"</span>, <span class="st">"survminer"</span>, <span class="st">"forestmodel"</span>, <span class="st">"BiocParallel"</span>, <span class="st">"BiocNeighbors"</span>)  </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (pkg <span class="cf">in</span> pkgs){</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(pkg, <span class="at">character.only =</span> T))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>rds_dir <span class="ot">&lt;-</span> <span class="st">"/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/codex"</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>fig_dir <span class="ot">&lt;-</span> <span class="st">"/cluster/home/lixiyue_jh/projects/stomatology/analysis/lvjiong/human/meta/manuscript/figs/fig2_new"</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># colors setting</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>config_fn <span class="ot">=</span> <span class="st">"/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml"</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>config_list <span class="ot">&lt;-</span> <span class="fu">show_me_the_colors</span>(config_fn, <span class="st">"all"</span>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>colors_celltype <span class="ot">&lt;-</span> config_list<span class="sc">$</span>cell_type</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>config <span class="ot">&lt;-</span> <span class="fu">read.config</span>(config_fn)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>cell_type_order <span class="ot">&lt;-</span> config<span class="sc">$</span>cell_type_order</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>sampleinfo <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo/sampleinfo.rds"</span>)</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>sampleinfo<span class="sc">$</span>codex <span class="ot">&lt;-</span> sampleinfo<span class="sc">$</span>codex <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">Time =</span> <span class="fu">case_when</span>(Time <span class="sc">&gt;</span> <span class="dv">60</span> <span class="sc">~</span> <span class="dv">60</span>, <span class="cn">TRUE</span> <span class="sc">~</span> Time),</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">Status =</span> <span class="fu">case_when</span>(Time <span class="sc">&gt;</span> <span class="dv">60</span> <span class="sc">~</span> <span class="dv">0</span>,<span class="cn">TRUE</span> <span class="sc">~</span> Status)</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># colors setting</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>config_fn <span class="ot">=</span> <span class="st">"/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml"</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>config_list <span class="ot">&lt;-</span> <span class="fu">show_me_the_colors</span>(config_fn, <span class="st">"all"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>colors_celltype <span class="ot">&lt;-</span> config_list<span class="sc">$</span>cell_type</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>config <span class="ot">&lt;-</span> <span class="fu">read.config</span>(config_fn)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>cell_type_order <span class="ot">&lt;-</span> config<span class="sc">$</span>cell_type_order</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>sampleinfo <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo/sampleinfo.rds"</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>sampleinfo<span class="sc">$</span>codex <span class="ot">&lt;-</span> sampleinfo<span class="sc">$</span>codex <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">Time =</span> <span class="fu">case_when</span>(Time <span class="sc">&gt;</span> <span class="dv">60</span> <span class="sc">~</span> <span class="dv">60</span>, <span class="cn">TRUE</span> <span class="sc">~</span> Time),</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">Status =</span> <span class="fu">case_when</span>(Time <span class="sc">&gt;</span> <span class="dv">60</span> <span class="sc">~</span> <span class="dv">0</span>,<span class="cn">TRUE</span> <span class="sc">~</span> Status)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="a-subtype_cn-survival_curve-k10-cl5" class="level2" data-number="14.2">
