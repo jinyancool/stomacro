@@ -8,7 +8,7 @@
 
 <meta name="author" content="Jinyan Huang">
 
-<title>sfig6 – Stomatology</title>
+<title>25&nbsp; Sup figure 6 – Stomatology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -44,6 +79,9 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-442386bcaee29f7246100ac1b47b78b4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -75,7 +113,7 @@ ul.task-list li input[type="checkbox"] {
 
 </head>
 
-<body class="nav-sidebar floating fullcontent quarto-light">
+<body class="nav-sidebar floating quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -410,15 +448,190 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#package-load-and-plot-settings." id="toc-package-load-and-plot-settings." class="nav-link active" data-scroll-target="#package-load-and-plot-settings."><span class="header-section-number">25.1</span> package load and plot settings.</a></li>
+  <li><a href="#b-cd44-ki67-panck-umap" id="toc-b-cd44-ki67-panck-umap" class="nav-link" data-scroll-target="#b-cd44-ki67-panck-umap"><span class="header-section-number">25.2</span> B: CD44, Ki67 &amp; PanCK umap</a></li>
+  <li><a href="#c-cd44-vs-ki67-panck" id="toc-c-cd44-vs-ki67-panck" class="nav-link" data-scroll-target="#c-cd44-vs-ki67-panck"><span class="header-section-number">25.3</span> C: CD44 vs Ki67 &amp; PanCK</a></li>
+  <li><a href="#ef-cd44-vs-vim" id="toc-ef-cd44-vs-vim" class="nav-link" data-scroll-target="#ef-cd44-vs-vim"><span class="header-section-number">25.4</span> E,F: CD44 vs Vim</a></li>
+  <li><a href="#h-emt-vs-shape-metrics" id="toc-h-emt-vs-shape-metrics" class="nav-link" data-scroll-target="#h-emt-vs-shape-metrics"><span class="header-section-number">25.5</span> H: EMT vs shape metrics</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/jinyancool/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./fig1.html">Visualization</a></li><li class="breadcrumb-item"><a href="./sfig6.html"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Sup figure 6</span></a></li></ol></nav></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./fig1.html">Visualization</a></li><li class="breadcrumb-item"><a href="./sfig6.html"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Sup figure 6</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Sup figure 6</span></h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<section id="package-load-and-plot-settings." class="level2" data-number="25.1">
+<h2 data-number="25.1" class="anchored" data-anchor-id="package-load-and-plot-settings."><span class="header-section-number">25.1</span> package load and plot settings.</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pkgs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"jhtools"</span>, <span class="st">"glue"</span>, <span class="st">"readxl"</span>, <span class="st">"Seurat"</span>, <span class="st">"data.table"</span>, <span class="st">"magrittr"</span>, <span class="st">"dplyr"</span>, </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"ggplot2"</span>, <span class="st">"ComplexHeatmap"</span>, <span class="st">"cluster"</span>, <span class="st">"survival"</span>, <span class="st">"survminer"</span>, <span class="st">"RColorBrewer"</span>, </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">"sva"</span>, <span class="st">"ggridges"</span>, <span class="st">"transport"</span>, <span class="st">"philentropy"</span>, <span class="st">"ggpubr"</span>, <span class="st">"rstatix"</span>, <span class="st">"ggrepel"</span>, </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>          <span class="st">"readr"</span>, <span class="st">"stringr"</span>, <span class="st">"sf"</span>, <span class="st">"Nebulosa"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (pkg <span class="cf">in</span> pkgs){</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(pkg, <span class="at">character.only =</span> T))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>dat_dir <span class="ot">&lt;-</span> <span class="st">"/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/polaris"</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>doc_dir <span class="ot">&lt;-</span> <span class="st">"/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo"</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>fig_dir <span class="ot">&lt;-</span> <span class="st">"/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/figures"</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>img_dir <span class="ot">&lt;-</span> <span class="st">"/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/images"</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>cols_fn <span class="ot">&lt;-</span> <span class="st">"/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml"</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">show_me_the_colors</span>(cols_fn)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>col_fun1 <span class="ot">&lt;-</span> circlize<span class="sc">::</span><span class="fu">colorRamp2</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.5</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="fl">2.5</span>), <span class="fu">unname</span>(cols<span class="sc">$</span>col_map))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>col_fun2 <span class="ot">&lt;-</span> circlize<span class="sc">::</span><span class="fu">colorRamp2</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="dv">1</span>), <span class="fu">unname</span>(cols<span class="sc">$</span>col_map))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>cols_ct <span class="ot">&lt;-</span> cols<span class="sc">$</span>cell_type</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>cols_grp <span class="ot">&lt;-</span> <span class="fu">c</span>(cols<span class="sc">$</span>cluster[<span class="dv">2</span>], cols<span class="sc">$</span>cluster[<span class="dv">1</span>], cols<span class="sc">$</span>cluster[<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>])</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cols_grp) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"G"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>cols_cl <span class="ot">&lt;-</span> cols_grp</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cols_cl) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"C"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="b-cd44-ki67-panck-umap" class="level2" data-number="25.2">
+<h2 data-number="25.2" class="anchored" data-anchor-id="b-cd44-ki67-panck-umap"><span class="header-section-number">25.2</span> B: CD44, Ki67 &amp; PanCK umap</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># CD44, Ki67 &amp; PanCK umap</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>srat_qt_fil <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(<span class="st">"{dat_dir}/srat_qt_fil.rds"</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">plot_density</span>(srat_qt_fil, <span class="fu">c</span>(<span class="st">"CD44"</span>, <span class="st">"Ki67"</span>, <span class="st">"PanCK"</span>), <span class="at">reduction =</span> <span class="st">"umap"</span>, <span class="at">raster =</span> <span class="cn">TRUE</span>, <span class="at">size =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_layout</span>(<span class="at">ncol =</span> <span class="dv">3</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(<span class="st">"{fig_dir}/umap_density_CD44_Ki67_PanCK.pdf"</span>), p, <span class="at">width =</span> <span class="dv">14</span>, <span class="at">height =</span> <span class="dv">4</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(<span class="st">"{img_dir}/umap_density_CD44_Ki67_PanCK.png"</span>), p, <span class="at">width =</span> <span class="dv">14</span>, <span class="at">height =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a href="images/umap_density_CD44_Ki67_PanCK.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/umap_density_CD44_Ki67_PanCK.png" class="align-center img-fluid" data-fig-cap="umap_density_CD44_Ki67_PanCK.png" alt="1st round clustering"></a></p>
+</section>
+<section id="c-cd44-vs-ki67-panck" class="level2" data-number="25.3">
+<h2 data-number="25.3" class="anchored" data-anchor-id="c-cd44-vs-ki67-panck"><span class="header-section-number">25.3</span> C: CD44 vs Ki67 &amp; PanCK</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># corr plot</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> <span class="fu">FetchData</span>(srat_qt_fil, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">"CD44"</span>, <span class="st">"Ki67"</span>, <span class="st">"PanCK"</span>), <span class="at">layer =</span> <span class="st">"data"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(<span class="at">cols =</span> Ki67<span class="sc">:</span>PanCK, <span class="at">names_to =</span> <span class="st">"gene"</span>, <span class="at">values_to =</span> <span class="st">"expr"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> pt <span class="sc">%&gt;%</span> <span class="fu">filter</span>(CD44 <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> expr <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pt, <span class="fu">aes</span>(CD44, expr)) <span class="sc">+</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hex</span>() <span class="sc">+</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> gene, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_cor</span>(<span class="at">method =</span> <span class="st">"pearson"</span>) <span class="sc">+</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(<span class="st">"{fig_dir}/correlation_CD44_vs_Ki67_PanCK.pdf"</span>), p, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="dv">4</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(<span class="st">"{img_dir}/correlation_CD44_vs_Ki67_PanCK.png"</span>), p, <span class="at">width =</span> <span class="dv">9</span>, <span class="at">height =</span> <span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a href="images/correlation_CD44_vs_Ki67_PanCK.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/correlation_CD44_vs_Ki67_PanCK.png" class="align-center img-fluid" data-fig-cap="correlation_CD44_vs_Ki67_PanCK.png" alt="1st round clustering"></a></p>
+</section>
+<section id="ef-cd44-vs-vim" class="level2" data-number="25.4">
+<h2 data-number="25.4" class="anchored" data-anchor-id="ef-cd44-vs-vim"><span class="header-section-number">25.4</span> E,F: CD44 vs Vim</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># corr plot by emt_mode</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>spinfo <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="fu">glue</span>(<span class="st">"{doc_dir}/sampleinfo.xlsx"</span>), <span class="at">sheet =</span> <span class="st">"polaris_EMT"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">"EMT_mode"</span> <span class="ot">=</span> <span class="st">"EMT mode"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> <span class="fu">FetchData</span>(srat_qt_fil, <span class="at">vars =</span> <span class="fu">c</span>(<span class="st">"CD44"</span>, <span class="st">"Vimentin"</span>, <span class="st">"roi"</span>), <span class="at">layer =</span> <span class="st">"data"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(spinfo, <span class="at">by =</span> <span class="fu">join_by</span>(roi <span class="sc">==</span> ROI)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">EMT_mode =</span> <span class="fu">factor</span>(EMT_mode, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Partial"</span>, <span class="st">"Full"</span>)))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> pt <span class="sc">%&gt;%</span> <span class="fu">filter</span>(CD44 <span class="sc">&gt;</span> <span class="dv">0</span> <span class="sc">&amp;</span> Vimentin <span class="sc">&gt;</span> <span class="dv">0</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pt, <span class="fu">aes</span>(CD44, Vimentin)) <span class="sc">+</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hex</span>() <span class="sc">+</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> EMT_mode, <span class="at">ncol =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_cor</span>(<span class="at">method =</span> <span class="st">"pearson"</span>) <span class="sc">+</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(<span class="st">"{fig_dir}/emt_correlation_CD44_vs_Vim.pdf"</span>), p, <span class="at">width =</span> <span class="dv">12</span>, <span class="at">height =</span> <span class="dv">4</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(<span class="st">"{img_dir}/emt_correlation_CD44_vs_Vim.png"</span>), p, <span class="at">width =</span> <span class="dv">12</span>, <span class="at">height =</span> <span class="dv">4</span>)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co"># specific samples</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>sps <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S02P_ROI3"</span>, <span class="st">"S48P_ROI1"</span>, <span class="st">"S48P_ROI2"</span>, <span class="st">"S70P_ROI1"</span>, <span class="st">"S74P_ROI3"</span>, <span class="st">"S79P_ROI2"</span>)</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>pt_s <span class="ot">&lt;-</span> pt <span class="sc">%&gt;%</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(roi <span class="sc">%in%</span> sps)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(pt_s, <span class="fu">aes</span>(CD44, Vimentin)) <span class="sc">+</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hex</span>() <span class="sc">+</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradient</span>(<span class="at">low =</span> <span class="st">"white"</span>, <span class="at">high =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span> roi, <span class="at">ncol =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm, <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>) <span class="sc">+</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_cor</span>(<span class="at">method =</span> <span class="st">"pearson"</span>) <span class="sc">+</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(<span class="st">"{fig_dir}/correlation_CD44_vs_Vim_select_samples.pdf"</span>), p, <span class="at">width =</span> <span class="dv">12</span>, <span class="at">height =</span> <span class="dv">8</span>)</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(<span class="st">"{img_dir}/correlation_CD44_vs_Vim_select_samples.png"</span>), p, <span class="at">width =</span> <span class="dv">12</span>, <span class="at">height =</span> <span class="dv">8</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a href="images/emt_correlation_CD44_vs_Vim.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="images/emt_correlation_CD44_vs_Vim.png" class="align-center img-fluid" data-fig-cap="emt_correlation_CD44_vs_Vim.png" alt="1st round clustering"></a> <a href="images/correlation_CD44_vs_Vim_select_samples.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="images/correlation_CD44_vs_Vim_select_samples.png" class="align-center img-fluid" data-fig-cap="correlation_CD44_vs_Vim_select_samples.png" alt="1st round clustering"></a></p>
+</section>
+<section id="h-emt-vs-shape-metrics" class="level2" data-number="25.5">
+<h2 data-number="25.5" class="anchored" data-anchor-id="h-emt-vs-shape-metrics"><span class="header-section-number">25.5</span> H: EMT vs shape metrics</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read data</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>dt_score <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="fu">glue</span>(<span class="st">"{dat_dir}/all_shape_metrics.csv"</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>dt <span class="ot">&lt;-</span> dt_score <span class="sc">%&gt;%</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(spinfo, <span class="at">by =</span> <span class="fu">join_by</span>(roi <span class="sc">==</span> ROI)) <span class="sc">%&gt;%</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">EMT_mode =</span> <span class="fu">factor</span>(EMT_mode, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"No"</span>, <span class="st">"Partial"</span>, <span class="st">"Full"</span>)))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># emt mode vs shape metrics</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>metric <span class="ot">&lt;-</span> <span class="st">"compactness"</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>form <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(<span class="fu">paste</span>(metric, <span class="st">"~ EMT_mode"</span>))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>test_sig <span class="ot">&lt;-</span> <span class="fu">wilcox_test</span>(dt, form) <span class="sc">%&gt;%</span> <span class="fu">filter</span>(p <span class="sc">&lt;=</span> <span class="fl">0.05</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>my_comparisons <span class="ot">&lt;-</span> test_sig <span class="sc">%&gt;%</span> <span class="fu">select</span>(group1, group2) <span class="sc">%&gt;%</span> t <span class="sc">%&gt;%</span> <span class="fu">as.data.frame</span>() <span class="sc">%&gt;%</span> as.list</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fu">ggboxplot</span>(dt, <span class="at">x =</span> <span class="st">"EMT_mode"</span>, <span class="at">y =</span> metric, <span class="at">color =</span> <span class="st">"EMT_mode"</span>, </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>               <span class="at">width =</span> <span class="fl">0.5</span>, <span class="at">add =</span> <span class="st">"jitter"</span>, <span class="at">legend =</span> <span class="st">"none"</span>) <span class="sc">+</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_brewer</span>(<span class="at">palette =</span> <span class="st">"Set1"</span>) <span class="sc">+</span> </span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">10000</span>) <span class="co">#coord_cartesian(ylim = c(0, 10000))</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span>(<span class="fu">length</span>(my_comparisons) <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(test_sig)) {</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    group1 <span class="ot">&lt;-</span> test_sig<span class="sc">$</span>group1[i]</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    group2 <span class="ot">&lt;-</span> test_sig<span class="sc">$</span>group2[i]</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    p_val <span class="ot">&lt;-</span> test_sig<span class="sc">$</span>p[i]</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>      x_pos <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">levels</span>(dt<span class="sc">$</span>EMT_mode) <span class="sc">%in%</span> <span class="fu">c</span>(group1, group2))</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>      y_position <span class="ot">&lt;-</span> <span class="dv">9500</span> <span class="sc">-</span> (i<span class="dv">-1</span>) <span class="sc">*</span> <span class="dv">800</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>      p <span class="ot">&lt;-</span> p <span class="sc">+</span> </span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotate</span>(<span class="st">"segment"</span>,</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>                 <span class="at">x =</span> x_pos[<span class="dv">1</span>], <span class="at">xend =</span> x_pos[<span class="dv">2</span>],</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>                 <span class="at">y =</span> y_position, <span class="at">yend =</span> y_position,</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotate</span>(<span class="st">"segment"</span>,</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>                 <span class="at">x =</span> x_pos[<span class="dv">1</span>], <span class="at">xend =</span> x_pos[<span class="dv">1</span>],</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>                 <span class="at">y =</span> y_position <span class="sc">-</span> <span class="dv">100</span>, <span class="at">yend =</span> y_position,</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotate</span>(<span class="st">"segment"</span>,</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>                 <span class="at">x =</span> x_pos[<span class="dv">2</span>], <span class="at">xend =</span> x_pos[<span class="dv">2</span>],</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>                 <span class="at">y =</span> y_position <span class="sc">-</span> <span class="dv">100</span>, <span class="at">yend =</span> y_position,</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color =</span> <span class="st">"black"</span>, <span class="at">linewidth =</span> <span class="fl">0.5</span>) <span class="sc">+</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>        <span class="fu">annotate</span>(<span class="st">"text"</span>,</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>                 <span class="at">x =</span> <span class="fu">mean</span>(x_pos),</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>                 <span class="at">y =</span> y_position <span class="sc">+</span> <span class="dv">200</span>,</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>                 <span class="at">label =</span> p_val,</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>                 <span class="at">size =</span> <span class="dv">5</span>,</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>                 <span class="at">vjust =</span> <span class="dv">0</span>)</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(<span class="st">"{fig_dir}/emt_mode_vs_shape_metrics_all_boxplot.pdf"</span>), p, <span class="at">width =</span> <span class="dv">5</span>, <span class="at">height =</span> <span class="dv">5</span>)</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="fu">glue</span>(<span class="st">"{img_dir}/emt_mode_vs_shape_metrics_all_boxplot.png"</span>), p, <span class="at">width =</span> <span class="dv">5</span>, <span class="at">height =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a href="images/emt_mode_vs_shape_metrics_all_boxplot.png" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="images/emt_mode_vs_shape_metrics_all_boxplot.png" class="align-center img-fluid" data-fig-cap="emt_mode_vs_shape_metrics_all_boxplot.png" alt="1st round clustering"></a></p>
+
+
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -840,12 +1053,44 @@ ul.task-list li input[type="checkbox"] {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/jinyancool/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/jinyancool/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

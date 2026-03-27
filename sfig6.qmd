@@ -1,0 +1,145 @@
+# Sup figure 6
+
+## package load and plot settings.
+
+```{r warning=FALSE}
+pkgs <- c("jhtools", "glue", "readxl", "Seurat", "data.table", "magrittr", "dplyr", 
+          "ggplot2", "ComplexHeatmap", "cluster", "survival", "survminer", "RColorBrewer", 
+          "sva", "ggridges", "transport", "philentropy", "ggpubr", "rstatix", "ggrepel", 
+          "readr", "stringr", "sf", "Nebulosa")
+for (pkg in pkgs){
+  suppressPackageStartupMessages(library(pkg, character.only = T))
+}
+
+dat_dir <- "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/polaris"
+doc_dir <- "/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo"
+fig_dir <- "/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/figures"
+img_dir <- "/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/images"
+
+cols_fn <- "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml"
+cols <- show_me_the_colors(cols_fn)
+col_fun1 <- circlize::colorRamp2(c(-2.5, 0, 1, 2, 2.5), unname(cols$col_map))
+col_fun2 <- circlize::colorRamp2(c(0, 0.5, 0.8, 0.9, 1), unname(cols$col_map))
+cols_ct <- cols$cell_type
+cols_grp <- c(cols$cluster[2], cols$cluster[1], cols$cluster[3:5])
+names(cols_grp) <- paste0("G", 1:5)
+cols_cl <- cols_grp
+names(cols_cl) <- paste0("C", 1:5)
+```
+
+## B: CD44, Ki67 & PanCK umap
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# CD44, Ki67 & PanCK umap
+srat_qt_fil <- readRDS(glue("{dat_dir}/srat_qt_fil.rds"))
+p <- plot_density(srat_qt_fil, c("CD44", "Ki67", "PanCK"), reduction = "umap", raster = TRUE, size = 0.1) +
+  plot_layout(ncol = 3)
+ggsave(glue("{fig_dir}/umap_density_CD44_Ki67_PanCK.pdf"), p, width = 14, height = 4)
+ggsave(glue("{img_dir}/umap_density_CD44_Ki67_PanCK.png"), p, width = 14, height = 4)
+```
+![](images/umap_density_CD44_Ki67_PanCK.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="umap_density_CD44_Ki67_PanCK.png"}
+
+## C: CD44 vs Ki67 & PanCK
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# corr plot
+pt <- FetchData(srat_qt_fil, vars = c("CD44", "Ki67", "PanCK"), layer = "data") %>%
+  tidyr::pivot_longer(cols = Ki67:PanCK, names_to = "gene", values_to = "expr")
+pt <- pt %>% filter(CD44 > 0 & expr > 0)
+p <- ggplot(pt, aes(CD44, expr)) +
+  geom_hex() +
+  scale_fill_gradient(low = "white", high = "red") +
+  facet_wrap(~ gene, scales = "free_y") +
+  geom_smooth(method = lm, color = "black", se = FALSE) +
+  stat_cor(method = "pearson") +
+  theme_classic()
+ggsave(glue("{fig_dir}/correlation_CD44_vs_Ki67_PanCK.pdf"), p, width = 9, height = 4)
+ggsave(glue("{img_dir}/correlation_CD44_vs_Ki67_PanCK.png"), p, width = 9, height = 4)
+```
+![](images/correlation_CD44_vs_Ki67_PanCK.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="correlation_CD44_vs_Ki67_PanCK.png"}
+
+## E,F: CD44 vs Vim
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# corr plot by emt_mode
+spinfo <- read_excel(glue("{doc_dir}/sampleinfo.xlsx"), sheet = "polaris_EMT") %>% 
+  rename("EMT_mode" = "EMT mode")
+pt <- FetchData(srat_qt_fil, vars = c("CD44", "Vimentin", "roi"), layer = "data") %>%
+  left_join(spinfo, by = join_by(roi == ROI)) %>%
+  mutate(EMT_mode = factor(EMT_mode, levels = c("No", "Partial", "Full")))
+pt <- pt %>% filter(CD44 > 0 & Vimentin > 0)
+p <- ggplot(pt, aes(CD44, Vimentin)) +
+  geom_hex() +
+  scale_fill_gradient(low = "white", high = "red") +
+  facet_wrap(~ EMT_mode, ncol = 3) +
+  geom_smooth(method = lm, color = "black", se = FALSE) +
+  stat_cor(method = "pearson") +
+  theme_classic()
+ggsave(glue("{fig_dir}/emt_correlation_CD44_vs_Vim.pdf"), p, width = 12, height = 4)
+ggsave(glue("{img_dir}/emt_correlation_CD44_vs_Vim.png"), p, width = 12, height = 4)
+
+# specific samples
+sps <- c("S02P_ROI3", "S48P_ROI1", "S48P_ROI2", "S70P_ROI1", "S74P_ROI3", "S79P_ROI2")
+pt_s <- pt %>%
+  filter(roi %in% sps)
+p <- ggplot(pt_s, aes(CD44, Vimentin)) +
+  geom_hex() +
+  scale_fill_gradient(low = "white", high = "red") +
+  facet_wrap(~ roi, ncol = 3) +
+  geom_smooth(method = lm, color = "black", se = FALSE) +
+  stat_cor(method = "pearson") +
+  theme_classic()
+ggsave(glue("{fig_dir}/correlation_CD44_vs_Vim_select_samples.pdf"), p, width = 12, height = 8)
+ggsave(glue("{img_dir}/correlation_CD44_vs_Vim_select_samples.png"), p, width = 12, height = 8)
+```
+![](images/emt_correlation_CD44_vs_Vim.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="emt_correlation_CD44_vs_Vim.png"}
+![](images/correlation_CD44_vs_Vim_select_samples.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="correlation_CD44_vs_Vim_select_samples.png"}
+
+## H: EMT vs shape metrics
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# read data
+dt_score <- fread(glue("{dat_dir}/all_shape_metrics.csv"))
+dt <- dt_score %>%
+  left_join(spinfo, by = join_by(roi == ROI)) %>%
+  mutate(EMT_mode = factor(EMT_mode, levels = c("No", "Partial", "Full")))
+
+# emt mode vs shape metrics
+metric <- "compactness"
+form <- as.formula(paste(metric, "~ EMT_mode"))
+test_sig <- wilcox_test(dt, form) %>% filter(p <= 0.05)
+my_comparisons <- test_sig %>% select(group1, group2) %>% t %>% as.data.frame() %>% as.list
+
+p <- ggboxplot(dt, x = "EMT_mode", y = metric, color = "EMT_mode", 
+               width = 0.5, add = "jitter", legend = "none") +
+  scale_color_brewer(palette = "Set1") + 
+  ylim(0, 10000) #coord_cartesian(ylim = c(0, 10000))
+
+if(length(my_comparisons) > 0) {
+  for(i in 1:nrow(test_sig)) {
+    group1 <- test_sig$group1[i]
+    group2 <- test_sig$group2[i]
+    p_val <- test_sig$p[i]
+      x_pos <- which(levels(dt$EMT_mode) %in% c(group1, group2))
+      y_position <- 9500 - (i-1) * 800
+      p <- p + 
+        annotate("segment",
+                 x = x_pos[1], xend = x_pos[2],
+                 y = y_position, yend = y_position,
+                 color = "black", linewidth = 0.5) +
+        annotate("segment",
+                 x = x_pos[1], xend = x_pos[1],
+                 y = y_position - 100, yend = y_position,
+                 color = "black", linewidth = 0.5) +
+        annotate("segment",
+                 x = x_pos[2], xend = x_pos[2],
+                 y = y_position - 100, yend = y_position,
+                 color = "black", linewidth = 0.5) +
+        annotate("text",
+                 x = mean(x_pos),
+                 y = y_position + 200,
+                 label = p_val,
+                 size = 5,
+                 vjust = 0)
+  }
+}
+ggsave(glue("{fig_dir}/emt_mode_vs_shape_metrics_all_boxplot.pdf"), p, width = 5, height = 5)
+ggsave(glue("{img_dir}/emt_mode_vs_shape_metrics_all_boxplot.png"), p, width = 5, height = 5)
+```
+![](images/emt_mode_vs_shape_metrics_all_boxplot.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="emt_mode_vs_shape_metrics_all_boxplot.png"}

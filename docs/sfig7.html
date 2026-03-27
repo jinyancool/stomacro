@@ -8,7 +8,7 @@
 
 <meta name="author" content="Jinyan Huang">
 
-<title>sfig7 – Stomatology</title>
+<title>26&nbsp; Sup figure 7 – Stomatology</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -44,6 +79,9 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-442386bcaee29f7246100ac1b47b78b4.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -75,7 +113,7 @@ ul.task-list li input[type="checkbox"] {
 
 </head>
 
-<body class="nav-sidebar floating fullcontent quarto-light">
+<body class="nav-sidebar floating quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -410,15 +448,198 @@ ul.task-list li input[type="checkbox"] {
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#package-load-and-plot-settings." id="toc-package-load-and-plot-settings." class="nav-link active" data-scroll-target="#package-load-and-plot-settings."><span class="header-section-number">26.1</span> package load and plot settings.</a></li>
+  <li><a href="#a-voronoi-celltype" id="toc-a-voronoi-celltype" class="nav-link" data-scroll-target="#a-voronoi-celltype"><span class="header-section-number">26.2</span> A: voronoi celltype</a></li>
+  <li><a href="#b-sample-correlation-heatmap" id="toc-b-sample-correlation-heatmap" class="nav-link" data-scroll-target="#b-sample-correlation-heatmap"><span class="header-section-number">26.3</span> B: sample correlation heatmap</a></li>
+  <li><a href="#c-survival-curve-for-presence-and-absence-of-immune-erosion-in-spinous-low-group" id="toc-c-survival-curve-for-presence-and-absence-of-immune-erosion-in-spinous-low-group" class="nav-link" data-scroll-target="#c-survival-curve-for-presence-and-absence-of-immune-erosion-in-spinous-low-group"><span class="header-section-number">26.4</span> C: survival curve for presence and absence of immune erosion in spinous low group</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/jinyancool/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./fig1.html">Visualization</a></li><li class="breadcrumb-item"><a href="./sfig7.html"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Sup figure 7</span></a></li></ol></nav></header>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./fig1.html">Visualization</a></li><li class="breadcrumb-item"><a href="./sfig7.html"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Sup figure 7</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Sup figure 7</span></h1>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
 
 
+</header>
 
+
+<section id="package-load-and-plot-settings." class="level2" data-number="26.1">
+<h2 data-number="26.1" class="anchored" data-anchor-id="package-load-and-plot-settings."><span class="header-section-number">26.1</span> package load and plot settings.</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pkgs <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"jhtools"</span>, <span class="st">"glue"</span>, <span class="st">"readxl"</span>, <span class="st">"Seurat"</span>, <span class="st">"data.table"</span>, <span class="st">"magrittr"</span>, <span class="st">"dplyr"</span>, </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>          <span class="st">"ggplot2"</span>, <span class="st">"ComplexHeatmap"</span>, <span class="st">"cluster"</span>, <span class="st">"survival"</span>, <span class="st">"survminer"</span>, <span class="st">"RColorBrewer"</span>, </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>          <span class="st">"sva"</span>, <span class="st">"ggridges"</span>, <span class="st">"transport"</span>, <span class="st">"philentropy"</span>, <span class="st">"ggpubr"</span>, <span class="st">"rstatix"</span>, <span class="st">"ggrepel"</span>, </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>          <span class="st">"readr"</span>, <span class="st">"stringr"</span>, <span class="st">"sf"</span>, <span class="st">"Nebulosa"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (pkg <span class="cf">in</span> pkgs){</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">suppressPackageStartupMessages</span>(<span class="fu">library</span>(pkg, <span class="at">character.only =</span> T))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>dat_dir <span class="ot">&lt;-</span> <span class="st">"/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/polaris"</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>doc_dir <span class="ot">&lt;-</span> <span class="st">"/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo"</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>fig_dir <span class="ot">&lt;-</span> <span class="st">"/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/figures"</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>img_dir <span class="ot">&lt;-</span> <span class="st">"/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/images"</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>cols_fn <span class="ot">&lt;-</span> <span class="st">"/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml"</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>cols <span class="ot">&lt;-</span> <span class="fu">show_me_the_colors</span>(cols_fn)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>col_fun1 <span class="ot">&lt;-</span> circlize<span class="sc">::</span><span class="fu">colorRamp2</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.5</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="fl">2.5</span>), <span class="fu">unname</span>(cols<span class="sc">$</span>col_map))</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>col_fun2 <span class="ot">&lt;-</span> circlize<span class="sc">::</span><span class="fu">colorRamp2</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="fl">0.5</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span>, <span class="dv">1</span>), <span class="fu">unname</span>(cols<span class="sc">$</span>col_map))</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>cols_ct <span class="ot">&lt;-</span> cols<span class="sc">$</span>cell_type</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>cols_grp <span class="ot">&lt;-</span> <span class="fu">c</span>(cols<span class="sc">$</span>cluster[<span class="dv">2</span>], cols<span class="sc">$</span>cluster[<span class="dv">1</span>], cols<span class="sc">$</span>cluster[<span class="dv">3</span><span class="sc">:</span><span class="dv">5</span>])</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cols_grp) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"G"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>cols_cl <span class="ot">&lt;-</span> cols_grp</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(cols_cl) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"C"</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="a-voronoi-celltype" class="level2" data-number="26.2">
+<h2 data-number="26.2" class="anchored" data-anchor-id="a-voronoi-celltype"><span class="header-section-number">26.2</span> A: voronoi celltype</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># voronoi plot of celltype</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>srat_qt_fil <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="fu">glue</span>(<span class="st">"{dat_dir}/srat_qt_fil.rds"</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>df_ct <span class="ot">&lt;-</span> srat_qt_fil[[]][, <span class="fu">c</span>(<span class="st">"Centroid.X.µm"</span>, <span class="st">"Centroid.Y.µm"</span>, <span class="st">"sample_id"</span>, <span class="st">"roi_id"</span>, <span class="st">"celltype"</span>)] <span class="sc">%&gt;%</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">roi_id =</span> <span class="fu">paste0</span>(sample_id, <span class="st">"_"</span>, roi_id),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">cell_id =</span> <span class="fu">colnames</span>(srat_qt_fil))</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>rois <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"S27P_ROI2"</span>, <span class="st">"R06P_ROI4"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>purrr<span class="sc">::</span><span class="fu">walk</span>(rois, <span class="cf">function</span>(roi){</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># data</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  sf_pt <span class="ot">&lt;-</span> df_ct <span class="sc">%&gt;%</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(roi_id <span class="sc">==</span> roi) <span class="sc">%&gt;%</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_as_sf</span>(<span class="at">coords =</span> <span class="fu">c</span>(<span class="st">"Centroid.X.µm"</span>, <span class="st">"Centroid.Y.µm"</span>), <span class="at">crs =</span> <span class="cn">NA</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  f_tis <span class="ot">&lt;-</span> <span class="fu">glue</span>(<span class="st">"{dat_dir}/20250223_tidy/{roi}.geojson"</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  sf_tis <span class="ot">&lt;-</span> <span class="fu">read_sf</span>(f_tis, <span class="at">crs =</span> <span class="cn">NA</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(classification <span class="sc">==</span> <span class="st">"Tumor"</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># voronoi </span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  sf_voronoi <span class="ot">&lt;-</span> <span class="fu">st_union</span>(sf_pt) <span class="sc">%&gt;%</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_voronoi</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_collection_extract</span>(<span class="st">"POLYGON"</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_as_sf</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_join</span>(sf_pt) <span class="sc">%&gt;%</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">st_intersection</span>(sf_tis)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># reverse y-axis</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  scale_mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  sf_invert <span class="ot">&lt;-</span> sf_voronoi</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_geometry</span>(sf_invert) <span class="ot">&lt;-</span> <span class="fu">st_geometry</span>(sf_invert) <span class="sc">*</span> scale_mat</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="co"># plot</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> <span class="fu">nrow</span>(sf_invert)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_sf</span>(<span class="at">data =</span> sf_invert, <span class="fu">aes</span>(<span class="at">fill =</span> celltype), <span class="at">linewidth =</span> <span class="fl">0.001</span>) <span class="sc">+</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> cols_ct) <span class="sc">+</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme_void</span>() </span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="fu">glue</span>(<span class="st">"{fig_dir}/{roi}_spatial_celltype_map.pdf"</span>), p, </span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>         <span class="at">width =</span> <span class="fu">sqrt</span>(n)<span class="sc">/</span><span class="dv">10</span>, <span class="at">height =</span> <span class="fu">sqrt</span>(n)<span class="sc">/</span><span class="dv">10</span>)</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="fu">glue</span>(<span class="st">"{img_dir}/{roi}_spatial_celltype_map.png"</span>), p, </span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>         <span class="at">width =</span> <span class="fu">sqrt</span>(n)<span class="sc">/</span><span class="dv">10</span>, <span class="at">height =</span> <span class="fu">sqrt</span>(n)<span class="sc">/</span><span class="dv">10</span>)</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a href="images/S27P_ROI2_spatial_celltype_map.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/S27P_ROI2_spatial_celltype_map.png" class="align-center img-fluid" data-fig-cap="S27P_ROI2_spatial_celltype_map.png" alt="1st round clustering"></a> <a href="images/R06P_ROI4_spatial_celltype_map.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/R06P_ROI4_spatial_celltype_map.png" class="align-center img-fluid" data-fig-cap="R06P_ROI4_spatial_celltype_map.png" alt="1st round clustering"></a></p>
+</section>
+<section id="b-sample-correlation-heatmap" class="level2" data-number="26.3">
+<h2 data-number="26.3" class="anchored" data-anchor-id="b-sample-correlation-heatmap"><span class="header-section-number">26.3</span> B: sample correlation heatmap</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read data</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>srat_core <span class="ot">&lt;-</span> <span class="fu">subset</span>(srat_qt_fil, <span class="at">subset =</span> roi_type <span class="sc">==</span> <span class="st">"Core"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># cluster samples by cell type proportion - pool multiple TMA together</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="do">## correlation mat</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>df_prop <span class="ot">&lt;-</span> srat_core[[]] <span class="sc">%&gt;%</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(sample_id, celltype) <span class="sc">%&gt;%</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">n =</span> <span class="fu">n</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">freq =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.table</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dcast</span>(sample_id <span class="sc">~</span> celltype, <span class="at">value.var =</span> <span class="st">"freq"</span>, <span class="at">fill =</span> <span class="dv">0</span>) </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>mat_prop <span class="ot">&lt;-</span> df_prop[, <span class="sc">-</span><span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">as.matrix</span>()</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(mat_prop) <span class="ot">&lt;-</span> df_prop<span class="sc">$</span>sample_id</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>mat_cor <span class="ot">&lt;-</span> <span class="fu">cor</span>(<span class="fu">t</span>(mat_prop), <span class="at">method =</span> <span class="st">"pearson"</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># plot group</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>dt_grp <span class="ot">&lt;-</span> <span class="fu">fread</span>(<span class="fu">glue</span>(<span class="st">"{dat_dir}/sample_cluster_group_newcore.csv"</span>))</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>df_anno <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(dt_grp[<span class="fu">match</span>(<span class="fu">colnames</span>(mat_cor), sample_id), ]) <span class="sc">%&gt;%</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">`</span><span class="at">rownames&lt;-</span><span class="st">`</span>(<span class="fu">colnames</span>(mat_cor)) <span class="sc">%&gt;%</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  .[, <span class="st">"group"</span>, drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>row_ha <span class="ot">&lt;-</span> <span class="fu">rowAnnotation</span>(<span class="at">df =</span> df_anno, <span class="at">col =</span> <span class="fu">list</span>(<span class="at">group =</span> cols_grp))</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>col_ha <span class="ot">&lt;-</span> <span class="fu">HeatmapAnnotation</span>(<span class="at">df =</span> df_anno, <span class="at">col =</span> <span class="fu">list</span>(<span class="at">group =</span> cols_grp))</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>idx_order <span class="ot">&lt;-</span> <span class="fu">match</span>(dt_grp<span class="sc">$</span>sample_id, <span class="fu">rownames</span>(df_anno))</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>p1 <span class="ot">&lt;-</span> ComplexHeatmap<span class="sc">::</span><span class="fu">Heatmap</span>(mat_cor, <span class="at">col =</span> col_fun2,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>                              <span class="at">column_order =</span> idx_order,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>                              <span class="at">row_order =</span> idx_order,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>                              <span class="at">column_names_gp =</span> grid<span class="sc">::</span><span class="fu">gpar</span>(<span class="at">fontsize =</span> <span class="dv">4</span>),</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>                              <span class="at">show_row_names =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>                              <span class="at">top_annotation =</span> col_ha,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>                              <span class="at">left_annotation =</span> row_ha)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="fu">pdf</span>(<span class="fu">glue</span>(<span class="st">"{fig_dir}/fig1a_heatmap_sample_correlation_group_anno.pdf"</span>), <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">8</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="fu">draw</span>(p1)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="fu">png</span>(<span class="fu">glue</span>(<span class="st">"{img_dir}/fig1a_heatmap_sample_correlation_group_anno.png"</span>), <span class="at">width =</span> <span class="dv">8</span>, <span class="at">height =</span> <span class="dv">8</span>, <span class="at">units =</span> <span class="st">"in"</span>, <span class="at">res =</span> <span class="dv">300</span>)</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="fu">draw</span>(p1)</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="fu">dev.off</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a href="images/fig1a_heatmap_sample_correlation_group_anno.png" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="images/fig1a_heatmap_sample_correlation_group_anno.png" class="align-center img-fluid" data-fig-cap="fig1a_heatmap_sample_correlation_group_anno.png" alt="1st round clustering"></a></p>
+</section>
+<section id="c-survival-curve-for-presence-and-absence-of-immune-erosion-in-spinous-low-group" class="level2" data-number="26.4">
+<h2 data-number="26.4" class="anchored" data-anchor-id="c-survival-curve-for-presence-and-absence-of-immune-erosion-in-spinous-low-group"><span class="header-section-number">26.4</span> C: survival curve for presence and absence of immune erosion in spinous low group</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># cd44 macrophage group</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df_mac <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="fu">glue</span>(<span class="st">"{doc_dir}/sampleinfo.xlsx"</span>), <span class="at">sheet =</span> <span class="st">"polaris_CD44_Mac"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(CD44_mac1))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># sample info</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>dt_sp <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="fu">glue</span>(<span class="st">"{doc_dir}/sampleinfo.xlsx"</span>), <span class="at">sheet =</span> <span class="st">"polaris_clinical"</span>) <span class="sc">%&gt;%</span> <span class="co"># clinical_info.tsv</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.data.table</span>()</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>dt_sp[RFS_time <span class="sc">&gt;</span> <span class="dv">60</span>, <span class="st">`</span><span class="at">:=</span><span class="st">`</span>(<span class="at">RFS_time =</span> <span class="dv">60</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>                         <span class="at">RFS =</span> <span class="dv">0</span>)]</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># sample core cluster </span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>dt_core <span class="ot">&lt;-</span> dt_grp <span class="sc">%&gt;%</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">group_m1 =</span> <span class="fu">ifelse</span>(group <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"G1"</span>, <span class="st">"G2"</span>), <span class="st">"spinous_high"</span>, <span class="st">"spinous_low"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">group_m2 =</span> <span class="fu">ifelse</span>(group <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"G1"</span>, <span class="st">"G2"</span>, <span class="st">"G4"</span>), <span class="st">"spinous_high"</span>, <span class="st">"spinous_low"</span>))</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># merge</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>df_surv <span class="ot">&lt;-</span> df_mac <span class="sc">%&gt;%</span> </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(dt_core, <span class="at">by =</span> <span class="st">"sample_id"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(dt_sp, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"patient_id"</span>, <span class="st">"sample_id"</span>))</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(grp <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"spinous_high"</span>, <span class="st">"spinous_low"</span>)){</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>  df_sub <span class="ot">&lt;-</span> df_surv <span class="sc">%&gt;%</span> <span class="fu">filter</span>(group_m2 <span class="sc">==</span> grp)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">survfit</span>(<span class="fu">Surv</span>(RFS_time, RFS) <span class="sc">~</span> CD44_mac1, <span class="at">data =</span> df_sub)</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>  p4 <span class="ot">&lt;-</span> <span class="fu">ggsurvplot</span>(fit, <span class="at">data =</span> df_sub, <span class="at">xlab =</span> <span class="st">"Time (Months)"</span>, <span class="at">pval =</span> <span class="cn">TRUE</span>, <span class="at">risk.table =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>                  <span class="at">risk.table.height =</span> <span class="fl">0.3</span>, </span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>                  <span class="at">palette =</span> <span class="fu">unname</span>(cols_grp), <span class="at">title =</span> <span class="fu">paste0</span>(<span class="st">"Survival by CD44 Mpg - Core Cluster "</span>, grp))</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>  p4<span class="sc">$</span>plot <span class="ot">&lt;-</span> p4<span class="sc">$</span>plot <span class="sc">+</span> </span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.title.x =</span> <span class="fu">element_blank</span>(),</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>          <span class="at">axis.text.x =</span> <span class="fu">element_blank</span>())</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  p4<span class="sc">$</span>table <span class="ot">&lt;-</span> p4<span class="sc">$</span>table <span class="sc">+</span> </span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">xlab</span>(<span class="st">"Time (Months)"</span>) <span class="sc">+</span> </span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">theme</span>(<span class="at">axis.title.x =</span> <span class="fu">element_text</span>())</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pdf</span>(<span class="fu">glue</span>(<span class="st">"{fig_dir}/fig1d_survival_curve_cd44_mac1_core_cluster_m2_{grp}.pdf"</span>), <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">7</span>)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(p4<span class="sc">$</span>plot<span class="sc">/</span>p4<span class="sc">$</span>table <span class="sc">+</span> patchwork<span class="sc">::</span><span class="fu">plot_layout</span>(<span class="at">heights =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">2</span>)))</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">dev.off</span>()</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>  p4 <span class="ot">&lt;-</span> <span class="fu">arrange_ggsurvplots</span>(<span class="fu">list</span>(p4), <span class="at">ncol =</span> <span class="dv">1</span>, <span class="at">print =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggsave</span>(<span class="fu">glue</span>(<span class="st">"{img_dir}/fig1d_survival_curve_cd44_mac1_core_cluster_m2_{grp}.png"</span>), p4, <span class="at">width =</span> <span class="dv">6</span>, <span class="at">height =</span> <span class="dv">7</span>)</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><a href="images/fig1d_survival_curve_cd44_mac1_core_cluster_m2_spinous_low.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="images/fig1d_survival_curve_cd44_mac1_core_cluster_m2_spinous_low.png" class="align-center img-fluid" data-fig-cap="fig1d_survival_curve_cd44_mac1_core_cluster_m2_spinous_low.png" alt="1st round clustering"></a></p>
+
+
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -840,12 +1061,44 @@ ul.task-list li input[type="checkbox"] {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/jinyancool/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/jinyancool/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div>
     <div class="nav-footer-right">
       &nbsp;
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

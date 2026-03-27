@@ -1,0 +1,234 @@
+# Figure 4
+
+## package load and plot settings.
+
+```{r warning=FALSE}
+pkgs <- c("jhtools", "glue", "readxl", "Seurat", "data.table", "magrittr", "dplyr", 
+          "ggplot2", "ComplexHeatmap", "cluster", "survival", "survminer", "RColorBrewer", 
+          "sva", "ggridges", "transport", "philentropy", "ggpubr", "rstatix", "ggrepel", 
+          "readr", "stringr", "sf", "Nebulosa")
+for (pkg in pkgs){
+  suppressPackageStartupMessages(library(pkg, character.only = T))
+}
+
+dat_dir <- "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/polaris"
+doc_dir <- "/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo"
+fig_dir <- "/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/figures"
+img_dir <- "/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/images"
+
+cols_fn <- "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml"
+cols <- show_me_the_colors(cols_fn)
+col_fun1 <- circlize::colorRamp2(c(-2.5, 0, 1, 2, 2.5), unname(cols$col_map))
+col_fun2 <- circlize::colorRamp2(c(0, 0.5, 0.8, 0.9, 1), unname(cols$col_map))
+cols_ct <- cols$cell_type
+cols_grp <- c(cols$cluster[2], cols$cluster[1], cols$cluster[3:5])
+names(cols_grp) <- paste0("G", 1:5)
+cols_cl <- cols_grp
+names(cols_cl) <- paste0("C", 1:5)
+```
+
+## A: cell type heatmap
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# umap celltype
+srat_new <- readRDS(glue("{dat_dir}/srat_qt_fil.rds"))
+srat_new <- RenameIdents(srat_new, 
+                    "Small_dense" = "Spatial_dense", 
+                    "Fragment" = "Microcluster", 
+                    "Nuclei Dense_kera" = "Kera_Dapi+")
+srat_new@meta.data$celltype <- Idents(srat_new)
+# heatmap celltype
+features <- c("area", "DAPI", "PanCK", "Vimentin", "Ki67", "CD44", 
+              "dist-stroma", "percent-epi", "n-neighbors")
+expr <- srat_new[["CODEX"]]$scale.data %>% t() %>%
+  as.data.frame() %>%
+  select(all_of(features)) %>%
+  mutate(across(everything(), ~ pmax(pmin(., 2.5), -2.5))) %>%
+  mutate(celltype = srat_new$celltype) %>%
+  group_by(celltype) %>% 
+  summarise_if(is.numeric, mean, na.rm = TRUE) %>% 
+  tibble::column_to_rownames(var = "celltype")
+
+n_cell <- table(Idents(srat_new)) 
+ha <- rowAnnotation(n_cell = anno_barplot(as.vector(n_cell[match(rownames(expr), names(n_cell))]), 
+                                          gp=gpar(fill = cols_ct[match(rownames(expr), names(cols_ct))]),
+                                          width = unit(3, "cm")))
+ht <- ComplexHeatmap::Heatmap(expr, 
+                              col = col_fun1,
+                              row_labels = rownames(expr),
+                              right_annotation = ha,
+                              heatmap_legend_param = list(title = "scale.data", at = seq(-2, 2, 1)), 
+                              column_names_rot = 45, column_names_centered = FALSE)
+pdf(glue("{fig_dir}/heatmap_celltype_features_newcore.pdf"), width = 10, height = 10)
+draw(ht)
+dev.off()
+png(glue("{img_dir}/heatmap_celltype_features_newcore.png"), width = 10, height = 10, units = "in", res = 300)
+draw(ht)
+dev.off()
+```
+![](images/heatmap_celltype_features_newcore.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="heatmap_celltype_features_newcore.png"}
+
+## B: voronoi celltype
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# voronoi plot of celltype
+srat_qt_fil <- srat_new
+df_ct <- srat_qt_fil[[]][, c("Centroid.X.µm", "Centroid.Y.µm", "sample_id", "roi_id", "celltype")] %>%
+  mutate(roi_id = paste0(sample_id, "_", roi_id),
+         cell_id = colnames(srat_qt_fil))
+rois <- c("R04P_ROI3", "R25P_ROI3")
+purrr::walk(rois, function(roi){
+  # data
+  sf_pt <- df_ct %>%
+    filter(roi_id == roi) %>%
+    st_as_sf(coords = c("Centroid.X.µm", "Centroid.Y.µm"), crs = NA)
+  f_tis <- glue("{dat_dir}/20250223_tidy/{roi}.geojson")
+  sf_tis <- read_sf(f_tis, crs = NA) %>%
+    filter(classification == "Tumor")
+  
+  # voronoi 
+  sf_voronoi <- st_union(sf_pt) %>%
+    st_voronoi() %>%
+    st_collection_extract("POLYGON")%>%
+    st_as_sf() %>%
+    st_join(sf_pt) %>%
+    st_intersection(sf_tis)
+  
+  # reverse y-axis
+  scale_mat <- matrix(c(1, 0, 0, -1), nrow = 2)
+  sf_invert <- sf_voronoi
+  st_geometry(sf_invert) <- st_geometry(sf_invert) * scale_mat
+  
+  # plot
+  n <- nrow(sf_invert)
+  p <- ggplot() +
+    geom_sf(data = sf_invert, aes(fill = celltype), linewidth = 0.001) +
+    scale_fill_manual(values = cols_ct) +
+    theme_void() 
+  ggsave(glue("{fig_dir}/{roi}_spatial_celltype_map.pdf"), p, 
+         width = sqrt(n)/10, height = sqrt(n)/10)
+  ggsave(glue("{img_dir}/{roi}_spatial_celltype_map.png"), p, 
+         width = sqrt(n)/10, height = sqrt(n)/10)
+})
+```
+![](images/R04P_ROI3_spatial_celltype_map.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="R04P_ROI3_spatial_celltype_map.png"}
+![](images/R25P_ROI3_spatial_celltype_map.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="R25P_ROI3_spatial_celltype_map.png"}
+
+## C: sample group celltype propotion
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# read data
+srat_core <- subset(srat_qt_fil, subset = roi_type == "Core")
+# cluster samples by cell type proportion - pool multiple TMA together
+## correlation mat
+df_prop <- srat_core[[]] %>%
+  group_by(sample_id, celltype) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n)) %>%
+  as.data.table() %>%
+  dcast(sample_id ~ celltype, value.var = "freq", fill = 0) 
+mat_prop <- df_prop[, -1] %>% as.matrix()
+rownames(mat_prop) <- df_prop$sample_id
+mat_cor <- cor(t(mat_prop), method = "pearson")
+# plot group
+dt_grp <- fread(glue("{dat_dir}/sample_cluster_group_newcore.csv"))
+df_anno <- as.data.frame(dt_grp[match(colnames(mat_cor), sample_id), ]) %>%
+  `rownames<-`(colnames(mat_cor)) %>%
+  .[, "group", drop = FALSE]
+# plot group freq
+df_grp_ct <- srat_core[[]] %>%
+  select(sample_id, roi_id, cell_id, celltype) %>%
+  left_join(tibble::rownames_to_column(df_anno, var = "sample_id"))
+p2 <- ggplot(df_grp_ct, aes(group, fill = celltype)) +
+  geom_bar(position = "fill") +
+  scale_fill_manual(values = cols_ct) +
+  coord_flip() +
+  theme_classic()
+ggsave(glue("{fig_dir}/fig1b_bar_stack_sample_group_celltype_prop.pdf"), p2, width = 7, height = 4)
+ggsave(glue("{img_dir}/fig1b_bar_stack_sample_group_celltype_prop.png"), p2, width = 7, height = 4, dpi = 300)
+```
+![](images/fig1b_bar_stack_sample_group_celltype_prop.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="fig1b_bar_stack_sample_group_celltype_prop.png"}
+
+## D: survival curve for five sample groups
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# ===================== survival analysis ===========================
+# clinical data
+clin <- read_excel(glue("{doc_dir}/sampleinfo.xlsx"), sheet = "polaris_clinical") %>% 
+  as.data.table()
+clin[RFS_time > 60, `:=`(RFS_time = 60,
+                         RFS = 0)]
+
+# read group data
+dt <- dt_grp %>%
+  left_join(clin, by = "sample_id") %>%
+  na.omit(cols = c("RFS", "RFS_time"))
+dt[, group := as.factor(group)]
+
+# survival analysis
+fit <- survfit(Surv(RFS_time, RFS) ~ group, data = dt)
+
+## pairwise_survdiff(Surv(RFS_time, RFS) ~ group, data = dt)
+## Pairwise comparisons using Log-Rank test 
+## data:  dt and group 
+##    G1   G2   G3   G4  
+## G2 0.23 -    -    -   
+## G3 0.23 0.89 -    -   
+## G4 0.17 0.89 0.89 -   
+## G5 0.17 0.89 0.89 0.89
+
+p3 <- ggsurvplot(fit, data = dt, xlab = "Time (Months)", pval = TRUE, risk.table = TRUE,
+                risk.table.height = 0.3, 
+                palette = unname(cols_grp), title = "Survival by Core Cluster")
+p3$plot <- p3$plot + 
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_blank())
+p3$table <- p3$table + 
+  xlab("Time (Months)") + 
+  theme(axis.title.x = element_text())
+pdf(glue("{fig_dir}/fig1c_survival_curve_sample_core_cluster.pdf"), width = 7, height = 7)
+print(p3$plot/p3$table + patchwork::plot_layout(heights = c(3, 2)))
+dev.off()
+p3 <- arrange_ggsurvplots(list(p3), ncol = 1, print = FALSE)
+ggsave(glue("{img_dir}/fig1c_survival_curve_sample_core_cluster.png"), p3, width = 7, height = 7)
+```
+![](images/fig1c_survival_curve_sample_core_cluster.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="fig1c_survival_curve_sample_core_cluster.png"}
+
+## E: survival curve for presence and absence of immune erosion in spinous high group
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# cd44 macrophage group
+df_mac <- read_excel(glue("{doc_dir}/sampleinfo.xlsx"), sheet = "polaris_CD44_Mac") %>%
+  filter(!is.na(CD44_mac1))
+
+# sample info
+dt_sp <- read_excel(glue("{doc_dir}/sampleinfo.xlsx"), sheet = "polaris_clinical") %>% # clinical_info.tsv
+  as.data.table()
+dt_sp[RFS_time > 60, `:=`(RFS_time = 60,
+                         RFS = 0)]
+
+# sample core cluster 
+dt_core <- dt_grp %>%
+  mutate(group_m1 = ifelse(group %in% c("G1", "G2"), "spinous_high", "spinous_low")) %>%
+  mutate(group_m2 = ifelse(group %in% c("G1", "G2", "G4"), "spinous_high", "spinous_low"))
+
+# merge
+df_surv <- df_mac %>% 
+  left_join(dt_core, by = "sample_id") %>%
+  left_join(dt_sp, by = c("patient_id", "sample_id"))
+
+for(grp in c("spinous_high", "spinous_low")){
+  df_sub <- df_surv %>% filter(group_m2 == grp)
+  fit <- survfit(Surv(RFS_time, RFS) ~ CD44_mac1, data = df_sub)
+  p4 <- ggsurvplot(fit, data = df_sub, xlab = "Time (Months)", pval = TRUE, risk.table = TRUE,
+                  risk.table.height = 0.3, 
+                  palette = unname(cols_grp), title = paste0("Survival by CD44 Mpg - Core Cluster ", grp))
+  p4$plot <- p4$plot + 
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_blank())
+  p4$table <- p4$table + 
+    xlab("Time (Months)") + 
+    theme(axis.title.x = element_text())
+  pdf(glue("{fig_dir}/fig1d_survival_curve_cd44_mac1_core_cluster_m2_{grp}.pdf"), width = 6, height = 7)
+  print(p4$plot/p4$table + patchwork::plot_layout(heights = c(3, 2)))
+  dev.off()
+  p4 <- arrange_ggsurvplots(list(p4), ncol = 1, print = FALSE)
+  ggsave(glue("{img_dir}/fig1d_survival_curve_cd44_mac1_core_cluster_m2_{grp}.png"), p4, width = 6, height = 7)
+}
+```
+![](images/fig1d_survival_curve_cd44_mac1_core_cluster_m2_spinous_high.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="fig1d_survival_curve_cd44_mac1_core_cluster_m2_spinous_high.png"}

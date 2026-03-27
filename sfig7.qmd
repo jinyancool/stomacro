@@ -1,0 +1,156 @@
+# Sup figure 7
+
+## package load and plot settings.
+
+```{r warning=FALSE}
+pkgs <- c("jhtools", "glue", "readxl", "Seurat", "data.table", "magrittr", "dplyr", 
+          "ggplot2", "ComplexHeatmap", "cluster", "survival", "survminer", "RColorBrewer", 
+          "sva", "ggridges", "transport", "philentropy", "ggpubr", "rstatix", "ggrepel", 
+          "readr", "stringr", "sf", "Nebulosa")
+for (pkg in pkgs){
+  suppressPackageStartupMessages(library(pkg, character.only = T))
+}
+
+dat_dir <- "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/rds/polaris"
+doc_dir <- "/cluster/home/jhuang/projects/stomatology/docs/lvjiong/sampleinfo"
+fig_dir <- "/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/figures"
+img_dir <- "/cluster/home/wyye_jh/projects/stomatology/analysis/lvjiong/human/fig/images"
+
+cols_fn <- "/cluster/home/jhuang/projects/stomatology/analysis/lvjiong/human/meta/manuscript/configs/colors.yaml"
+cols <- show_me_the_colors(cols_fn)
+col_fun1 <- circlize::colorRamp2(c(-2.5, 0, 1, 2, 2.5), unname(cols$col_map))
+col_fun2 <- circlize::colorRamp2(c(0, 0.5, 0.8, 0.9, 1), unname(cols$col_map))
+cols_ct <- cols$cell_type
+cols_grp <- c(cols$cluster[2], cols$cluster[1], cols$cluster[3:5])
+names(cols_grp) <- paste0("G", 1:5)
+cols_cl <- cols_grp
+names(cols_cl) <- paste0("C", 1:5)
+```
+
+## A: voronoi celltype
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# voronoi plot of celltype
+srat_qt_fil <- readRDS(glue("{dat_dir}/srat_qt_fil.rds"))
+df_ct <- srat_qt_fil[[]][, c("Centroid.X.µm", "Centroid.Y.µm", "sample_id", "roi_id", "celltype")] %>%
+  mutate(roi_id = paste0(sample_id, "_", roi_id),
+         cell_id = colnames(srat_qt_fil))
+rois <- c("S27P_ROI2", "R06P_ROI4")
+purrr::walk(rois, function(roi){
+  # data
+  sf_pt <- df_ct %>%
+    filter(roi_id == roi) %>%
+    st_as_sf(coords = c("Centroid.X.µm", "Centroid.Y.µm"), crs = NA)
+  f_tis <- glue("{dat_dir}/20250223_tidy/{roi}.geojson")
+  sf_tis <- read_sf(f_tis, crs = NA) %>%
+    filter(classification == "Tumor")
+  
+  # voronoi 
+  sf_voronoi <- st_union(sf_pt) %>%
+    st_voronoi() %>%
+    st_collection_extract("POLYGON")%>%
+    st_as_sf() %>%
+    st_join(sf_pt) %>%
+    st_intersection(sf_tis)
+  
+  # reverse y-axis
+  scale_mat <- matrix(c(1, 0, 0, -1), nrow = 2)
+  sf_invert <- sf_voronoi
+  st_geometry(sf_invert) <- st_geometry(sf_invert) * scale_mat
+  
+  # plot
+  n <- nrow(sf_invert)
+  p <- ggplot() +
+    geom_sf(data = sf_invert, aes(fill = celltype), linewidth = 0.001) +
+    scale_fill_manual(values = cols_ct) +
+    theme_void() 
+  ggsave(glue("{fig_dir}/{roi}_spatial_celltype_map.pdf"), p, 
+         width = sqrt(n)/10, height = sqrt(n)/10)
+  ggsave(glue("{img_dir}/{roi}_spatial_celltype_map.png"), p, 
+         width = sqrt(n)/10, height = sqrt(n)/10)
+})
+```
+![](images/S27P_ROI2_spatial_celltype_map.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="S27P_ROI2_spatial_celltype_map.png"}
+![](images/R06P_ROI4_spatial_celltype_map.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="R06P_ROI4_spatial_celltype_map.png"}
+
+## B: sample correlation heatmap
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# read data
+srat_core <- subset(srat_qt_fil, subset = roi_type == "Core")
+# cluster samples by cell type proportion - pool multiple TMA together
+## correlation mat
+df_prop <- srat_core[[]] %>%
+  group_by(sample_id, celltype) %>%
+  summarise(n = n()) %>%
+  mutate(freq = n / sum(n)) %>%
+  as.data.table() %>%
+  dcast(sample_id ~ celltype, value.var = "freq", fill = 0) 
+mat_prop <- df_prop[, -1] %>% as.matrix()
+rownames(mat_prop) <- df_prop$sample_id
+mat_cor <- cor(t(mat_prop), method = "pearson")
+# plot group
+dt_grp <- fread(glue("{dat_dir}/sample_cluster_group_newcore.csv"))
+df_anno <- as.data.frame(dt_grp[match(colnames(mat_cor), sample_id), ]) %>%
+  `rownames<-`(colnames(mat_cor)) %>%
+  .[, "group", drop = FALSE]
+row_ha <- rowAnnotation(df = df_anno, col = list(group = cols_grp))
+col_ha <- HeatmapAnnotation(df = df_anno, col = list(group = cols_grp))
+idx_order <- match(dt_grp$sample_id, rownames(df_anno))
+p1 <- ComplexHeatmap::Heatmap(mat_cor, col = col_fun2,
+                              column_order = idx_order,
+                              row_order = idx_order,
+                              column_names_gp = grid::gpar(fontsize = 4),
+                              show_row_names = FALSE,
+                              top_annotation = col_ha,
+                              left_annotation = row_ha)
+pdf(glue("{fig_dir}/fig1a_heatmap_sample_correlation_group_anno.pdf"), width = 8, height = 8)
+draw(p1)
+dev.off()
+png(glue("{img_dir}/fig1a_heatmap_sample_correlation_group_anno.png"), width = 8, height = 8, units = "in", res = 300)
+draw(p1)
+dev.off()
+```
+![](images/fig1a_heatmap_sample_correlation_group_anno.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="fig1a_heatmap_sample_correlation_group_anno.png"}
+
+## C: survival curve for presence and absence of immune erosion in spinous low group
+```{r cache=FALSE, warning=FALSE, message=FALSE}
+# cd44 macrophage group
+df_mac <- read_excel(glue("{doc_dir}/sampleinfo.xlsx"), sheet = "polaris_CD44_Mac") %>%
+  filter(!is.na(CD44_mac1))
+
+# sample info
+dt_sp <- read_excel(glue("{doc_dir}/sampleinfo.xlsx"), sheet = "polaris_clinical") %>% # clinical_info.tsv
+  as.data.table()
+dt_sp[RFS_time > 60, `:=`(RFS_time = 60,
+                         RFS = 0)]
+
+# sample core cluster 
+dt_core <- dt_grp %>%
+  mutate(group_m1 = ifelse(group %in% c("G1", "G2"), "spinous_high", "spinous_low")) %>%
+  mutate(group_m2 = ifelse(group %in% c("G1", "G2", "G4"), "spinous_high", "spinous_low"))
+
+# merge
+df_surv <- df_mac %>% 
+  left_join(dt_core, by = "sample_id") %>%
+  left_join(dt_sp, by = c("patient_id", "sample_id"))
+
+for(grp in c("spinous_high", "spinous_low")){
+  df_sub <- df_surv %>% filter(group_m2 == grp)
+  fit <- survfit(Surv(RFS_time, RFS) ~ CD44_mac1, data = df_sub)
+  p4 <- ggsurvplot(fit, data = df_sub, xlab = "Time (Months)", pval = TRUE, risk.table = TRUE,
+                  risk.table.height = 0.3, 
+                  palette = unname(cols_grp), title = paste0("Survival by CD44 Mpg - Core Cluster ", grp))
+  p4$plot <- p4$plot + 
+    theme(axis.title.x = element_blank(),
+          axis.text.x = element_blank())
+  p4$table <- p4$table + 
+    xlab("Time (Months)") + 
+    theme(axis.title.x = element_text())
+  pdf(glue("{fig_dir}/fig1d_survival_curve_cd44_mac1_core_cluster_m2_{grp}.pdf"), width = 6, height = 7)
+  print(p4$plot/p4$table + patchwork::plot_layout(heights = c(3, 2)))
+  dev.off()
+  p4 <- arrange_ggsurvplots(list(p4), ncol = 1, print = FALSE)
+  ggsave(glue("{img_dir}/fig1d_survival_curve_cd44_mac1_core_cluster_m2_{grp}.png"), p4, width = 6, height = 7)
+}
+```
+![](images/fig1d_survival_curve_cd44_mac1_core_cluster_m2_spinous_low.png){.align-center .lightbox fig-alt="1st round clustering" fig-cap="fig1d_survival_curve_cd44_mac1_core_cluster_m2_spinous_low.png"}
+
