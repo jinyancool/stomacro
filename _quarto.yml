@@ -36,8 +36,6 @@ book:
       chapters:
         - href: qc.qmd
           text: Quality Control
-        - href: batchrnaseq.qmd
-          text: Batch RNAseq
         - href: batchscrnaseq.qmd
           text: Batch SingleCell
         - href: single_cell_integrate.qmd
