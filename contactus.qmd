@@ -2,7 +2,7 @@
 
 We welcome inquiries and collaboration to maximize the impact of our research. To ensure your questions are directed to the most appropriate team member, please use the following contact guidelines:
 
--   Clinical Questions: For inquiries related to clinical implications, diagnostic applications, or patient management, please contact Prof. Jiong Lyn.
+-   Clinical Questions: For inquiries related to clinical implications, diagnostic applications, or patient management, please contact Prof. Jiong Lyn. [1315021\@zju.edu.cn](mailto:%201315021@zju.edu.cn)
 
 -   Bioinformatics and Computational Questions: For assistance with bioinformatics troubleshooting, methodology, or replicating our analytical pipelines, please contact me directly at [hiekeen\@gmail.com](mailto:hiekeen@gmail.com).
 
